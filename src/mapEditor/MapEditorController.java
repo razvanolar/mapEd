@@ -6,6 +6,7 @@ import javafx.scene.control.SplitPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import mapEditor.application.main_app_toolbars.project_tree_toolbar.ProjectVerticalToolbarController;
 import mapEditor.application.main_app_toolbars.project_tree_toolbar.ProjectVerticalToolbarView;
 import mapEditor.application.manage_images.ManageImagesController;
@@ -14,6 +15,8 @@ import mapEditor.application.manage_maps.ManageMapsController;
 import mapEditor.application.manage_maps.ManageMapsView;
 import mapEditor.application.main_app_toolbars.main_toolbar.MapEditorToolbarController;
 import mapEditor.application.main_app_toolbars.main_toolbar.MapEditorToolbarView;
+import mapEditor.application.menu_bar.MapEditorMenuBarController;
+import mapEditor.application.menu_bar.MapEditorMenuBarView;
 
 /**
  *
@@ -36,11 +39,17 @@ public class MapEditorController {
   }
 
   public void initView() {
+    /* init menu bar */
+    MapEditorMenuBarController.IMapEditorMenuBarView menuBarView = new MapEditorMenuBarView();
+    MapEditorMenuBarController menuBarController = new MapEditorMenuBarController(menuBarView);
+    menuBarController.bind();
+
     /* init main toolbar */
     MapEditorToolbarController.IMapEditorToolbarView toolbarView = new MapEditorToolbarView();
     toolbarController = new MapEditorToolbarController(toolbarView);
     toolbarController.bind();
-    mainContainer.setTop(toolbarView.asNode());
+
+    addMapEditorMenuBarAndToolbar(menuBarView.asNode(), toolbarView.asNode());
 
     /* init left side toolbar : project toolbar */
     ProjectVerticalToolbarController.IProjectVerticalToolbarView projectVerticalToolbarView = new ProjectVerticalToolbarView();
@@ -48,7 +57,7 @@ public class MapEditorController {
     projectVerticalToolbarController.bind();
     mainContainer.setLeft(projectVerticalToolbarView.asNode());
 
-    // use it when construct the project tree view; no it's only for testing
+    // use it when construct the project tree view; now it's only for testing
     setProjectTreeView();
 
     changeView();
@@ -115,6 +124,12 @@ public class MapEditorController {
     this.scene = scene;
     this.mainContainer = mainContainer;
     this.centerSplitPane = centerSplitPane;
+  }
+
+  private void addMapEditorMenuBarAndToolbar(Region menuBar, Region toolbar) {
+    VBox pane = new VBox();
+    pane.getChildren().addAll(menuBar, toolbar);
+    mainContainer.setTop(pane);
   }
 
   public final Scene getScene() {
