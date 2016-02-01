@@ -1,0 +1,30 @@
+/* system components settings */
+/* ************************** */
+.scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+
+.scroll-pane:focused {
+    -fx-focus-color: transparent;
+}
+/* ************************** */
+
+.canvas_container_dark_bg {
+    -fx-background-image: url("canvas_container_dark_bg.png");
+}
+
+.canvas_container_light_bg {
+    -fx-background-image: url("canvas_container_light_bg.png");
+}
+
+.title_label_bg {
+    -fx-background-color: darkgray;
+}
+
+.scroll_pane_bg {
+    -fx-background-color: #e7e8e8;
+}
+
+#test {
+    -fx-background-image: url("canvas_container_light_bg.png");
+}
