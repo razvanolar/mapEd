@@ -3,4 +3,5 @@
 .idea
 *.iml
 out
+med_config
 *.class
