@@ -4,8 +4,11 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import mapEditor.application.create_project_part.CreateProjectController;
+import mapEditor.application.create_project_part.CreateProjectView;
 import mapEditor.application.main_part.app_utils.constants.CssConstants;
 import mapEditor.application.repo.RepoController;
 
@@ -22,7 +25,8 @@ public class MapEditorView extends Application {
 
   @Override
   public void init() {
-    if (true)
+    MapEditorController.getInstance().setMapEditorView(this);
+    if (false)
       initPrimaryStageElements();
     else
       initCreateProjectStage();
@@ -30,7 +34,7 @@ public class MapEditorView extends Application {
 
   @Override
   public void start(Stage primaryStage) throws Exception {
-    if (true) {
+    if (false) {
       primaryStage.setScene(primaryScene);
       primaryStage.setMaximized(true);
       primaryStage.setTitle("MapEditor 1.1v");
@@ -38,6 +42,7 @@ public class MapEditorView extends Application {
     } else {
       createProjectStage = new Stage(StageStyle.DECORATED);
       createProjectStage.setScene(createProjectScene);
+      createProjectStage.setResizable(false);
       createProjectStage.show();
     }
   }
@@ -51,16 +56,27 @@ public class MapEditorView extends Application {
     if (cssPath != null)
       primaryScene.getStylesheets().add(cssPath);
     MapEditorController.getInstance().setSceneAndMainContainer(primaryScene, mainContainer, centerSplitPane);
-    MapEditorController.getInstance().initView();
+    MapEditorController.getInstance().initPrimaryView();
   }
 
   private void initCreateProjectStage() {
-    BorderPane mainContainer = new BorderPane();
+    CreateProjectController.ICreateProjectView createProjectView = new CreateProjectView();
+    BorderPane mainContainer = new BorderPane(createProjectView.asNode());
     createProjectScene = new Scene(mainContainer, 600, 400);
+
+    String cssPath = CssConstants.getDefaultTheme();
+    if (cssPath != null)
+      createProjectScene.getStylesheets().add(cssPath);
+
+    HBox headerPane = new HBox();
+    headerPane.setPrefHeight(60);
+    mainContainer.setTop(headerPane);
+    MapEditorController.getInstance().initCreateProjectView(createProjectView);
   }
 
   public static void main(String[] args) {
     RepoController repoController = new RepoController();
+    MapEditorController.getInstance().setRepoController(repoController);
     launch(args);
   }
 }

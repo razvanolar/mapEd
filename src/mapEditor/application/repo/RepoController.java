@@ -7,4 +7,7 @@ package mapEditor.application.repo;
 public class RepoController {
 
 
+  public boolean isLoadExistingProject() {
+    return false;
+  }
 }

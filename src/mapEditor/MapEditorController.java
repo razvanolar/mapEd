@@ -7,6 +7,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import mapEditor.application.create_project_part.CreateProjectController;
 import mapEditor.application.main_part.main_app_toolbars.project_tree_toolbar.ProjectVerticalToolbarController;
 import mapEditor.application.main_part.main_app_toolbars.project_tree_toolbar.ProjectVerticalToolbarView;
 import mapEditor.application.main_part.manage_images.ManageImagesController;
@@ -17,6 +18,7 @@ import mapEditor.application.main_part.main_app_toolbars.main_toolbar.MapEditorT
 import mapEditor.application.main_part.main_app_toolbars.main_toolbar.MapEditorToolbarView;
 import mapEditor.application.main_part.menu_bar.MapEditorMenuBarController;
 import mapEditor.application.main_part.menu_bar.MapEditorMenuBarView;
+import mapEditor.application.repo.RepoController;
 
 /**
  *
@@ -25,9 +27,13 @@ import mapEditor.application.main_part.menu_bar.MapEditorMenuBarView;
 public class MapEditorController {
 
   private static MapEditorController INSTANCE;
+
+  private MapEditorView mapEditorView;
   private Scene scene;
   private BorderPane mainContainer;
   private SplitPane centerSplitPane;
+
+  private RepoController repoController;
   private MapEditorToolbarController toolbarController;
   private ManageMapsController manageMapsController;
   private ManageImagesController manageImagesController;
@@ -38,7 +44,7 @@ public class MapEditorController {
     return INSTANCE;
   }
 
-  public void initView() {
+  public void initPrimaryView() {
     /* init menu bar */
     MapEditorMenuBarController.IMapEditorMenuBarView menuBarView = new MapEditorMenuBarView();
     MapEditorMenuBarController menuBarController = new MapEditorMenuBarController(menuBarView);
@@ -61,6 +67,11 @@ public class MapEditorController {
     setProjectTreeView();
 
     changeView();
+  }
+
+  public void initCreateProjectView(CreateProjectController.ICreateProjectView createProjectView) {
+    CreateProjectController createProjectController = new CreateProjectController(createProjectView);
+    createProjectController.bind();
   }
 
   /**
@@ -124,6 +135,14 @@ public class MapEditorController {
     this.scene = scene;
     this.mainContainer = mainContainer;
     this.centerSplitPane = centerSplitPane;
+  }
+
+  public void setMapEditorView(MapEditorView mapEditorView) {
+    this.mapEditorView = mapEditorView;
+  }
+
+  public void setRepoController(RepoController repoController) {
+    this.repoController = repoController;
   }
 
   private void addMapEditorMenuBarAndToolbar(Region menuBar, Region toolbar) {

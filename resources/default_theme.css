@@ -25,6 +25,10 @@
     -fx-background-color: #e7e8e8;
 }
 
+.horizontal_separator_bar {
+    -fx-background-color: darkgray;
+}
+
 #test {
     -fx-background-image: url("canvas_container_light_bg.png");
 }
