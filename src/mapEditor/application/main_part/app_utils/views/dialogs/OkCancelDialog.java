@@ -25,17 +25,34 @@ public class OkCancelDialog {
   private Stage stage;
   private Scene scene;
 
-  public OkCancelDialog(String title) {
+  private StageStyle stageStyle = StageStyle.UTILITY;
+  private Modality modality = Modality.APPLICATION_MODAL;
+  private boolean isResizable;
+
+  /**
+   * Standard MapEditor Ok-Cancel dialog window.
+   * @param title       - window title
+   * @param stageStyle  - Style of the displayed window (if it's null; in this case UTILITY style will be used)
+   * @param modality    - window modality (if it's null, the default Modality will be used)
+   * @param isResizable - TRUE if the window should be resizable, FALSE otherwise
+   */
+  public OkCancelDialog(String title, StageStyle stageStyle, Modality modality, boolean isResizable) {
     this.title = title;
+    this.stageStyle = stageStyle != null ? stageStyle : this.stageStyle;
+    this.modality = modality != null ? modality : this.modality;
+    this.isResizable = isResizable;
     initGUI();
   }
 
   private void initGUI() {
-    stage = new Stage(StageStyle.UTILITY);
+    stage = new Stage(stageStyle);
     okButton = new Button("OK");
     cancelButton = new Button("Cancel");
     HBox buttonsContainer = new HBox(5, okButton, cancelButton);
     mainContainer = new BorderPane();
+
+    okButton.setPrefWidth(70);
+    cancelButton.setPrefWidth(70);
 
     buttonsContainer.setAlignment(Pos.CENTER_RIGHT);
     buttonsContainer.setPadding(new Insets(5));
@@ -64,8 +81,8 @@ public class OkCancelDialog {
     stage.setTitle(title);
     stage.setAlwaysOnTop(true);
     stage.sizeToScene();
-    stage.initModality(Modality.APPLICATION_MODAL);
-    stage.setResizable(false);
+    stage.initModality(modality);
+    stage.setResizable(isResizable);
     stage.show();
   }
 

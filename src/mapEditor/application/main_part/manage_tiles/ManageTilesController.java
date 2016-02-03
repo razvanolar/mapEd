@@ -45,7 +45,7 @@ public class ManageTilesController implements Controller {
   }
 
   private void onAddNewTabSelection() {
-    OkCancelDialog window = new OkCancelDialog("Add new tab");
+    OkCancelDialog window = new OkCancelDialog("Add new tab", null, null, false);
     NewTilesTabForm tilesTabForm = new NewTilesTabForm();
     window.setContent(tilesTabForm.asNode());
     window.getOkButton().setOnAction(event -> {

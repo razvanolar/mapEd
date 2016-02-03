@@ -1,8 +1,11 @@
 package mapEditor;
 
 import javafx.application.Application;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.SplitPane;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
@@ -10,6 +13,7 @@ import javafx.stage.StageStyle;
 import mapEditor.application.create_project_part.CreateProjectController;
 import mapEditor.application.create_project_part.CreateProjectView;
 import mapEditor.application.main_part.app_utils.constants.CssConstants;
+import mapEditor.application.main_part.app_utils.inputs.ImageProvider;
 import mapEditor.application.repo.RepoController;
 
 /**
@@ -34,15 +38,18 @@ public class MapEditorView extends Application {
 
   @Override
   public void start(Stage primaryStage) throws Exception {
+    Image logo = ImageProvider.logo();
     if (false) {
       primaryStage.setScene(primaryScene);
       primaryStage.setMaximized(true);
       primaryStage.setTitle("MapEditor 1.1v");
+      primaryStage.getIcons().add(logo);
       primaryStage.show();
     } else {
       createProjectStage = new Stage(StageStyle.DECORATED);
       createProjectStage.setScene(createProjectScene);
       createProjectStage.setResizable(false);
+      createProjectStage.getIcons().add(logo);
       createProjectStage.show();
     }
   }
@@ -68,7 +75,9 @@ public class MapEditorView extends Application {
     if (cssPath != null)
       createProjectScene.getStylesheets().add(cssPath);
 
-    HBox headerPane = new HBox();
+    Image logo = ImageProvider.logoText60();
+    HBox headerPane = new HBox(new ImageView(logo));
+    headerPane.setPadding(new Insets(5));
     headerPane.setPrefHeight(60);
     mainContainer.setTop(headerPane);
     MapEditorController.getInstance().initCreateProjectView(createProjectView);

@@ -84,7 +84,7 @@ public class ManageImagesController implements Controller {
    * Called when user want to create a new image tab
    */
   private void onAddButtonSelection() {
-    OkCancelDialog dialog = new OkCancelDialog("");
+    OkCancelDialog dialog = new OkCancelDialog("", null, null, false);
     TabImageLoadView loadView = new TabImageLoadView(dialog.getStage());
 
     // TODO: add a warning label in the loadView UI in order to inform user why the inputs are incorrect

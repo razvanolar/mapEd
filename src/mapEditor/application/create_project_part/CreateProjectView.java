@@ -80,6 +80,14 @@ public class CreateProjectView implements CreateProjectController.ICreateProject
     }
   }
 
+  public TextField getProjectNameTextField() {
+    return projectNameTextField;
+  }
+
+  public TextField getProjectPathTextField() {
+    return projectPathTextField;
+  }
+
   public Button getPathButton() {
     return pathButton;
   }
