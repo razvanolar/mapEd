@@ -8,6 +8,7 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import mapEditor.application.create_project_part.CreateProjectController;
+import mapEditor.application.main_part.app_utils.AppParameters;
 import mapEditor.application.main_part.main_app_toolbars.project_tree_toolbar.ProjectVerticalToolbarController;
 import mapEditor.application.main_part.main_app_toolbars.project_tree_toolbar.ProjectVerticalToolbarView;
 import mapEditor.application.main_part.manage_images.ManageImagesController;
@@ -19,6 +20,7 @@ import mapEditor.application.main_part.main_app_toolbars.main_toolbar.MapEditorT
 import mapEditor.application.main_part.menu_bar.MapEditorMenuBarController;
 import mapEditor.application.main_part.menu_bar.MapEditorMenuBarView;
 import mapEditor.application.repo.RepoController;
+import mapEditor.application.repo.models.ProjectModel;
 
 /**
  *
@@ -127,6 +129,30 @@ public class MapEditorController {
       centerSplitPane.setDividerPositions(dividerPositions);
   }
 
+  private void addMapEditorMenuBarAndToolbar(Region menuBar, Region toolbar) {
+    VBox pane = new VBox();
+    pane.getChildren().addAll(menuBar, toolbar);
+    mainContainer.setTop(pane);
+  }
+
+  /**
+   * Load the project.
+   * @param project - project
+   * @param loadFromCreateProjectView true if the call it's made from CreateProjectView
+   */
+  public void loadProject(ProjectModel project, boolean loadFromCreateProjectView) {
+    AppParameters.CURRENT_PROJECT = project;
+
+    mapEditorView.showPrimaryStage();
+
+    if (loadFromCreateProjectView)
+      mapEditorView.clearCreateProjectView();
+  }
+
+
+
+  /* getters and setters */
+
   public void setSceneCursor(Cursor cursor) {
     scene.setCursor(cursor);
   }
@@ -143,12 +169,6 @@ public class MapEditorController {
 
   public void setRepoController(RepoController repoController) {
     this.repoController = repoController;
-  }
-
-  private void addMapEditorMenuBarAndToolbar(Region menuBar, Region toolbar) {
-    VBox pane = new VBox();
-    pane.getChildren().addAll(menuBar, toolbar);
-    mainContainer.setTop(pane);
   }
 
   public final Scene getScene() {

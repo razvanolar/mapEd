@@ -46,6 +46,7 @@ public class SystemFilesView implements View {
   private Button refreshButton;
 
   private ChangeListener<Boolean> expandListener;
+  private boolean isAutoExpanding;
   /** The item that is used for completing a tree selection (i.e. Ok Button) */
   private Node completeSelectionNode;
 
@@ -163,6 +164,7 @@ public class SystemFilesView implements View {
       if (file != null && !file.isEmpty())
         filesQueue.add(file);
 
+    isAutoExpanding = true;
     TreeItem<File> currentNode = null;
     while (!nodesList.isEmpty() && !filesQueue.isEmpty()) {
       String currentFile = filesQueue.poll();
@@ -179,6 +181,7 @@ public class SystemFilesView implements View {
           break;
         }
     }
+    isAutoExpanding = false;
 
     if (currentNode != null) {
       tree.getSelectionModel().select(currentNode);
@@ -188,6 +191,8 @@ public class SystemFilesView implements View {
 
   private ChangeListener<Boolean> createExpandListener() {
     return (observable, oldValue, newValue) -> {
+      if (isAutoExpanding)
+        return;
       BooleanProperty property = (BooleanProperty) observable;
       LazyTreeItem item = (LazyTreeItem) property.getBean();
       if (!item.wasExpanded()) {
@@ -212,8 +217,7 @@ public class SystemFilesView implements View {
     TreeItem<File> item = tree.getSelectionModel().getSelectedItem();
     if (item == null)
       return false;
-    LazyTreeItem lazyTreeItem = (LazyTreeItem) item;
-    return lazyTreeItem.canHaveChildren() || (lazyTreeItem.getChildren() != null && !lazyTreeItem.getChildren().isEmpty());
+    return item.getValue().isDirectory();
   }
 
   public TreeView<File> getTree() {

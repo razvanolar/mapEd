@@ -3,9 +3,7 @@ package mapEditor.application.create_project_part;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
-import javafx.scene.control.Button;
-import javafx.scene.control.SplitPane;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 import mapEditor.application.main_part.app_utils.views.others.HorizontalSeparatorBar;
@@ -23,7 +21,9 @@ public class CreateProjectView implements CreateProjectController.ICreateProject
   private TextField projectPathTextField;
   private Button pathButton;
   private Button createProjectButton;
-  private Button canvelProjectButton;
+  private Button cancelProjectButton;
+  private RadioButton orthogonalMapRadioButton;
+  private RadioButton isometricMapRadioButton;
 
   public CreateProjectView() {
     initGUI();
@@ -37,9 +37,14 @@ public class CreateProjectView implements CreateProjectController.ICreateProject
     projectPathTextField = new TextField();
     pathButton = new Button("...");
     createProjectButton = new Button("Create");
-    canvelProjectButton = new Button("Cancel");
+    cancelProjectButton = new Button("Cancel");
+    orthogonalMapRadioButton = new RadioButton("Orthogonal");
+    isometricMapRadioButton = new RadioButton("Isometric");
+    ToggleGroup radioGroup = new ToggleGroup();
 
     projectNameTextField.setPrefWidth(700);
+    radioGroup.getToggles().addAll(orthogonalMapRadioButton, isometricMapRadioButton);
+    orthogonalMapRadioButton.setSelected(true);
 
     GridPane projectFormGrid = new GridPane();
     projectFormGrid.setPadding(new Insets(5));
@@ -51,12 +56,16 @@ public class CreateProjectView implements CreateProjectController.ICreateProject
     projectFormGrid.add(projectPathTextField, 1, 1);
     projectFormGrid.add(pathButton, 2, 1);
 
-    HBox buttonsContainer = new HBox(5, createProjectButton, canvelProjectButton);
+    HBox buttonsContainer = new HBox(5, createProjectButton, cancelProjectButton);
     buttonsContainer.setAlignment(Pos.CENTER_RIGHT);
     buttonsContainer.setPadding(new Insets(5));
 
+    HBox mapStylesContainer = new HBox(5, new Text("Maps Style : "), orthogonalMapRadioButton, isometricMapRadioButton);
+    mapStylesContainer.setAlignment(Pos.CENTER_LEFT);
+    mapStylesContainer.setPadding(new Insets(5));
+
     VBox topPane = new VBox(projectFormGrid, new HorizontalSeparatorBar(3));
-    VBox bottomPane = new VBox(new HorizontalSeparatorBar(3), buttonsContainer);
+    VBox bottomPane = new VBox(mapStylesContainer, new HorizontalSeparatorBar(3), buttonsContainer);
 
     createProjectPane.setTop(topPane);
     createProjectPane.setBottom(bottomPane);
@@ -90,6 +99,14 @@ public class CreateProjectView implements CreateProjectController.ICreateProject
 
   public Button getPathButton() {
     return pathButton;
+  }
+
+  public Button getCancelProjectButton() {
+    return cancelProjectButton;
+  }
+
+  public Button getCreateProjectButton() {
+    return createProjectButton;
   }
 
   @Override

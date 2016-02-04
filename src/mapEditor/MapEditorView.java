@@ -26,10 +26,12 @@ public class MapEditorView extends Application {
   private Stage createProjectStage;
   private Scene primaryScene;
   private Scene createProjectScene;
+  private Image logo;
 
   @Override
   public void init() {
     MapEditorController.getInstance().setMapEditorView(this);
+    logo = ImageProvider.logo();
     if (false)
       initPrimaryStageElements();
     else
@@ -38,20 +40,30 @@ public class MapEditorView extends Application {
 
   @Override
   public void start(Stage primaryStage) throws Exception {
-    Image logo = ImageProvider.logo();
+    this.primaryStage = primaryStage;
     if (false) {
-      primaryStage.setScene(primaryScene);
-      primaryStage.setMaximized(true);
-      primaryStage.setTitle("MapEditor 1.1v");
-      primaryStage.getIcons().add(logo);
-      primaryStage.show();
+      showPrimaryStage();
     } else {
-      createProjectStage = new Stage(StageStyle.DECORATED);
-      createProjectStage.setScene(createProjectScene);
-      createProjectStage.setResizable(false);
-      createProjectStage.getIcons().add(logo);
-      createProjectStage.show();
+      showCreateProjectStage();
     }
+  }
+
+  public void showPrimaryStage() {
+    if (primaryScene == null)
+      initPrimaryStageElements();
+    this.primaryStage.setScene(primaryScene);
+    this.primaryStage.setMaximized(true);
+    this.primaryStage.setTitle("MapEditor 1.1v");
+    this.primaryStage.getIcons().add(logo);
+    this.primaryStage.show();
+  }
+
+  public void showCreateProjectStage() {
+    createProjectStage = new Stage(StageStyle.DECORATED);
+    createProjectStage.setScene(createProjectScene);
+    createProjectStage.setResizable(false);
+    createProjectStage.getIcons().add(logo);
+    createProjectStage.show();
   }
 
   private void initPrimaryStageElements() {
@@ -81,6 +93,18 @@ public class MapEditorView extends Application {
     headerPane.setPrefHeight(60);
     mainContainer.setTop(headerPane);
     MapEditorController.getInstance().initCreateProjectView(createProjectView);
+
+    createProjectView.getCancelProjectButton().setOnAction(event -> {
+      if (createProjectStage != null)
+        createProjectStage.close();
+    });
+  }
+
+  public void clearCreateProjectView() {
+    if (createProjectStage != null)
+      createProjectStage.close();
+    createProjectStage = null;
+    createProjectScene = null;
   }
 
   public static void main(String[] args) {
