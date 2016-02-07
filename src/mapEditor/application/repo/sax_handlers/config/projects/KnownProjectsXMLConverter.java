@@ -22,7 +22,9 @@ public class KnownProjectsXMLConverter {
 
     for (LWProjectModel project : projects) {
       builder.append("\t<project path=\"");
-      builder.append(project.getProjectPath());
+      builder.append(project.getPath());
+      builder.append("\" name=\"");
+      builder.append(project.getName());
       builder.append("\" lastAccess=\"");
       builder.append(Long.toString(project.getLastAccessedTime()));
       builder.append("\" />\n");

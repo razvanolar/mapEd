@@ -7,16 +7,22 @@ package mapEditor.application.repo.models;
  */
 public class LWProjectModel {
 
-  private String projectPath;
+  private String path;
+  private String name;
   private long lastAccessedTime;
 
-  public LWProjectModel(String projectPath, long lastAccessedTime) {
-    this.projectPath = projectPath;
+  public LWProjectModel(String name, String projectPath, long lastAccessedTime) {
+    this.name = name;
+    this.path = projectPath;
     this.lastAccessedTime = lastAccessedTime;
   }
 
-  public String getProjectPath() {
-    return projectPath;
+  public String getPath() {
+    return path;
+  }
+
+  public String getName() {
+    return name;
   }
 
   public long getLastAccessedTime() {

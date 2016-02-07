@@ -81,7 +81,7 @@ public class RepoController {
       if (!path.endsWith("\\"))
         path += "\\";
       writeContentToFile(xmlResult, path + name);
-      saveToExistingProjects(SystemParameters.PROJECTS, new LWProjectModel(path, System.currentTimeMillis()));
+      saveToExistingProjects(SystemParameters.PROJECTS, new LWProjectModel(name, path, System.currentTimeMillis()));
       return project;
     } catch (Exception ex) {
       System.out.println(ex.getMessage());

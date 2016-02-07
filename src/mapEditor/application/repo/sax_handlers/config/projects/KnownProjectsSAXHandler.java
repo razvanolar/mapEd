@@ -24,7 +24,9 @@ public class KnownProjectsSAXHandler extends DefaultHandler {
         projects = new ArrayList<>();
         break;
       case "project":
-        project = new LWProjectModel(attributes.getValue("path"), Long.parseLong(attributes.getValue("lastAccess")));
+        project = new LWProjectModel(attributes.getValue("name"),
+                attributes.getValue("path"),
+                Long.parseLong(attributes.getValue("lastAccess")));
         break;
     }
   }
