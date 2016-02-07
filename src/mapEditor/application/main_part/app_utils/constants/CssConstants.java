@@ -16,6 +16,7 @@ public class CssConstants {
   public static final String TITLE_LABEL_BG = "title_label_bg";
   public static final String SCROLL_PANE_BG = "scroll_pane_bg";
   public static final String HORIZONTAL_SEPARATOR_BAR = "horizontal_separator_bar";
+  public static final String PROJECT_LABEL_VIEW = "projectLabelView";
 
   public static String getDefaultTheme() {
     return getFilePath(new File(PATH + DEFAULT_THEME));

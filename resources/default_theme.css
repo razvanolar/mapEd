@@ -29,6 +29,10 @@
     -fx-background-color: darkgray;
 }
 
+.projectLabelView {
+    -fx-background-color: darkgray;
+}
+
 #test {
     -fx-background-image: url("canvas_container_light_bg.png");
 }

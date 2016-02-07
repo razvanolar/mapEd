@@ -28,4 +28,8 @@ public class LWProjectModel {
   public long getLastAccessedTime() {
     return lastAccessedTime;
   }
+
+  public void setLastAccessedTime(long lastAccessedTime) {
+    this.lastAccessedTime = lastAccessedTime;
+  }
 }

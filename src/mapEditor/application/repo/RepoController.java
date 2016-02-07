@@ -6,6 +6,7 @@ import mapEditor.application.repo.models.ProjectModel;
 import mapEditor.application.repo.sax_handlers.config.projects.KnownProjectsXMLConverter;
 import mapEditor.application.repo.sax_handlers.config.projects.KnownProjectsXMLHandler;
 import mapEditor.application.repo.sax_handlers.project_init_file.ProjectXMLConverter;
+import mapEditor.application.repo.sax_handlers.project_init_file.ProjectXMLHandler;
 import mapEditor.application.repo.types.CreateProjectStatus;
 import mapEditor.application.repo.types.MapType;
 
@@ -52,17 +53,23 @@ public class RepoController {
       return;
     if (existingProjects == null)
       existingProjects = new ArrayList<>();
+    existingProjects.add(newProject);
+    saveProjects(existingProjects);
+  }
+
+  public void saveProjects(List<LWProjectModel> projects) {
+    if (projects == null)
+      return;
     try {
-      existingProjects.add(newProject);
-      Collections.sort(existingProjects, (o1, o2) -> (int) (o1.getLastAccessedTime() - o2.getLastAccessedTime()));
+      Collections.sort(projects, (o1, o2) -> (int) (o2.getLastAccessedTime() - o1.getLastAccessedTime()));
       KnownProjectsXMLConverter converter = new KnownProjectsXMLConverter();
-      String result = converter.convertLWProjectsToXML(existingProjects);
+      String result = converter.convertLWProjectsToXML(projects);
       PrintWriter writer = new PrintWriter(new FileWriter(SystemParameters.KNOWN_PROJECTS_FILE_PATH, false));
       writer.write(result);
       writer.close();
-      SystemParameters.PROJECTS = existingProjects;
+      SystemParameters.PROJECTS = projects;
     } catch (Exception ex) {
-      System.out.println(ex.getMessage() + "\n Unable to save project to existing projects");
+      System.out.println("Unable to save projects. Error message: " + ex.getMessage());
     }
   }
 
@@ -80,7 +87,7 @@ public class RepoController {
       String xmlResult  = xmlConverter.convertProjectToXML(project);
       if (!path.endsWith("\\"))
         path += "\\";
-      writeContentToFile(xmlResult, path + name);
+      writeContentToFile(xmlResult, path + name + ".med");
       saveToExistingProjects(SystemParameters.PROJECTS, new LWProjectModel(name, path, System.currentTimeMillis()));
       return project;
     } catch (Exception ex) {
@@ -89,10 +96,31 @@ public class RepoController {
     }
   }
 
+  /**
+   * Load the project settings.
+   * @param path - project path
+   * @return model - ProjectModel
+   * @throws Exception
+   */
+  public ProjectModel loadProject(String path) throws Exception {
+    String content = readContentFromFile(path);
+    ProjectXMLHandler handler = new ProjectXMLHandler(content);
+    return handler.parse();
+  }
+
   public void writeContentToFile(String content, String path) throws Exception {
     PrintWriter writer = new PrintWriter(new File(path));
     writer.write(content);
     writer.close();
+  }
+
+  public String readContentFromFile(String filePath) throws Exception {
+    BufferedReader reader = new BufferedReader(new FileReader(new File(filePath)));
+    StringBuilder builder = new StringBuilder();
+    String line;
+    while ((line = reader.readLine()) != null)
+      builder.append(line);
+    return builder.toString();
   }
 
   /**

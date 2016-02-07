@@ -74,6 +74,8 @@ public class CreateProjectView implements CreateProjectController.ICreateProject
     splitPane.setDividerPositions(0.35);
     SplitPane.setResizableWithParent(recentProjectsPane, false);
 
+    recentProjectsPane.setSpacing(5);
+
     setState(CreateProjectController.ICreateProjectViewState.NONE);
   }
 
@@ -87,6 +89,10 @@ public class CreateProjectView implements CreateProjectController.ICreateProject
         createProjectButton.setDisable(true);
         break;
     }
+  }
+
+  public void addProjectLabel(DisplayProjectLabelView labelView) {
+    recentProjectsPane.getChildren().add(labelView.asNode());
   }
 
   public TextField getProjectNameTextField() {

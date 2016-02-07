@@ -16,6 +16,10 @@ public class ImageProvider {
     return getImage(new File(PATH + "logo.png"));
   }
 
+  public static Image logo12() {
+    return getImage(new File(PATH + "logo_12.png"));
+  }
+
   public static Image logoText60() {
     return getImage(new File(PATH + "logo_text_60.png"));
   }

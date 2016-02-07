@@ -5,6 +5,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextField;
+import javafx.scene.input.MouseButton;
 import mapEditor.MapEditorController;
 import mapEditor.application.main_part.app_utils.AppParameters;
 import mapEditor.application.main_part.app_utils.inputs.StringValidator;
@@ -13,8 +14,12 @@ import mapEditor.application.main_part.app_utils.views.others.SystemFilesView;
 import mapEditor.application.main_part.types.Controller;
 import mapEditor.application.main_part.types.View;
 import mapEditor.application.repo.RepoController;
+import mapEditor.application.repo.SystemParameters;
+import mapEditor.application.repo.models.LWProjectModel;
 import mapEditor.application.repo.models.ProjectModel;
 import mapEditor.application.repo.types.CreateProjectStatus;
+
+import java.util.Date;
 
 /**
  *
@@ -28,6 +33,7 @@ public class CreateProjectController implements Controller {
 
   public interface ICreateProjectView extends View {
     void setState(ICreateProjectViewState state);
+    void addProjectLabel(DisplayProjectLabelView labelView);
     TextField getProjectNameTextField();
     TextField getProjectPathTextField();
     Button getPathButton();
@@ -36,13 +42,28 @@ public class CreateProjectController implements Controller {
   }
 
   private ICreateProjectView view;
+  private ProjectContextMenu projectContextMenu;
 
   public CreateProjectController(ICreateProjectView view) {
     this.view = view;
+    projectContextMenu = new ProjectContextMenu();
   }
 
   @Override
   public void bind() {
+    if (SystemParameters.PROJECTS != null) {
+      Date date = new Date();
+      for (LWProjectModel model : SystemParameters.PROJECTS) {
+        date.setTime(model.getLastAccessedTime());
+        DisplayProjectLabelView labelView = new DisplayProjectLabelView(model.getName(), model.getPath(), date.toString());
+        labelView.addListener(event -> {
+          if (event.getButton() == MouseButton.PRIMARY)
+            loadProjectFiles(model);
+        });
+        labelView.setContextMenu(projectContextMenu.getContextMenu());
+        view.addProjectLabel(labelView);
+      }
+    }
     addListeners();
     view.getProjectNameTextField().setText(AppParameters.DEFAULT_PROJECT_NAME);
     view.getProjectPathTextField().setText(AppParameters.SYSTEM_FILES_VIEW_PATH);
@@ -70,10 +91,11 @@ public class CreateProjectController implements Controller {
   }
 
   private void doOnCreateProjectSelection() {
-    String name = view.getProjectNameTextField().getText() + ".med";
+    String name = view.getProjectNameTextField().getText();
     String path = view.getProjectPathTextField().getText();
+    String confFile = name + ".med";
 
-    CreateProjectStatus status = RepoController.getInstance().checkIfProjectFieldsAreValid(name, path);
+    CreateProjectStatus status = RepoController.getInstance().checkIfProjectFieldsAreValid(confFile, path);
 
     if (status == CreateProjectStatus.NOT_DIRECTORY) {
       showWarningDialog(null, "You can't use the selected path because it's not a directory.");
@@ -105,13 +127,27 @@ public class CreateProjectController implements Controller {
 
   private void createProjectFiles(String name, String path) {
     ProjectModel project = RepoController.getInstance().createProject(name, path);
-
     if (project == null) {
       showWarningDialog(null, "Failed to create project files.");
       return;
     }
-
     MapEditorController.getInstance().loadProject(project, true);
+  }
+
+  private void loadProjectFiles(LWProjectModel lwProject) {
+    try {
+      String filePath = lwProject.getPath();
+      if (!filePath.endsWith("\\"))
+        filePath += "\\";
+      filePath += lwProject.getName() + ".med";
+      ProjectModel project = RepoController.getInstance().loadProject(filePath);
+      lwProject.setLastAccessedTime(System.currentTimeMillis());
+      RepoController.getInstance().saveProjects(SystemParameters.PROJECTS);
+      project.setHomePath(lwProject.getPath());
+      MapEditorController.getInstance().loadProject(project, true);
+    } catch (Exception ex) {
+      System.out.println("CreateProjectController - loadProjectFiles - Unable to load project. Error message: " + ex.getMessage());
+    }
   }
 
   private boolean checkTextFieldsValidity() {
