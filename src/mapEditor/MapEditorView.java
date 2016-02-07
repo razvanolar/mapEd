@@ -15,6 +15,7 @@ import mapEditor.application.create_project_part.CreateProjectView;
 import mapEditor.application.main_part.app_utils.constants.CssConstants;
 import mapEditor.application.main_part.app_utils.inputs.ImageProvider;
 import mapEditor.application.repo.RepoController;
+import mapEditor.application.repo.SystemParameters;
 
 /**
  *
@@ -81,7 +82,7 @@ public class MapEditorView extends Application {
   private void initCreateProjectStage() {
     CreateProjectController.ICreateProjectView createProjectView = new CreateProjectView();
     BorderPane mainContainer = new BorderPane(createProjectView.asNode());
-    createProjectScene = new Scene(mainContainer, 600, 400);
+    createProjectScene = new Scene(mainContainer, 700, 400);
 
     String cssPath = CssConstants.getDefaultTheme();
     if (cssPath != null)
@@ -108,8 +109,14 @@ public class MapEditorView extends Application {
   }
 
   public static void main(String[] args) {
-    RepoController repoController = new RepoController();
-    MapEditorController.getInstance().setRepoController(repoController);
-    launch(args);
+    try {
+      RepoController repoController = new RepoController();
+      SystemParameters.PROJECTS = repoController.loadExistingProjects();
+
+      MapEditorController.getInstance().setRepoController(repoController);
+      launch(args);
+    } catch (Exception ex) {
+      System.out.println("*** Unable to open the app. Exception message : " + ex.getMessage());
+    }
   }
 }

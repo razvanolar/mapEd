@@ -76,6 +76,17 @@ public class CreateProjectController implements Controller {
     String path = view.getProjectPathTextField().getText();
 
     CreateProjectStatus status = RepoController.getInstance().checkIfProjectFieldsAreValid(name, path);
+
+    if (status == CreateProjectStatus.NOT_DIRECTORY) {
+      showWarningDialog(null, "You can't use the selected path because it's not a directory.");
+      return;
+    }
+
+    if (status == CreateProjectStatus.ANOTHER_CREATED) {
+      showWarningDialog(null, "There is another .med project created. Please choose another file");
+      return;
+    }
+
     if (status == CreateProjectStatus.NAME_EXISTS) {
       showWarningDialog(null, "There is another file with the same name. Please rename the project.");
       return;
