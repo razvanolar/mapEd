@@ -12,10 +12,14 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import mapEditor.application.create_project_part.CreateProjectController;
 import mapEditor.application.create_project_part.CreateProjectView;
+import mapEditor.application.main_part.app_utils.AppParameters;
 import mapEditor.application.main_part.app_utils.constants.CssConstants;
 import mapEditor.application.main_part.app_utils.inputs.ImageProvider;
 import mapEditor.application.repo.RepoController;
 import mapEditor.application.repo.SystemParameters;
+import mapEditor.application.repo.models.LWProjectModel;
+import mapEditor.application.repo.models.ProjectModel;
+import mapEditor.application.repo.types.ProjectStatus;
 
 /**
  *
@@ -33,7 +37,7 @@ public class MapEditorView extends Application {
   public void init() {
     MapEditorController.getInstance().setMapEditorView(this);
     logo = ImageProvider.logo();
-    if (false)
+    if (AppParameters.CURRENT_PROJECT != null)
       initPrimaryStageElements();
     else
       initCreateProjectStage();
@@ -42,7 +46,7 @@ public class MapEditorView extends Application {
   @Override
   public void start(Stage primaryStage) throws Exception {
     this.primaryStage = primaryStage;
-    if (false) {
+    if (AppParameters.CURRENT_PROJECT != null) {
       showPrimaryStage();
     } else {
       showCreateProjectStage();
@@ -54,7 +58,7 @@ public class MapEditorView extends Application {
       initPrimaryStageElements();
     this.primaryStage.setScene(primaryScene);
     this.primaryStage.setMaximized(true);
-    this.primaryStage.setTitle("MapEditor 1.1v");
+    this.primaryStage.setTitle(AppParameters.CURRENT_PROJECT.getName() + " - " + AppParameters.CURRENT_PROJECT.getHomePath() + " - MapEditor 1.1v");
     this.primaryStage.getIcons().add(logo);
     this.primaryStage.show();
   }
@@ -112,6 +116,15 @@ public class MapEditorView extends Application {
     try {
       RepoController repoController = new RepoController();
       SystemParameters.PROJECTS = repoController.loadExistingProjects();
+      for (LWProjectModel model : SystemParameters.PROJECTS)
+        if (model.getStatus() == ProjectStatus.OPENED) {
+          ProjectModel project = repoController.loadProject(model, false);
+          if (project != null) {
+            project.setHomePath(model.getPath());
+            AppParameters.CURRENT_PROJECT = project;
+            break;
+          }
+        }
 
       MapEditorController.getInstance().setRepoController(repoController);
       launch(args);

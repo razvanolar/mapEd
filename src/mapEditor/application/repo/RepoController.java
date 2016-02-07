@@ -9,6 +9,7 @@ import mapEditor.application.repo.sax_handlers.project_init_file.ProjectXMLConve
 import mapEditor.application.repo.sax_handlers.project_init_file.ProjectXMLHandler;
 import mapEditor.application.repo.types.CreateProjectStatus;
 import mapEditor.application.repo.types.MapType;
+import mapEditor.application.repo.types.ProjectStatus;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -88,7 +89,7 @@ public class RepoController {
       if (!path.endsWith("\\"))
         path += "\\";
       writeContentToFile(xmlResult, path + name + ".med");
-      saveToExistingProjects(SystemParameters.PROJECTS, new LWProjectModel(name, path, System.currentTimeMillis()));
+      saveToExistingProjects(SystemParameters.PROJECTS, new LWProjectModel(name, path, System.currentTimeMillis(), ProjectStatus.OPENED));
       return project;
     } catch (Exception ex) {
       System.out.println(ex.getMessage());
@@ -106,6 +107,28 @@ public class RepoController {
     String content = readContentFromFile(path);
     ProjectXMLHandler handler = new ProjectXMLHandler(content);
     return handler.parse();
+  }
+
+  /**
+   * Load the project settings.
+   * @param model - project light weight version
+   * @param throwException - true to throw the exception (if appears); false otherwise
+   * @return model - ProjectModel
+   * @throws Exception
+   */
+  public ProjectModel loadProject(LWProjectModel model, boolean throwException) throws Exception {
+    try {
+      String filePath = model.getPath();
+      if (!filePath.endsWith("\\"))
+        filePath += "\\";
+      filePath += model.getName() + ".med";
+      return loadProject(filePath);
+    } catch (Exception ex) {
+      System.out.println("RepoController - loadProject - Unable to load project. Error message: " + ex.getMessage());
+      if (throwException)
+        throw ex;
+    }
+    return null;
   }
 
   public void writeContentToFile(String content, String path) throws Exception {

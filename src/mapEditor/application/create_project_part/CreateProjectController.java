@@ -18,6 +18,7 @@ import mapEditor.application.repo.SystemParameters;
 import mapEditor.application.repo.models.LWProjectModel;
 import mapEditor.application.repo.models.ProjectModel;
 import mapEditor.application.repo.types.CreateProjectStatus;
+import mapEditor.application.repo.types.ProjectStatus;
 
 import java.util.Date;
 
@@ -134,20 +135,19 @@ public class CreateProjectController implements Controller {
     MapEditorController.getInstance().loadProject(project, true);
   }
 
-  private void loadProjectFiles(LWProjectModel lwProject) {
+  public ProjectModel loadProjectFiles(LWProjectModel lwProject) {
     try {
-      String filePath = lwProject.getPath();
-      if (!filePath.endsWith("\\"))
-        filePath += "\\";
-      filePath += lwProject.getName() + ".med";
-      ProjectModel project = RepoController.getInstance().loadProject(filePath);
+      ProjectModel project = RepoController.getInstance().loadProject(lwProject, true);
       lwProject.setLastAccessedTime(System.currentTimeMillis());
+      lwProject.setStatus(ProjectStatus.OPENED);
       RepoController.getInstance().saveProjects(SystemParameters.PROJECTS);
       project.setHomePath(lwProject.getPath());
       MapEditorController.getInstance().loadProject(project, true);
+      return project;
     } catch (Exception ex) {
       System.out.println("CreateProjectController - loadProjectFiles - Unable to load project. Error message: " + ex.getMessage());
     }
+    return null;
   }
 
   private boolean checkTextFieldsValidity() {

@@ -27,6 +27,7 @@ public class KnownProjectsXMLConverter {
       builder.append(project.getName());
       builder.append("\" lastAccess=\"");
       builder.append(Long.toString(project.getLastAccessedTime()));
+      builder.append("\" status=\"").append(project.getStatus().name());
       builder.append("\" />\n");
     }
 

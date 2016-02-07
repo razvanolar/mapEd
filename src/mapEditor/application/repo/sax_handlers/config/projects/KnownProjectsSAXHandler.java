@@ -1,6 +1,7 @@
 package mapEditor.application.repo.sax_handlers.config.projects;
 
 import mapEditor.application.repo.models.LWProjectModel;
+import mapEditor.application.repo.types.ProjectStatus;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -26,7 +27,8 @@ public class KnownProjectsSAXHandler extends DefaultHandler {
       case "project":
         project = new LWProjectModel(attributes.getValue("name"),
                 attributes.getValue("path"),
-                Long.parseLong(attributes.getValue("lastAccess")));
+                Long.parseLong(attributes.getValue("lastAccess")),
+                ProjectStatus.valueOf(attributes.getValue("status")));
         break;
     }
   }
