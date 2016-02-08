@@ -71,6 +71,7 @@ public class RepoController {
       SystemParameters.PROJECTS = projects;
     } catch (Exception ex) {
       System.out.println("Unable to save projects. Error message: " + ex.getMessage());
+      ex.printStackTrace();
     }
   }
 
@@ -129,6 +130,20 @@ public class RepoController {
         throw ex;
     }
     return null;
+  }
+
+  public boolean closeProject(String projectPath) {
+    if (projectPath == null || projectPath.isEmpty())
+      return false;
+
+    for (LWProjectModel model : SystemParameters.PROJECTS) {
+      if (model.getPath().equals(projectPath)) {
+        model.setStatus(ProjectStatus.CLOSED);
+        break;
+      }
+    }
+    saveProjects(SystemParameters.PROJECTS);
+    return true;
   }
 
   public void writeContentToFile(String content, String path) throws Exception {

@@ -16,6 +16,7 @@ public class MapEditorMenuBarView implements MapEditorMenuBarController.IMapEdit
   private Menu fileMenu;
   private MenuItem newMenuItem;
   private MenuItem openMenuItem;
+  private MenuItem closeProjectMenuItem;
   private MenuItem settingsMenuItem;
   private MenuItem exportAsHtmlMenuItem;
   private MenuItem exitMenuItem;
@@ -30,11 +31,13 @@ public class MapEditorMenuBarView implements MapEditorMenuBarController.IMapEdit
   private void initGUI() {
     newMenuItem = new MenuItem("New");
     openMenuItem = new MenuItem("Open...");
+    closeProjectMenuItem = new MenuItem("Close Project");
     settingsMenuItem = new MenuItem("Settings");
     exportAsHtmlMenuItem = new MenuItem("Export to Html...");
     exitMenuItem = new MenuItem("Exit");
     fileMenu = new Menu("File", null, newMenuItem,
             openMenuItem,
+            closeProjectMenuItem,
             new SeparatorMenuItem(),
             settingsMenuItem,
             new SeparatorMenuItem(),
@@ -45,6 +48,14 @@ public class MapEditorMenuBarView implements MapEditorMenuBarController.IMapEdit
     preferencesMenu = new Menu("Preferences");
     helpMenu = new Menu("Help");
     menuBar = new MenuBar(fileMenu, editMenu, preferencesMenu, helpMenu);
+  }
+
+  public MenuItem getCloseProjectMenuItem() {
+    return closeProjectMenuItem;
+  }
+
+  public MenuItem getExitMenuItem() {
+    return exitMenuItem;
   }
 
   @Override

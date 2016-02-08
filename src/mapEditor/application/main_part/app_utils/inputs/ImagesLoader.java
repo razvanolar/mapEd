@@ -16,7 +16,7 @@ public class ImagesLoader {
 
   private static ImagesLoader INSTANCE;
   /* TODO: use a configurable path */
-  private static String DEFAULT_PATH = "C:\\Users\\razvanolar\\Desktop\\MapEditor_Docs\\tilesets";
+  private static String DEFAULT_PATH = "C:\\Users\\razvanolar\\Desktop\\MapEditor_Util\\tilesets";
 
   public void loadImage(Callback<Image, Void> callback, Window owner) {
     FileChooser fileChooser = new FileChooser();

@@ -149,6 +149,10 @@ public class MapEditorController {
       mapEditorView.clearCreateProjectView();
   }
 
+  public void closeApp() {
+    mapEditorView.close();
+  }
+
 
 
   /* getters and setters */
@@ -169,6 +173,10 @@ public class MapEditorController {
 
   public void setRepoController(RepoController repoController) {
     this.repoController = repoController;
+  }
+
+  public RepoController getRepoController() {
+    return repoController;
   }
 
   public final Scene getScene() {

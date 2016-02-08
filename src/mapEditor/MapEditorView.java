@@ -112,6 +112,13 @@ public class MapEditorView extends Application {
     createProjectScene = null;
   }
 
+  public void close() {
+    if (createProjectStage != null)
+      createProjectStage.close();
+    if (primaryStage != null)
+      primaryStage.close();
+  }
+
   public static void main(String[] args) {
     try {
       RepoController repoController = new RepoController();
