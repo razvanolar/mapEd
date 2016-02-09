@@ -41,7 +41,7 @@ public class ManageMapsView implements ManageMapsController.IMangeMapsView {
 
     splitPane = new SplitPane(canvasScrollPane, rightSplitPane);
     splitPane.setOrientation(Orientation.HORIZONTAL);
-    splitPane.setDividerPositions(0.7);
+    splitPane.setDividerPositions(0.4);
     splitPane.prefWidthProperty().bind(MapEditorController.getInstance().getScene().widthProperty());
     splitPane.prefHeightProperty().bind(MapEditorController.getInstance().getScene().heightProperty());
     SplitPane.setResizableWithParent(rightSplitPane, false);

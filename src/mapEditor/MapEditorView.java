@@ -127,7 +127,6 @@ public class MapEditorView extends Application {
         if (model.getStatus() == ProjectStatus.OPENED) {
           ProjectModel project = repoController.loadProject(model, false);
           if (project != null) {
-            project.setHomePath(model.getPath());
             AppParameters.CURRENT_PROJECT = project;
             break;
           }

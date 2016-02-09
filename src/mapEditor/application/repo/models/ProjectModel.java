@@ -2,6 +2,8 @@ package mapEditor.application.repo.models;
 
 import mapEditor.application.repo.types.MapType;
 
+import java.io.File;
+
 /**
  *
  * Created by razvanolar on 05.02.2016.
@@ -13,6 +15,10 @@ public class ProjectModel {
   private MapType mapType;
   private int cellSize;
 
+  private File tileGroupsFile;
+  private File charactersFile;
+  private File mapsFile;
+
   public ProjectModel() {}
 
   public ProjectModel(String name, String homePath, MapType mapType, int cellSize) {
@@ -20,6 +26,9 @@ public class ProjectModel {
     this.homePath = homePath;
     this.mapType = mapType;
     this.cellSize = cellSize;
+
+    if (!this.homePath.endsWith("\\"))
+      this.homePath += "\\";
   }
 
   public String getName() {
@@ -38,6 +47,18 @@ public class ProjectModel {
     return cellSize;
   }
 
+  public File getTileGroupsFile() {
+    return tileGroupsFile;
+  }
+
+  public File getCharactersFile() {
+    return charactersFile;
+  }
+
+  public File getMapsFile() {
+    return mapsFile;
+  }
+
   public void setName(String name) {
     this.name = name;
   }
@@ -52,5 +73,17 @@ public class ProjectModel {
 
   public void setCellSize(int cellSize) {
     this.cellSize = cellSize;
+  }
+
+  public void setTileGroupsFile(File tileGroupsFile) {
+    this.tileGroupsFile = tileGroupsFile;
+  }
+
+  public void setCharactersFile(File charactersFile) {
+    this.charactersFile = charactersFile;
+  }
+
+  public void setMapsFile(File mapsFile) {
+    this.mapsFile = mapsFile;
   }
 }

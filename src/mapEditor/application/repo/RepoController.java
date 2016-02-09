@@ -91,6 +91,7 @@ public class RepoController {
         path += "\\";
       writeContentToFile(xmlResult, path + name + ".med");
       saveToExistingProjects(SystemParameters.PROJECTS, new LWProjectModel(name, path, System.currentTimeMillis(), ProjectStatus.OPENED));
+      createProjectFiles(path);
       return project;
     } catch (Exception ex) {
       System.out.println(ex.getMessage());
@@ -99,15 +100,57 @@ public class RepoController {
   }
 
   /**
+   * Create the main project directories (tile_groups, characters, maps).
+   * If a directory can not be created, only log the error.
+   * @param projectPath - project path; must be a valid directory path
+   */
+  private void createProjectFiles(String projectPath) {
+    if (!projectPath.endsWith("\\"))
+      projectPath += "\\";
+    File tileGroupsFile = new File(projectPath + SystemParameters.TILE_GROUPS_FOLDER_PATH);
+    File charactersFile = new File(projectPath + SystemParameters.CHARACTERS_FOLDER_PATH);
+    File mapsFile = new File(projectPath + SystemParameters.MAPS_FOLDER_PATH);
+    if (!tileGroupsFile.exists() && !tileGroupsFile.mkdirs())
+      System.out.println("Unable to create tile groups directory. Project path: " + projectPath);
+    if (!charactersFile.exists() && !charactersFile.mkdirs())
+      System.out.println("Unable to create characters directory. Project path: " + projectPath);
+    if (!mapsFile.exists() && !mapsFile.mkdirs())
+      System.out.println("Unable to create maps directory. Project path: " + projectPath);
+  }
+
+  /**
    * Load the project settings.
    * @param path - project path
    * @return model - ProjectModel
    * @throws Exception
    */
-  public ProjectModel loadProject(String path) throws Exception {
+  public ProjectModel loadProjectSettings(String path) throws Exception {
     String content = readContentFromFile(path);
     ProjectXMLHandler handler = new ProjectXMLHandler(content);
     return handler.parse();
+  }
+
+  /**
+   * Set project main directories. If a directory is missing, we'll try to create it.
+   * @param project - ProjectModel
+   * @throws Exception
+   */
+  public void loadProjectFiles(ProjectModel project) throws Exception {
+    if (project == null)
+      return;
+    String projectPath = project.getHomePath();
+    File tileGroupsFile = new File(projectPath + SystemParameters.TILE_GROUPS_FOLDER_PATH);
+    File charactersFile = new File(projectPath + SystemParameters.CHARACTERS_FOLDER_PATH);
+    File mapsFile = new File(projectPath + SystemParameters.MAPS_FOLDER_PATH);
+    if (!tileGroupsFile.exists() && !tileGroupsFile.mkdirs())
+      throw new Exception("Tile groups directory does not exist and failed to create.");
+    if (!charactersFile.exists() && !charactersFile.mkdirs())
+      throw new Exception("Characters directory does not exist and failed to create.");
+    if (!mapsFile.exists() && !mapsFile.mkdirs())
+      throw new Exception("Maps directory does not exist and failed to create.");
+    project.setTileGroupsFile(tileGroupsFile);
+    project.setCharactersFile(charactersFile);
+    project.setMapsFile(mapsFile);
   }
 
   /**
@@ -122,8 +165,11 @@ public class RepoController {
       String filePath = model.getPath();
       if (!filePath.endsWith("\\"))
         filePath += "\\";
-      filePath += model.getName() + ".med";
-      return loadProject(filePath);
+      filePath += model.getName() + SystemParameters.PROJECT_FILE_EXT;
+      ProjectModel projectModel = loadProjectSettings(filePath);
+      projectModel.setHomePath(model.getPath());
+      loadProjectFiles(projectModel);
+      return projectModel;
     } catch (Exception ex) {
       System.out.println("RepoController - loadProject - Unable to load project. Error message: " + ex.getMessage());
       if (throwException)

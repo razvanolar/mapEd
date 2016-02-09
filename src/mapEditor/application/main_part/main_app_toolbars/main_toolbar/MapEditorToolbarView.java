@@ -33,8 +33,8 @@ public class MapEditorToolbarView implements MapEditorToolbarController.IMapEdit
     HBox.setHgrow(spacer, Priority.ALWAYS);
     spacer.setMinWidth(Region.USE_PREF_SIZE);
 
-//    mapEditorViewButton.setSelected(true);
-    imageEditorViewButton.setSelected(true);
+    mapEditorViewButton.setSelected(true);
+//    imageEditorViewButton.setSelected(true);
     ToggleGroup group = new ToggleGroup();
     group.getToggles().addAll(mapEditorViewButton, imageEditorViewButton);
 

@@ -61,7 +61,7 @@ public class ManageImagesView implements ManageImagesController.IManageImagesVie
     SplitPane.setResizableWithParent(leftPane, false);
     SplitPane.setResizableWithParent(configurationPanel, false);
     mainSplitPane.setOrientation(Orientation.HORIZONTAL);
-    mainSplitPane.setDividerPositions(0.6);
+    mainSplitPane.setDividerPositions(0.8);
     canvasSplitPane.setOrientation(Orientation.VERTICAL);
     canvasSplitPane.setDividerPositions(0.5);
   }

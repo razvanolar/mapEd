@@ -19,6 +19,8 @@ import mapEditor.application.main_part.main_app_toolbars.main_toolbar.MapEditorT
 import mapEditor.application.main_part.main_app_toolbars.main_toolbar.MapEditorToolbarView;
 import mapEditor.application.main_part.menu_bar.MapEditorMenuBarController;
 import mapEditor.application.main_part.menu_bar.MapEditorMenuBarView;
+import mapEditor.application.main_part.project_tree.ProjectTreeController;
+import mapEditor.application.main_part.project_tree.ProjectTreeView;
 import mapEditor.application.repo.RepoController;
 import mapEditor.application.repo.models.ProjectModel;
 
@@ -106,14 +108,17 @@ public class MapEditorController {
   }
 
   private void setProjectTreeView() {
-    StackPane stackPane = new StackPane();
-    SplitPane.setResizableWithParent(stackPane, false);
+    ProjectTreeController.IProjectTreeView projectTreeView = new ProjectTreeView();
+    ProjectTreeController projectTreeController = new ProjectTreeController(projectTreeView);
+    projectTreeController.bind();
+
+    SplitPane.setResizableWithParent(projectTreeView.asNode(), false);
     if (!centerSplitPane.getItems().isEmpty()) {
       centerSplitPane.getItems().remove(0);
-      centerSplitPane.getItems().add(0, stackPane);
+      centerSplitPane.getItems().add(0, projectTreeView.asNode());
     } else
-      centerSplitPane.getItems().add(stackPane);
-    centerSplitPane.setDividerPositions(0.0);
+      centerSplitPane.getItems().add(projectTreeView.asNode());
+    centerSplitPane.setDividerPositions(0.4);
   }
 
   private void setContentView(Region contentView) {
