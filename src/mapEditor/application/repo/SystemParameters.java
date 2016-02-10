@@ -2,6 +2,7 @@ package mapEditor.application.repo;
 
 import mapEditor.application.repo.models.LWProjectModel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -20,4 +21,6 @@ public class SystemParameters {
   public static String MAPS_FOLDER_PATH = "maps\\";
 
   public static List<LWProjectModel> PROJECTS;
+
+  public static List<Thread> watchers = new ArrayList<>();
 }

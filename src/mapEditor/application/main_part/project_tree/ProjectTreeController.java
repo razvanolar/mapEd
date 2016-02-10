@@ -9,9 +9,12 @@ import mapEditor.application.main_part.app_utils.models.LazyTreeItem;
 import mapEditor.application.main_part.app_utils.models.TreeItemType;
 import mapEditor.application.main_part.types.Controller;
 import mapEditor.application.main_part.types.View;
+import mapEditor.application.repo.SystemParameters;
 import mapEditor.application.repo.models.ProjectModel;
 
 import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /**
  *
@@ -35,6 +38,13 @@ public class ProjectTreeController implements Controller {
   public void bind() {
     treeItemListener = createExpandListener();
     loadProjectFiles(AppParameters.CURRENT_PROJECT);
+    addListeners();
+  }
+
+  private void addListeners() {
+//    view.getTree().getSelectionModel().selectedItemProperty().addListener((observable, oldItem, newItem) -> {
+//      System.out.println("--- " + newItem);
+//    });
   }
 
   private void loadProjectFiles(ProjectModel project) {
@@ -47,16 +57,21 @@ public class ProjectTreeController implements Controller {
     LazyTreeItem charactersItem = new LazyTreeItem(project.getCharactersFile(), true, TreeItemType.PROJECT_FOLDER);
     LazyTreeItem mapsItem = new LazyTreeItem(project.getMapsFile(), true, TreeItemType.PROJECT_FOLDER);
 
-    tilesGroupItem.getChildren().addAll(tileSetsItem, tilesItem);
-    tilesGroupItem.setExpanded(true);
     view.getRoot().getChildren().addAll(tilesGroupItem,
             charactersItem,
             mapsItem);
     view.getTree().getSelectionModel().select(0);
+    tilesGroupItem.getChildren().addAll(tileSetsItem, tilesItem);
+    tilesGroupItem.setExpanded(true);
+    tilesGroupItem.setWasExpanded(true);
 
     tilesGroupItem.expandedProperty().addListener(treeItemListener);
+    tileSetsItem.expandedProperty().addListener(treeItemListener);
+    tilesItem.expandedProperty().addListener(treeItemListener);
     charactersItem.expandedProperty().addListener(treeItemListener);
     mapsItem.expandedProperty().addListener(treeItemListener);
+
+    initWatchDirThreads(tileSetsItem);
   }
 
   private void loadFilesForNode(File[] files, LazyTreeItem parent) {
@@ -69,7 +84,6 @@ public class ProjectTreeController implements Controller {
       node.expandedProperty().addListener(treeItemListener);
       parent.getChildren().add(node);
     }
-
   }
 
   private ChangeListener<Boolean> createExpandListener() {
@@ -77,6 +91,7 @@ public class ProjectTreeController implements Controller {
       BooleanProperty property = (BooleanProperty) observable;
       LazyTreeItem item = (LazyTreeItem) property.getBean();
       if (!item.wasExpanded()) {
+        item.getChildren().clear();
         File value = item.getValue();
         File[] subdirectories = value.listFiles();
         loadFilesForNode(subdirectories, item);
@@ -88,5 +103,24 @@ public class ProjectTreeController implements Controller {
       else
         item.closeFolder();
     };
+  }
+
+  private void initWatchDirThreads(LazyTreeItem item) {
+    try {
+      Path path = Paths.get(item.getValue().getAbsolutePath());
+      WatchDir watchDir = new WatchDir(path, item, treeItemListener);
+      Runnable runnable = new Runnable() {
+        @Override
+        public void run() {
+          watchDir.processEvents();
+        }
+      };
+      Thread thread = new Thread(runnable);
+      thread.start();
+      SystemParameters.watchers.add(thread);
+      System.out.println("Watcher for " + item.getValue().getAbsolutePath() + " was registered");
+    } catch (Exception ex) {
+      System.out.println("Unable to register watcher. Error message: " + ex.getMessage());
+    }
   }
 }
