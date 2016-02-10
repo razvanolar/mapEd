@@ -1,6 +1,6 @@
 package mapEditor.application.main_part.app_utils.inputs;
 
-import mapEditor.application.main_part.app_utils.inputs.models.KnownFileExtensions;
+import mapEditor.application.main_part.app_utils.models.KnownFileExtensions;
 
 /**
  *

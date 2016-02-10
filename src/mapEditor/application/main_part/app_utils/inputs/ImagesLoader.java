@@ -4,7 +4,7 @@ import javafx.scene.image.Image;
 import javafx.stage.FileChooser;
 import javafx.stage.Window;
 import javafx.util.Callback;
-import mapEditor.application.main_part.app_utils.inputs.models.ImageLoaderModel;
+import mapEditor.application.main_part.app_utils.models.ImageLoaderModel;
 
 import java.io.File;
 

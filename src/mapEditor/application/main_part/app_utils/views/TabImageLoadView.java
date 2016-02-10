@@ -13,7 +13,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Window;
 import mapEditor.application.main_part.app_utils.constants.CssConstants;
 import mapEditor.application.main_part.app_utils.inputs.ImagesLoader;
-import mapEditor.application.main_part.app_utils.inputs.models.ImageLoaderModel;
+import mapEditor.application.main_part.app_utils.models.ImageLoaderModel;
 import mapEditor.application.main_part.app_utils.views.canvas.FitImageCanvas;
 
 /**

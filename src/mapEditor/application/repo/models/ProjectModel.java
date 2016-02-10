@@ -16,6 +16,8 @@ public class ProjectModel {
   private int cellSize;
 
   private File tileGroupsFile;
+  private File tileSetsFile;
+  private File tilesFile;
   private File charactersFile;
   private File mapsFile;
 
@@ -59,6 +61,14 @@ public class ProjectModel {
     return mapsFile;
   }
 
+  public File getTileSetsFile() {
+    return tileSetsFile;
+  }
+
+  public File getTilesFile() {
+    return tilesFile;
+  }
+
   public void setName(String name) {
     this.name = name;
   }
@@ -85,5 +95,13 @@ public class ProjectModel {
 
   public void setMapsFile(File mapsFile) {
     this.mapsFile = mapsFile;
+  }
+
+  public void setTileSetsFile(File tileSetsFile) {
+    this.tileSetsFile = tileSetsFile;
+  }
+
+  public void setTilesFile(File tilesFile) {
+    this.tilesFile = tilesFile;
   }
 }

@@ -1,4 +1,4 @@
-package mapEditor.application.main_part.app_utils.inputs.models;
+package mapEditor.application.main_part.app_utils.models;
 
 import javafx.scene.image.Image;
 

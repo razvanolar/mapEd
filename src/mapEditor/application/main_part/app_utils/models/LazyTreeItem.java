@@ -1,4 +1,4 @@
-package mapEditor.application.main_part.app_utils.inputs.models;
+package mapEditor.application.main_part.app_utils.models;
 
 import javafx.scene.control.TreeItem;
 import javafx.scene.image.ImageView;
@@ -18,6 +18,8 @@ public class LazyTreeItem extends TreeItem<File> {
   private boolean wasExpanded = false;
   /** This variable is set to TRUE only when the given files is known for having children */
   private boolean canHaveChildren;
+  /** Indicates the type of the node */
+  private TreeItemType type = TreeItemType.NORMAL;
 
   private ImageView openFolder;
   private ImageView closeFolder;
@@ -27,6 +29,11 @@ public class LazyTreeItem extends TreeItem<File> {
     this.file = file;
     this.canHaveChildren = canHaveChildren;
     setGraphics();
+  }
+
+  public LazyTreeItem(File file, boolean canHaveChildren, TreeItemType type) {
+    this(file, canHaveChildren);
+    this.type = type;
   }
 
   private void setGraphics() {
@@ -66,4 +73,11 @@ public class LazyTreeItem extends TreeItem<File> {
     return canHaveChildren;
   }
 
+  public TreeItemType getType() {
+    return type;
+  }
+
+  public void setType(TreeItemType type) {
+    this.type = type;
+  }
 }

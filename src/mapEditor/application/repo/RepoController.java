@@ -140,15 +140,23 @@ public class RepoController {
       return;
     String projectPath = project.getHomePath();
     File tileGroupsFile = new File(projectPath + SystemParameters.TILE_GROUPS_FOLDER_PATH);
+    File tileSetsFile = new File(projectPath + SystemParameters.TILE_SETS_FOLDER_PATH);
+    File tilesFile = new File(projectPath + SystemParameters.TILES_FOLDER_PATH);
     File charactersFile = new File(projectPath + SystemParameters.CHARACTERS_FOLDER_PATH);
     File mapsFile = new File(projectPath + SystemParameters.MAPS_FOLDER_PATH);
     if (!tileGroupsFile.exists() && !tileGroupsFile.mkdirs())
       throw new Exception("Tile groups directory does not exist and failed to create.");
+    if (!tileSetsFile.exists() && !tileSetsFile.mkdirs())
+      throw new Exception("Tile sets directory does not exist and failed to create.");
+    if (!tilesFile.exists() && !tilesFile.mkdirs())
+      throw new Exception("Tiles directory does not exist and failed to create.");
     if (!charactersFile.exists() && !charactersFile.mkdirs())
       throw new Exception("Characters directory does not exist and failed to create.");
     if (!mapsFile.exists() && !mapsFile.mkdirs())
       throw new Exception("Maps directory does not exist and failed to create.");
     project.setTileGroupsFile(tileGroupsFile);
+    project.setTileSetsFile(tileSetsFile);
+    project.setTilesFile(tilesFile);
     project.setCharactersFile(charactersFile);
     project.setMapsFile(mapsFile);
   }

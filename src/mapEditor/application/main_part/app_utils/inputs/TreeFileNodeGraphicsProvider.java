@@ -1,7 +1,7 @@
 package mapEditor.application.main_part.app_utils.inputs;
 
 import javafx.scene.image.ImageView;
-import mapEditor.application.main_part.app_utils.inputs.models.KnownFileExtensions;
+import mapEditor.application.main_part.app_utils.models.KnownFileExtensions;
 
 /**
  *
