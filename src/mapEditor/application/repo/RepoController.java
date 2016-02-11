@@ -23,6 +23,7 @@ import java.util.List;
 public class RepoController {
 
   private static RepoController INSTANCE;
+  private RepoUtil repoUtil;
 
   public List<LWProjectModel> loadExistingProjects() throws Exception {
     File file = new File(SystemParameters.KNOWN_PROJECTS_FILE_PATH);
@@ -254,6 +255,22 @@ public class RepoController {
   public boolean createPathIfNotExist(String path) {
     File file = new File(path);
     return file.exists() || file.mkdirs();
+  }
+
+  /**
+   * Returns a list of all leaf items from the specified path.
+   * @param path - valid directory path
+   * @return result - if the path is valid and all leaf item were successfully traversed;
+   *         null - otherwise
+   */
+  public List<File> loadLeafItemsFromPath(String path) {
+    return getRepoUtil().loadTileSetsFile(path);
+  }
+
+  private RepoUtil getRepoUtil() {
+    if (repoUtil == null)
+      repoUtil = new RepoUtil();
+    return repoUtil;
   }
 
   public static RepoController getInstance() {

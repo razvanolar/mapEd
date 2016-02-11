@@ -5,7 +5,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import mapEditor.application.create_project_part.CreateProjectController;
 import mapEditor.application.main_part.app_utils.AppParameters;

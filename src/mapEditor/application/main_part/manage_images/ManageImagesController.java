@@ -9,14 +9,22 @@ import javafx.scene.control.TabPane;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import mapEditor.application.main_part.app_utils.AppParameters;
 import mapEditor.application.main_part.app_utils.inputs.ImagesLoader;
 import mapEditor.application.main_part.app_utils.inputs.StringValidator;
+import mapEditor.application.main_part.app_utils.models.ImageLoaderModel;
+import mapEditor.application.main_part.app_utils.models.MessageType;
 import mapEditor.application.main_part.app_utils.views.canvas.ImageCanvas;
 import mapEditor.application.main_part.app_utils.views.TabImageLoadView;
 import mapEditor.application.main_part.app_utils.views.dialogs.OkCancelDialog;
 import mapEditor.application.main_part.manage_images.configurations.ManageConfigurationController;
 import mapEditor.application.main_part.types.Controller;
 import mapEditor.application.main_part.types.View;
+import mapEditor.application.repo.RepoController;
+import mapEditor.application.repo.SystemParameters;
+
+import java.io.File;
+import java.util.List;
 
 /**
  *
@@ -40,6 +48,7 @@ public class ManageImagesController implements Controller {
     Button getRemoveTabButton();
     Button getRenameTabButton();
     Button getSettingsButton();
+    Button getSaveTileSetButton();
     Button getResetConfigurationButton();
     ManageConfigurationController.IManageConfigurationView getManageConfigurationView();
   }
@@ -72,10 +81,12 @@ public class ManageImagesController implements Controller {
         }
         configurationController.setListener(currentCanvas);
         currentCanvas.paint();
-        newTab.setContent(newTab.getContent());
+        verifyCurrentCanvasImage();
       } else {
+        currentCanvas = null;
         configurationController.setListener(null);
         configurationController.setViewState(IManageConfigurationViewState.NO_TAB_SELECTED);
+        view.getSaveTileSetButton().setDisable(true);
       }
     });
   }
@@ -115,13 +126,15 @@ public class ManageImagesController implements Controller {
   }
 
   private void loadCanvasImage(ImageCanvas canvas) {
-    ImagesLoader.getInstance().loadImage(param -> {
-      canvas.setImage(param);
+    ImagesLoader.getInstance().loadImageModel(param -> {
+      if (param == null)
+        return null;
+      canvas.setImage(param.getImage());
+      canvas.setUserData(param);
       canvas.paint();
-      if (param != null) {
-        configurationController.setListener(canvas);
-        configurationController.setViewState(IManageConfigurationViewState.FULL_SELECTION);
-      }
+      configurationController.setListener(canvas);
+      configurationController.setViewState(IManageConfigurationViewState.FULL_SELECTION);
+      verifyCurrentCanvasImage();
       return null;
     }, null);
   }
@@ -147,6 +160,42 @@ public class ManageImagesController implements Controller {
       if (tab.getText().equals(tabName))
         return true;
     return false;
+  }
+
+  private int i = 0;
+  /* TODO: make this verification into a separate thread */
+  private void verifyCurrentCanvasImage() {
+    if (currentCanvas == null || currentCanvas.getUserData() == null) {
+      view.getSaveTileSetButton().setDisable(true);
+      return;
+    }
+
+    ImageLoaderModel image = (ImageLoaderModel) currentCanvas.getUserData();
+    List<File> result = RepoController.getInstance().loadLeafItemsFromPath(AppParameters.CURRENT_PROJECT.getTileSetsFile().getAbsolutePath());
+
+    if (result == null) {
+      view.getSaveTileSetButton().setDisable(true);
+      return;
+    }
+
+    String imagePath = image.getImagePath();
+    for (File file : result)
+      if (file.getAbsolutePath().equals(imagePath)) {
+        view.getSaveTileSetButton().setDisable(true);
+        return;
+      }
+
+    view.getSaveTileSetButton().setDisable(false);
+    if (i % 2 == 0) {
+      SystemParameters.MESSAGE_KEY.setMessageType(MessageType.SAVE_TILE_SET_IMAGE);
+    } else {
+      SystemParameters.MESSAGE_KEY.setMessageType(MessageType.VERIFY_CANVAS_TILE_SET_IMAGE);
+    }
+
+    synchronized (SystemParameters.MESSAGE_KEY) {
+      SystemParameters.MESSAGE_KEY.notify();
+      i ++;
+    }
   }
 
   public View getView() {

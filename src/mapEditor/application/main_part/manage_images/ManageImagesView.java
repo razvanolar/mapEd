@@ -6,6 +6,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
 import mapEditor.application.main_part.app_utils.constants.CssConstants;
+import mapEditor.application.main_part.app_utils.views.others.FillToolItem;
 import mapEditor.application.main_part.manage_images.configurations.ManageConfigurationController;
 import mapEditor.application.main_part.manage_images.configurations.ManageConfigurationView;
 
@@ -21,6 +22,7 @@ public class ManageImagesView implements ManageImagesController.IManageImagesVie
   private Button removeTabButton;
   private Button renameTabButton;
   private Button settingsButton;
+  private Button saveTileSetButton;
   private Button resetConfigurationButton;
   private ManageConfigurationController.IManageConfigurationView manageConfigurationView;
 
@@ -33,6 +35,7 @@ public class ManageImagesView implements ManageImagesController.IManageImagesVie
     removeTabButton = new Button("Remove Tab");
     renameTabButton = new Button("Rename Tab");
     settingsButton = new Button("Settings");
+    saveTileSetButton = new Button("Save Tile Set");
     resetConfigurationButton = new Button("Reset");
     manageConfigurationView = new ManageConfigurationView();
     tabPane = new TabPane();
@@ -45,7 +48,8 @@ public class ManageImagesView implements ManageImagesController.IManageImagesVie
     BorderPane leftPane = new BorderPane(leftScrollPane);
     mainSplitPane = new SplitPane(canvasSplitPane, leftPane);
 
-    tabsToolbar.getItems().addAll(addNewTabButton, removeTabButton, renameTabButton, settingsButton);
+    tabsToolbar.getItems().addAll(addNewTabButton, removeTabButton, renameTabButton, settingsButton, new FillToolItem(),
+            saveTileSetButton);
     configurationToolbar.getItems().addAll(resetConfigurationButton);
 
     leftPane.setBottom(configurationToolbar);
@@ -97,6 +101,10 @@ public class ManageImagesView implements ManageImagesController.IManageImagesVie
 
   public Button getSettingsButton() {
     return settingsButton;
+  }
+
+  public Button getSaveTileSetButton() {
+    return saveTileSetButton;
   }
 
   public Button getResetConfigurationButton() {

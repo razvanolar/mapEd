@@ -190,7 +190,8 @@ public class ImageCanvas extends Canvas implements StyleListener {
 
   public void setImage(Image image) {
     this.image = image;
-    colorAdjustEffect = new ColorAdjust();
+    if (image != null)
+      colorAdjustEffect = new ColorAdjust();
   }
 
   @Override

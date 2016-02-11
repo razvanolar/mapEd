@@ -13,8 +13,10 @@ import javafx.stage.StageStyle;
 import mapEditor.application.create_project_part.CreateProjectController;
 import mapEditor.application.create_project_part.CreateProjectView;
 import mapEditor.application.main_part.app_utils.AppParameters;
+import mapEditor.application.main_part.app_utils.constants.AppConstants;
 import mapEditor.application.main_part.app_utils.constants.CssConstants;
 import mapEditor.application.main_part.app_utils.inputs.ImageProvider;
+import mapEditor.application.main_part.app_utils.threads.AppListener;
 import mapEditor.application.repo.RepoController;
 import mapEditor.application.repo.SystemParameters;
 import mapEditor.application.repo.models.LWProjectModel;
@@ -57,8 +59,11 @@ public class MapEditorView extends Application {
   public void stop() throws Exception {
     for (Thread thread : SystemParameters.watchers) {
       thread.interrupt();
-      System.out.println("Thread " + thread.getName() + " stopped.");
+      System.out.println("> Thread " + thread.getName() + " stopped.");
     }
+
+    if (SystemParameters.appListenerThread != null)
+      SystemParameters.appListenerThread.interrupt();
   }
 
   public void showPrimaryStage() {
@@ -141,6 +146,8 @@ public class MapEditorView extends Application {
         }
 
       MapEditorController.getInstance().setRepoController(repoController);
+      SystemParameters.appListenerThread = new Thread(new AppListener(), AppConstants.APP_LISTENER_THREAD_NAME);
+      SystemParameters.appListenerThread.start();
       launch(args);
     } catch (Exception ex) {
       System.out.println("*** Unable to open the app. Exception message : " + ex.getMessage());

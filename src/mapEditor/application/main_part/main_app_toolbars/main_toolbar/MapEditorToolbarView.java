@@ -7,6 +7,7 @@ import javafx.scene.control.ToolBar;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
+import mapEditor.application.main_part.app_utils.views.others.FillToolItem;
 
 /**
  *
@@ -29,16 +30,12 @@ public class MapEditorToolbarView implements MapEditorToolbarController.IMapEdit
     imageEditorViewButton = new ToggleButton("Image Editor");
     toolBar = new ToolBar();
 
-    Region spacer = new Region();
-    HBox.setHgrow(spacer, Priority.ALWAYS);
-    spacer.setMinWidth(Region.USE_PREF_SIZE);
-
     mapEditorViewButton.setSelected(true);
 //    imageEditorViewButton.setSelected(true);
     ToggleGroup group = new ToggleGroup();
     group.getToggles().addAll(mapEditorViewButton, imageEditorViewButton);
 
-    toolBar.getItems().addAll(newMapButton, spacer, mapEditorViewButton, imageEditorViewButton);
+    toolBar.getItems().addAll(newMapButton, new FillToolItem(), mapEditorViewButton, imageEditorViewButton);
   }
 
   public ToggleButton getMapEditorViewButton() {
