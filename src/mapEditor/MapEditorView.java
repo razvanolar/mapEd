@@ -55,8 +55,10 @@ public class MapEditorView extends Application {
 
   @Override
   public void stop() throws Exception {
-    for (Thread thread : SystemParameters.watchers)
+    for (Thread thread : SystemParameters.watchers) {
       thread.interrupt();
+      System.out.println("Thread " + thread.getName() + " stopped.");
+    }
   }
 
   public void showPrimaryStage() {

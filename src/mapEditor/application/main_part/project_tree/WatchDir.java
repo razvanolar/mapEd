@@ -115,18 +115,6 @@ public class WatchDir {
     }
   }
 
-  private void loadFilesForNode(File[] files, LazyTreeItem parent) {
-    if (files == null || files.length == 0 || parent == null)
-      return;
-    for (File file : files) {
-      File[] subdirs = file.listFiles();
-      boolean canHaveChildren = subdirs != null;
-      LazyTreeItem node = new LazyTreeItem(file, canHaveChildren);
-      node.expandedProperty().addListener(listener);
-      parent.getChildren().add(node);
-    }
-  }
-
   private LazyTreeItem findItemByPath(String path) {
     Queue<TreeItem<File>> queue = new LinkedList<>();
     queue.add(root);

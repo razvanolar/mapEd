@@ -72,6 +72,9 @@ public class ProjectTreeController implements Controller {
     mapsItem.expandedProperty().addListener(treeItemListener);
 
     initWatchDirThreads(tileSetsItem);
+    initWatchDirThreads(tilesItem);
+    initWatchDirThreads(charactersItem);
+    initWatchDirThreads(mapsItem);
   }
 
   private void loadFilesForNode(File[] files, LazyTreeItem parent) {
@@ -109,13 +112,8 @@ public class ProjectTreeController implements Controller {
     try {
       Path path = Paths.get(item.getValue().getAbsolutePath());
       WatchDir watchDir = new WatchDir(path, item, treeItemListener);
-      Runnable runnable = new Runnable() {
-        @Override
-        public void run() {
-          watchDir.processEvents();
-        }
-      };
-      Thread thread = new Thread(runnable);
+      Runnable runnable = watchDir::processEvents;
+      Thread thread = new Thread(runnable, item.getValue().getName() + " watcher");
       thread.start();
       SystemParameters.watchers.add(thread);
       System.out.println("Watcher for " + item.getValue().getAbsolutePath() + " was registered");
