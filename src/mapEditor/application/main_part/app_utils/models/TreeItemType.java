@@ -6,15 +6,19 @@ package mapEditor.application.main_part.app_utils.models;
  * Created by razvanolar on 10.02.2016.
  */
 public enum  TreeItemType {
-
-  NORMAL(0), PROJECT_FOLDER(1);
+  NORMAL(1), FOLDER(1),
+  PROJECT_TILES_GROUP_FOLDER(0),
+  PROJECT_TILE_SETS_FOLDER(0),
+  PROJECT_TILES_FOLDER(0),
+  PROJECT_CHARACTERS_FOLDER(0),
+  PROJECT_MAPS_FOLDER(0);
 
   int type;
   TreeItemType(int type) {
     this.type = type;
   }
 
-  public boolean isNormalType() {
-    return this.type == 0;
+  public boolean isSystemType() {
+    return type == 0;
   }
 }

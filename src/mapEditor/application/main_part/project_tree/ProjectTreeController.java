@@ -2,11 +2,16 @@ package mapEditor.application.main_part.project_tree;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.event.EventHandler;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+import javafx.scene.input.MouseEvent;
 import mapEditor.application.main_part.app_utils.AppParameters;
 import mapEditor.application.main_part.app_utils.models.LazyTreeItem;
 import mapEditor.application.main_part.app_utils.models.TreeItemType;
+import mapEditor.application.main_part.project_tree.context_menu.ProjectTreeContextMenuController;
+import mapEditor.application.main_part.project_tree.context_menu.ProjectTreeContextMenuView;
 import mapEditor.application.main_part.types.Controller;
 import mapEditor.application.main_part.types.View;
 import mapEditor.application.repo.SystemParameters;
@@ -30,37 +35,44 @@ public class ProjectTreeController implements Controller {
   private IProjectTreeView view;
   private ChangeListener<Boolean> treeItemListener;
 
+  private ProjectTreeContextMenuController contextMenuController;
+
   public ProjectTreeController(IProjectTreeView view) {
     this.view = view;
   }
 
   @Override
   public void bind() {
+    contextMenuController = new ProjectTreeContextMenuController(new ProjectTreeContextMenuView());
+    contextMenuController.bind();
     treeItemListener = createExpandListener();
     loadProjectFiles(AppParameters.CURRENT_PROJECT);
     addListeners();
   }
 
   private void addListeners() {
-//    view.getTree().getSelectionModel().selectedItemProperty().addListener((observable, oldItem, newItem) -> {
-//      System.out.println("--- " + newItem);
-//    });
+    view.getTree().setContextMenu(contextMenuController.getContextMenu());
+
+    view.getTree().getSelectionModel().selectedItemProperty().addListener((observable, oldItem, newItem) -> {
+      contextMenuController.setSelectedItem(newItem != null ? (LazyTreeItem) newItem : null);
+    });
   }
 
   private void loadProjectFiles(ProjectModel project) {
     if (project == null)
       return;
     view.getRoot().getChildren().clear();
-    LazyTreeItem tilesGroupItem = new LazyTreeItem(project.getTileGroupsFile(), true, TreeItemType.PROJECT_FOLDER);
-    LazyTreeItem tileSetsItem = new LazyTreeItem(project.getTileSetsFile(), true, TreeItemType.PROJECT_FOLDER);
-    LazyTreeItem tilesItem = new LazyTreeItem(project.getTilesFile(), true, TreeItemType.PROJECT_FOLDER);
-    LazyTreeItem charactersItem = new LazyTreeItem(project.getCharactersFile(), true, TreeItemType.PROJECT_FOLDER);
-    LazyTreeItem mapsItem = new LazyTreeItem(project.getMapsFile(), true, TreeItemType.PROJECT_FOLDER);
+    LazyTreeItem tilesGroupItem = new LazyTreeItem(project.getTileGroupsFile(), true, TreeItemType.PROJECT_TILES_GROUP_FOLDER);
+    LazyTreeItem tileSetsItem = new LazyTreeItem(project.getTileSetsFile(), true, TreeItemType.PROJECT_TILE_SETS_FOLDER);
+    LazyTreeItem tilesItem = new LazyTreeItem(project.getTilesFile(), true, TreeItemType.PROJECT_TILES_FOLDER);
+    LazyTreeItem charactersItem = new LazyTreeItem(project.getCharactersFile(), true, TreeItemType.PROJECT_CHARACTERS_FOLDER);
+    LazyTreeItem mapsItem = new LazyTreeItem(project.getMapsFile(), true, TreeItemType.PROJECT_MAPS_FOLDER);
 
     view.getRoot().getChildren().addAll(tilesGroupItem,
             charactersItem,
             mapsItem);
-    view.getTree().getSelectionModel().select(0);
+    view.getTree().getSelectionModel().select(tilesGroupItem);
+    contextMenuController.setSelectedItem(tilesGroupItem);
     tilesGroupItem.getChildren().addAll(tileSetsItem, tilesItem);
     tilesGroupItem.setExpanded(true);
     tilesGroupItem.setWasExpanded(true);
@@ -81,9 +93,7 @@ public class ProjectTreeController implements Controller {
     if (files == null || files.length == 0 || parent == null)
       return;
     for (File file : files) {
-      File[] subdirs = file.listFiles();
-      boolean canHaveChildren = subdirs != null;
-      LazyTreeItem node = new LazyTreeItem(file, canHaveChildren);
+      LazyTreeItem node = new LazyTreeItem(file, file.isDirectory(), file.isDirectory() ? TreeItemType.FOLDER : TreeItemType.NORMAL);
       node.expandedProperty().addListener(treeItemListener);
       parent.getChildren().add(node);
     }

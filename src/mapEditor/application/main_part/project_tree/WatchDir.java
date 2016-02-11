@@ -3,6 +3,7 @@ package mapEditor.application.main_part.project_tree;
 import javafx.beans.value.ChangeListener;
 import javafx.scene.control.TreeItem;
 import mapEditor.application.main_part.app_utils.models.LazyTreeItem;
+import mapEditor.application.main_part.app_utils.models.TreeItemType;
 
 import java.io.File;
 import java.io.IOException;
@@ -75,8 +76,9 @@ public class WatchDir {
         if (kind == StandardWatchEventKinds.ENTRY_CREATE) {
           LazyTreeItem item = findItemByPath(dir.toAbsolutePath().toString());
           if (item != null && item.wasExpanded()) {
+            boolean isDirectory = Files.isDirectory(child, LinkOption.NOFOLLOW_LINKS);
             LazyTreeItem newItem = new LazyTreeItem(new File(child.toAbsolutePath().toString()),
-                    Files.isDirectory(child, LinkOption.NOFOLLOW_LINKS));
+                    isDirectory, isDirectory ? TreeItemType.FOLDER : TreeItemType.NORMAL);
             newItem.expandedProperty().addListener(listener);
             item.getChildren().add(newItem);
             item.getChildren().sort(new Comparator<TreeItem<File>>() {
