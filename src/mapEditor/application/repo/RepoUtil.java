@@ -9,16 +9,25 @@ import java.util.*;
  */
 public class RepoUtil {
 
-  protected RepoUtil() {}
+  private Map<String, List<File>> filesCachePerPath;
+
+  protected RepoUtil() {
+    filesCachePerPath = new HashMap<>();
+  }
 
   public List<File> loadTileSetsFile(String path) {
     if (path == null)
       return null;
+    List<File> result = filesCachePerPath.get(path);
+    if (result != null) {
+      System.out.println("load files from cache");
+      return result;
+    }
     File pathFile = new File(path);
     if (!pathFile.exists())
       return null;
 
-    List<File> result = new ArrayList<>();
+    result = new ArrayList<>();
     File[] files = pathFile.listFiles();
     if (files != null && files.length > 0) {
       Queue<File> queue = new LinkedList<>();
@@ -31,6 +40,12 @@ public class RepoUtil {
           queue.addAll(Arrays.asList(files));
       }
     }
+    filesCachePerPath.put(path, result);
     return result;
+  }
+
+  public void invalidateFileCachePath(String path) {
+    if (path != null)
+      filesCachePerPath.remove(path);
   }
 }

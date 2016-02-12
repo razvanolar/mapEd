@@ -7,7 +7,9 @@ import mapEditor.application.repo.SystemParameters;
  *
  * Created by razvanolar on 12.02.2016.
  */
-public class AppListener implements Runnable {
+public class MessageListener implements Runnable {
+
+  private MessageHandler handler = new MessageHandler();
 
   @Override
   public void run() {
@@ -18,6 +20,8 @@ public class AppListener implements Runnable {
           SystemParameters.MESSAGE_KEY.wait();
           System.out.println("A new message was received : " + SystemParameters.MESSAGE_KEY.getMessageType().name());
         }
+        if (SystemParameters.MESSAGE_KEY.getMessageType() != null)
+          handler.handleMessage(SystemParameters.MESSAGE_KEY.getMessageType());
       } catch (InterruptedException ex) {
         System.out.println("*** " + AppConstants.APP_LISTENER_THREAD_NAME + " was interrupted. The loop will be closed");
         break;

@@ -4,6 +4,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.scene.control.TreeItem;
 import mapEditor.application.main_part.app_utils.models.LazyTreeItem;
 import mapEditor.application.main_part.app_utils.models.TreeItemType;
+import mapEditor.application.repo.RepoController;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,6 +22,7 @@ public class WatchDir {
   private Map<WatchKey, Path> keys;
   private LazyTreeItem root;
   private ChangeListener<Boolean> listener;
+  private final RepoController repoController;
 
   /**
    * Creates a WatchService and registers the given directory
@@ -30,6 +32,7 @@ public class WatchDir {
     this.keys = new HashMap<>();
     this.root = item;
     this.listener = listener;
+    this.repoController = RepoController.getInstance();
 
     System.out.format("Scanning %s ...\n", dir);
     registerAll(dir);
@@ -94,12 +97,18 @@ public class WatchDir {
           } catch (IOException x) {
             // ignore to keep sample readbale
           }
+          synchronized (repoController) {
+            repoController.invalidateFileCachePath(root.getValue().getAbsolutePath());
+          }
         } else if (kind == StandardWatchEventKinds.ENTRY_DELETE) {
           LazyTreeItem childItem = findItemByPath(child.toAbsolutePath().toString());
           if (childItem != null) {
             TreeItem<File> parentItem = childItem.getParent();
             if (parentItem != null)
               parentItem.getChildren().remove(childItem);
+          }
+          synchronized (repoController) {
+            repoController.invalidateFileCachePath(root.getValue().getAbsolutePath());
           }
         }
       }

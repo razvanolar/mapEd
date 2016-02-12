@@ -16,7 +16,7 @@ import mapEditor.application.main_part.app_utils.AppParameters;
 import mapEditor.application.main_part.app_utils.constants.AppConstants;
 import mapEditor.application.main_part.app_utils.constants.CssConstants;
 import mapEditor.application.main_part.app_utils.inputs.ImageProvider;
-import mapEditor.application.main_part.app_utils.threads.AppListener;
+import mapEditor.application.main_part.app_utils.threads.MessageListener;
 import mapEditor.application.repo.RepoController;
 import mapEditor.application.repo.SystemParameters;
 import mapEditor.application.repo.models.LWProjectModel;
@@ -146,7 +146,7 @@ public class MapEditorView extends Application {
         }
 
       MapEditorController.getInstance().setRepoController(repoController);
-      SystemParameters.appListenerThread = new Thread(new AppListener(), AppConstants.APP_LISTENER_THREAD_NAME);
+      SystemParameters.appListenerThread = new Thread(new MessageListener(), AppConstants.APP_LISTENER_THREAD_NAME);
       SystemParameters.appListenerThread.start();
       launch(args);
     } catch (Exception ex) {

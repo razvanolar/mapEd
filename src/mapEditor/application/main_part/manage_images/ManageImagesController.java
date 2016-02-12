@@ -20,11 +20,7 @@ import mapEditor.application.main_part.app_utils.views.dialogs.OkCancelDialog;
 import mapEditor.application.main_part.manage_images.configurations.ManageConfigurationController;
 import mapEditor.application.main_part.types.Controller;
 import mapEditor.application.main_part.types.View;
-import mapEditor.application.repo.RepoController;
 import mapEditor.application.repo.SystemParameters;
-
-import java.io.File;
-import java.util.List;
 
 /**
  *
@@ -81,7 +77,7 @@ public class ManageImagesController implements Controller {
         }
         configurationController.setListener(currentCanvas);
         currentCanvas.paint();
-        verifyCurrentCanvasImage();
+        notifyCanvasChange();
       } else {
         currentCanvas = null;
         configurationController.setListener(null);
@@ -134,7 +130,7 @@ public class ManageImagesController implements Controller {
       canvas.paint();
       configurationController.setListener(canvas);
       configurationController.setViewState(IManageConfigurationViewState.FULL_SELECTION);
-      verifyCurrentCanvasImage();
+      notifyCanvasChange();
       return null;
     }, null);
   }
@@ -162,39 +158,19 @@ public class ManageImagesController implements Controller {
     return false;
   }
 
-  private int i = 0;
-  /* TODO: make this verification into a separate thread */
-  private void verifyCurrentCanvasImage() {
+  private void notifyCanvasChange() {
     if (currentCanvas == null || currentCanvas.getUserData() == null) {
       view.getSaveTileSetButton().setDisable(true);
       return;
     }
 
     ImageLoaderModel image = (ImageLoaderModel) currentCanvas.getUserData();
-    List<File> result = RepoController.getInstance().loadLeafItemsFromPath(AppParameters.CURRENT_PROJECT.getTileSetsFile().getAbsolutePath());
-
-    if (result == null) {
-      view.getSaveTileSetButton().setDisable(true);
-      return;
-    }
-
-    String imagePath = image.getImagePath();
-    for (File file : result)
-      if (file.getAbsolutePath().equals(imagePath)) {
-        view.getSaveTileSetButton().setDisable(true);
-        return;
-      }
-
-    view.getSaveTileSetButton().setDisable(false);
-    if (i % 2 == 0) {
-      SystemParameters.MESSAGE_KEY.setMessageType(MessageType.SAVE_TILE_SET_IMAGE);
-    } else {
-      SystemParameters.MESSAGE_KEY.setMessageType(MessageType.VERIFY_CANVAS_TILE_SET_IMAGE);
-    }
-
     synchronized (SystemParameters.MESSAGE_KEY) {
+      SystemParameters.MESSAGE_KEY.setImagePath(image.getImagePath());
+      SystemParameters.MESSAGE_KEY.setPathToVerify(AppParameters.CURRENT_PROJECT.getTileSetsFile().getAbsolutePath());
+      SystemParameters.MESSAGE_KEY.setButton(view.getSaveTileSetButton());
+      SystemParameters.MESSAGE_KEY.setMessageType(MessageType.VERIFY_CANVAS_TILE_SET_IMAGE);
       SystemParameters.MESSAGE_KEY.notify();
-      i ++;
     }
   }
 

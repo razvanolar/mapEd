@@ -267,6 +267,14 @@ public class RepoController {
     return getRepoUtil().loadTileSetsFile(path);
   }
 
+  /**
+   * Invalidates the cache on a the specified path maintained for application files.
+   * @param path - valid directory path
+   */
+  public void invalidateFileCachePath(String path) {
+    getRepoUtil().invalidateFileCachePath(path);
+  }
+
   private RepoUtil getRepoUtil() {
     if (repoUtil == null)
       repoUtil = new RepoUtil();
