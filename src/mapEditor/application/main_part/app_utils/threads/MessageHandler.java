@@ -5,6 +5,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import mapEditor.application.main_part.app_utils.models.ImageLoaderModel;
 import mapEditor.application.main_part.app_utils.models.MessageType;
+import mapEditor.application.main_part.app_utils.views.dialogs.AlertDialog;
 import mapEditor.application.repo.RepoController;
 import mapEditor.application.repo.SystemParameters;
 
@@ -47,11 +48,6 @@ public class MessageHandler {
   }
 
   private void showWarningDialog(String title, String message) {
-    Platform.runLater(() -> {
-      Alert alert = new Alert(Alert.AlertType.WARNING);
-      alert.setTitle(title == null ? "Warning" : title);
-      alert.setContentText(message);
-      alert.showAndWait();
-    });
+    Platform.runLater(() -> AlertDialog.showDialog(title, message));
   }
 }

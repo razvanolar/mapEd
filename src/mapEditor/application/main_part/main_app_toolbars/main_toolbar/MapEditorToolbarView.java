@@ -19,6 +19,7 @@ public class MapEditorToolbarView implements MapEditorToolbarController.IMapEdit
   private Button newMapButton;
   private ToggleButton mapEditorViewButton;
   private ToggleButton imageEditorViewButton;
+  private ToggleGroup toggleGroup;
 
   public MapEditorToolbarView() {
     initGUI();
@@ -32,8 +33,8 @@ public class MapEditorToolbarView implements MapEditorToolbarController.IMapEdit
 
     mapEditorViewButton.setSelected(true);
 //    imageEditorViewButton.setSelected(true);
-    ToggleGroup group = new ToggleGroup();
-    group.getToggles().addAll(mapEditorViewButton, imageEditorViewButton);
+    toggleGroup = new ToggleGroup();
+    toggleGroup.getToggles().addAll(mapEditorViewButton, imageEditorViewButton);
 
     toolBar.getItems().addAll(newMapButton, new FillToolItem(), mapEditorViewButton, imageEditorViewButton);
   }
@@ -44,6 +45,10 @@ public class MapEditorToolbarView implements MapEditorToolbarController.IMapEdit
 
   public ToggleButton getImageEditorViewButton() {
     return imageEditorViewButton;
+  }
+
+  public ToggleGroup getToggleGroup() {
+    return toggleGroup;
   }
 
   @Override

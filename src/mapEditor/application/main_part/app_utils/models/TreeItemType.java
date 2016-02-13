@@ -6,7 +6,7 @@ package mapEditor.application.main_part.app_utils.models;
  * Created by razvanolar on 10.02.2016.
  */
 public enum  TreeItemType {
-  NORMAL(1), FOLDER(1),
+  NORMAL(1), FOLDER(1), IMAGE(1),
   PROJECT_TILES_GROUP_FOLDER(0),
   PROJECT_TILE_SETS_FOLDER(0),
   PROJECT_TILES_FOLDER(0),

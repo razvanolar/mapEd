@@ -4,11 +4,20 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+import javafx.scene.image.Image;
+import mapEditor.MapEditorController;
 import mapEditor.application.main_part.app_utils.AppParameters;
+import mapEditor.application.main_part.app_utils.inputs.FileExtensionUtil;
+import mapEditor.application.main_part.app_utils.inputs.ImageProvider;
+import mapEditor.application.main_part.app_utils.models.ImageLoaderModel;
 import mapEditor.application.main_part.app_utils.models.LazyTreeItem;
 import mapEditor.application.main_part.app_utils.models.TreeItemType;
+import mapEditor.application.main_part.manage_images.ManageImagesController;
+import mapEditor.application.main_part.manage_maps.ManageMapsController;
 import mapEditor.application.main_part.project_tree.context_menu.ProjectTreeContextMenuController;
 import mapEditor.application.main_part.project_tree.context_menu.ProjectTreeContextMenuView;
+import mapEditor.application.main_part.project_tree.utils.ProjectTreeContextMenuListener;
+import mapEditor.application.main_part.project_tree.utils.WatchDir;
 import mapEditor.application.main_part.types.Controller;
 import mapEditor.application.main_part.types.View;
 import mapEditor.application.repo.SystemParameters;
@@ -22,7 +31,7 @@ import java.nio.file.Paths;
  *
  * Created by razvanolar on 08.02.2016.
  */
-public class ProjectTreeController implements Controller {
+public class ProjectTreeController implements Controller, ProjectTreeContextMenuListener {
 
   public interface IProjectTreeView extends View {
     TreeItem<File> getRoot();
@@ -33,6 +42,8 @@ public class ProjectTreeController implements Controller {
   private ChangeListener<Boolean> treeItemListener;
 
   private ProjectTreeContextMenuController contextMenuController;
+  private ManageMapsController manageMapsController;
+  private ManageImagesController manageImagesController;
 
   public ProjectTreeController(IProjectTreeView view) {
     this.view = view;
@@ -40,7 +51,7 @@ public class ProjectTreeController implements Controller {
 
   @Override
   public void bind() {
-    contextMenuController = new ProjectTreeContextMenuController(new ProjectTreeContextMenuView());
+    contextMenuController = new ProjectTreeContextMenuController(new ProjectTreeContextMenuView(), this);
     contextMenuController.bind();
     treeItemListener = createExpandListener();
     loadProjectFiles(AppParameters.CURRENT_PROJECT);
@@ -90,7 +101,8 @@ public class ProjectTreeController implements Controller {
     if (files == null || files.length == 0 || parent == null)
       return;
     for (File file : files) {
-      LazyTreeItem node = new LazyTreeItem(file, file.isDirectory(), file.isDirectory() ? TreeItemType.FOLDER : TreeItemType.NORMAL);
+      LazyTreeItem node = new LazyTreeItem(file, file.isDirectory(),
+              file.isDirectory() ? TreeItemType.FOLDER : (FileExtensionUtil.isImageFile(file.getName()) ? TreeItemType.IMAGE : TreeItemType.NORMAL));
       node.expandedProperty().addListener(treeItemListener);
       parent.getChildren().add(node);
     }
@@ -127,5 +139,27 @@ public class ProjectTreeController implements Controller {
     } catch (Exception ex) {
       System.out.println("Unable to register watcher. Error message: " + ex.getMessage());
     }
+  }
+
+  public void setManageMapsController(ManageMapsController manageMapsController) {
+    this.manageMapsController = manageMapsController;
+  }
+
+  public void setManageImagesController(ManageImagesController manageImagesController) {
+    this.manageImagesController = manageImagesController;
+  }
+
+  @Override
+  public void openInImageEditor() {
+    TreeItem<File> item = view.getTree().getSelectionModel().getSelectedItem();
+    if (item == null || item.getValue() == null || !FileExtensionUtil.isImageFile(item.getValue().getName()))
+      return;
+    if (!MapEditorController.getInstance().isImageEditorView())
+      MapEditorController.getInstance().changeToImageEditorView();
+    File file = item.getValue();
+    Image image = ImageProvider.getImage(file);
+    ImageLoaderModel imageModel = new ImageLoaderModel(image, file.getAbsolutePath(), file.getName());
+    if (manageImagesController != null)
+      manageImagesController.addNewTab(file.getName(), imageModel);
   }
 }

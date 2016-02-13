@@ -19,6 +19,7 @@ import mapEditor.application.main_part.app_utils.models.ImageLoaderModel;
 import mapEditor.application.main_part.app_utils.models.MessageType;
 import mapEditor.application.main_part.app_utils.views.canvas.ImageCanvas;
 import mapEditor.application.main_part.app_utils.views.TabImageLoadView;
+import mapEditor.application.main_part.app_utils.views.dialogs.AlertDialog;
 import mapEditor.application.main_part.app_utils.views.dialogs.OkCancelDialog;
 import mapEditor.application.main_part.manage_images.configurations.ManageConfigurationController;
 import mapEditor.application.main_part.manage_images.utils.SaveImageController;
@@ -207,6 +208,13 @@ public class ManageImagesController implements Controller {
     String tileSetsPath = AppParameters.CURRENT_PROJECT.getTileSetsFile().getAbsolutePath();
     System.out.println("imagePath: " + imagePath + " | tilesPath: " + tileSetsPath);
     view.getSaveTileSetButton().setDisable(imagePath.contains(tileSetsPath));
+  }
+
+  public void addNewTab(String title, ImageLoaderModel image) {
+    if (!checkIfTabNameExists(title))
+      addImageTab(title, image);
+    else
+      AlertDialog.showDialog(null, "A tab named '" + title + "' already exists.");
   }
 
   public View getView() {

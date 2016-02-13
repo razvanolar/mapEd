@@ -1,6 +1,8 @@
 package mapEditor.application.main_part.main_app_toolbars.main_toolbar;
 
+import javafx.beans.value.ChangeListener;
 import javafx.scene.control.ToggleButton;
+import javafx.scene.control.ToggleGroup;
 import mapEditor.MapEditorController;
 import mapEditor.application.main_part.types.Controller;
 import mapEditor.application.main_part.types.View;
@@ -14,6 +16,7 @@ public class MapEditorToolbarController implements Controller {
   public interface IMapEditorToolbarView extends View {
     ToggleButton getMapEditorViewButton();
     ToggleButton getImageEditorViewButton();
+    ToggleGroup getToggleGroup();
   }
 
   private IMapEditorToolbarView view;
@@ -27,8 +30,16 @@ public class MapEditorToolbarController implements Controller {
   }
 
   private void addListeners() {
-    view.getMapEditorViewButton().setOnAction(event -> MapEditorController.getInstance().changeView());
-    view.getImageEditorViewButton().setOnAction(event -> MapEditorController.getInstance().changeView());
+    ChangeListener<Boolean> changeListener = (observable, oldValue, newValue) -> {
+      if (newValue)
+        MapEditorController.getInstance().changeView();
+    };
+    view.getMapEditorViewButton().selectedProperty().addListener(changeListener);
+    view.getImageEditorViewButton().selectedProperty().addListener(changeListener);
+  }
+
+  public void changeToImageEditorView() {
+    view.getImageEditorViewButton().setSelected(true);
   }
 
   public boolean isMapViewSelected() {

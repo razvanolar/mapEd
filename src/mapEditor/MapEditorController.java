@@ -40,6 +40,7 @@ public class MapEditorController {
   private MapEditorToolbarController toolbarController;
   private ManageMapsController manageMapsController;
   private ManageImagesController manageImagesController;
+  private ProjectTreeController projectTreeController;
 
   public static MapEditorController getInstance() {
     if (INSTANCE == null)
@@ -93,6 +94,7 @@ public class MapEditorController {
       ManageMapsController.IMangeMapsView mapContentView = new ManageMapsView();
       manageMapsController = new ManageMapsController(mapContentView);
       manageMapsController.bind();
+      projectTreeController.setManageMapsController(manageMapsController);
     }
     setContentView(manageMapsController.getView().asNode());
   }
@@ -102,13 +104,14 @@ public class MapEditorController {
       ManageImagesController.IManageImagesView imagesView = new ManageImagesView();
       manageImagesController = new ManageImagesController(imagesView);
       manageImagesController.bind();
+      projectTreeController.setManageImagesController(manageImagesController);
     }
     setContentView(manageImagesController.getView().asNode());
   }
 
   private void setProjectTreeView() {
     ProjectTreeController.IProjectTreeView projectTreeView = new ProjectTreeView();
-    ProjectTreeController projectTreeController = new ProjectTreeController(projectTreeView);
+    projectTreeController = new ProjectTreeController(projectTreeView);
     projectTreeController.bind();
 
     SplitPane.setResizableWithParent(projectTreeView.asNode(), false);
@@ -153,6 +156,10 @@ public class MapEditorController {
       mapEditorView.clearCreateProjectView();
   }
 
+  public void changeToImageEditorView() {
+    toolbarController.changeToImageEditorView();
+  }
+
   public void closeApp() {
     mapEditorView.close();
   }
@@ -185,5 +192,13 @@ public class MapEditorController {
 
   public final Scene getScene() {
     return scene;
+  }
+
+  public boolean isImageEditorView() {
+    return !toolbarController.isMapViewSelected();
+  }
+
+  public boolean isMapView() {
+    return toolbarController.isMapViewSelected();
   }
 }

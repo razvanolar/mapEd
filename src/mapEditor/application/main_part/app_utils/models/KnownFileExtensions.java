@@ -13,6 +13,8 @@ public enum KnownFileExtensions {
 
 
   String extension;
+  static List<KnownFileExtensions> allExtensions;
+  static List<KnownFileExtensions> imageExtensions;
   KnownFileExtensions(String extension) {
     this.extension = extension;
   }
@@ -26,8 +28,19 @@ public enum KnownFileExtensions {
   }
 
   public static List<KnownFileExtensions> getExtensions() {
-    ArrayList<KnownFileExtensions> result = new ArrayList<>(Arrays.asList(values()));
-    result.remove(UNKNOWN);
-    return result;
+    if (allExtensions == null) {
+      allExtensions = new ArrayList<>(Arrays.asList(values()));
+      allExtensions.remove(UNKNOWN);
+    }
+    return allExtensions;
+  }
+
+  public static List<KnownFileExtensions> getImageExtensions() {
+    if (imageExtensions == null) {
+      imageExtensions = new ArrayList<>();
+      imageExtensions.add(PNG);
+      imageExtensions.add(JPG);
+    }
+    return imageExtensions;
   }
 }

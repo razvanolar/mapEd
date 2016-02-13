@@ -18,4 +18,10 @@ public class FileExtensionUtil {
     }
     return KnownFileExtensions.UNKNOWN;
   }
+
+  public static boolean isImageFile(String name) {
+    List<KnownFileExtensions> extensions = KnownFileExtensions.getImageExtensions();
+    KnownFileExtensions ext = getFileExtension(name);
+    return extensions.contains(ext);
+  }
 }

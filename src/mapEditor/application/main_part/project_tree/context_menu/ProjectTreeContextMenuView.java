@@ -20,6 +20,8 @@ public class ProjectTreeContextMenuView implements ProjectTreeContextMenuControl
   private MenuItem newTilesMenuItem;
   private MenuItem newCharactersMenuItem;
   private MenuItem newMapMenuItem;
+  private MenuItem openInImageEditorMenuItem;
+  private MenuItem useForDrawingMenuItem;
   private MenuItem renameMenuItem;
   private MenuItem deleteMenuItem;
   private MenuItem clearMenuItem;
@@ -36,6 +38,8 @@ public class ProjectTreeContextMenuView implements ProjectTreeContextMenuControl
     newTilesMenuItem = new MenuItem("Tiles");
     newCharactersMenuItem = new MenuItem("Characters");
     newMapMenuItem = new MenuItem("Map");
+    openInImageEditorMenuItem = new MenuItem("Open in Image Editor");
+    useForDrawingMenuItem = new MenuItem("Use For Drawing");
     renameMenuItem = new MenuItem("Rename");
     deleteMenuItem = new MenuItem("Delete");
     clearMenuItem = new MenuItem("Clear");
@@ -49,6 +53,9 @@ public class ProjectTreeContextMenuView implements ProjectTreeContextMenuControl
             newMapMenuItem);
 
     contextMenu.getItems().addAll(newMenu,
+            new SeparatorMenuItem(),
+            openInImageEditorMenuItem,
+            useForDrawingMenuItem,
             new SeparatorMenuItem(),
             renameMenuItem,
             deleteMenuItem,
@@ -66,6 +73,12 @@ public class ProjectTreeContextMenuView implements ProjectTreeContextMenuControl
     enableAllItems(true);
     switch (treeItemType) {
       case NORMAL:
+        newMenu.setDisable(true);
+        clearMenuItem.setDisable(true);
+        openInImageEditorMenuItem.setDisable(true);
+        useForDrawingMenuItem.setDisable(true);
+        break;
+      case IMAGE:
         newMenu.setDisable(true);
         clearMenuItem.setDisable(true);
         break;
@@ -141,6 +154,10 @@ public class ProjectTreeContextMenuView implements ProjectTreeContextMenuControl
     deleteMenuItem.setDisable(!value);
     clearMenuItem.setDisable(!value);
     copyPathMenuItem.setDisable(!value);
+  }
+
+  public MenuItem getOpenInImageEditorMenuItem() {
+    return openInImageEditorMenuItem;
   }
 
   public ContextMenu getContextMenu() {

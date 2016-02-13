@@ -1,8 +1,10 @@
 package mapEditor.application.main_part.project_tree.context_menu;
 
 import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
 import mapEditor.application.main_part.app_utils.models.LazyTreeItem;
 import mapEditor.application.main_part.app_utils.models.TreeItemType;
+import mapEditor.application.main_part.project_tree.utils.ProjectTreeContextMenuListener;
 import mapEditor.application.main_part.types.Controller;
 
 /**
@@ -13,20 +15,23 @@ public class ProjectTreeContextMenuController implements Controller {
 
   public interface IProjectTreeContextMenuView {
     void setState(TreeItemType treeItemType, TreeItemType parentItemType);
+    MenuItem getOpenInImageEditorMenuItem();
     ContextMenu getContextMenu();
   }
 
   private IProjectTreeContextMenuView view;
+  private ProjectTreeContextMenuListener listener;
   private LazyTreeItem selectedItem;
   private LazyTreeItem parentItem;
 
-  public ProjectTreeContextMenuController(IProjectTreeContextMenuView view) {
+  public ProjectTreeContextMenuController(IProjectTreeContextMenuView view, ProjectTreeContextMenuListener listener) {
     this.view = view;
+    this.listener = listener;
   }
 
   @Override
   public void bind() {
-
+    view.getOpenInImageEditorMenuItem().setOnAction(event -> listener.openInImageEditor());
   }
 
   private LazyTreeItem getParentForSelectedItem() {

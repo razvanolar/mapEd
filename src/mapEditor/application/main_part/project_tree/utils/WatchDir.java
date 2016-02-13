@@ -1,4 +1,4 @@
-package mapEditor.application.main_part.project_tree;
+package mapEditor.application.main_part.project_tree.utils;
 
 import javafx.beans.value.ChangeListener;
 import javafx.scene.control.TreeItem;
@@ -39,7 +39,7 @@ public class WatchDir {
   /**
    * Process all events for keys queued to the watcher
    */
-  protected void processEvents() {
+  public void processEvents() {
     for (;;) {
       // wait for key to be signalled
       WatchKey key;
@@ -75,8 +75,8 @@ public class WatchDir {
         // register it and its sub-directories
         if (kind == StandardWatchEventKinds.ENTRY_CREATE) {
           LazyTreeItem item = findItemByPath(dir.toAbsolutePath().toString());
+          boolean isDirectory = Files.isDirectory(child, LinkOption.NOFOLLOW_LINKS);
           if (item != null && item.wasExpanded()) {
-            boolean isDirectory = Files.isDirectory(child, LinkOption.NOFOLLOW_LINKS);
             LazyTreeItem newItem = new LazyTreeItem(new File(child.toAbsolutePath().toString()),
                     isDirectory, isDirectory ? TreeItemType.FOLDER : TreeItemType.NORMAL);
             newItem.expandedProperty().addListener(listener);
@@ -84,9 +84,8 @@ public class WatchDir {
             item.getChildren().sort((o1, o2) -> o1.getValue().getName().compareTo(o2.getValue().getName()));
           }
           try {
-            if (Files.isDirectory(child, LinkOption.NOFOLLOW_LINKS)) {
+            if (isDirectory)
               registerAll(child);
-            }
           } catch (IOException x) {
             // ignore to keep sample readbale
           }
