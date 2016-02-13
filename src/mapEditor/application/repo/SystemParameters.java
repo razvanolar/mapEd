@@ -20,6 +20,7 @@ public class SystemParameters {
   public static final String TILE_SETS_FOLDER_PATH = TILE_GROUPS_FOLDER_PATH + "tile_sets\\";
   public static final String CHARACTERS_FOLDER_PATH = "characters\\";
   public static final String MAPS_FOLDER_PATH = "maps\\";
+  public static final String UNTITLED_TAB_NAME = "*Untitled";
 
   public static List<LWProjectModel> PROJECTS;
 

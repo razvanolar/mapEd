@@ -74,7 +74,7 @@ public class SaveImageController implements Controller {
   }
 
   private boolean isValidSelection(String name, String path) {
-    return name != null && name.matches("^[a-zA-Z0-9]+" + imageExtension.forRegex()) &&
+    return name != null && name.matches("^[a-zA-Z0-9[-_]]+" + imageExtension.forRegex()) &&
             path != null && path.contains(rootFile.getAbsolutePath());
   }
 }

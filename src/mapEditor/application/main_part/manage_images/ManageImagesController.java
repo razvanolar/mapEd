@@ -2,11 +2,7 @@ package mapEditor.application.main_part.manage_images;
 
 import javafx.beans.value.ChangeListener;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.control.Button;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
-import javafx.scene.image.Image;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Modality;
@@ -24,6 +20,7 @@ import mapEditor.application.main_part.app_utils.views.dialogs.OkCancelDialog;
 import mapEditor.application.main_part.manage_images.configurations.ManageConfigurationController;
 import mapEditor.application.main_part.manage_images.utils.SaveImageController;
 import mapEditor.application.main_part.manage_images.utils.SaveImageView;
+import mapEditor.application.main_part.manage_images.utils.TabContentView;
 import mapEditor.application.main_part.types.Controller;
 import mapEditor.application.main_part.types.View;
 import mapEditor.application.repo.SystemParameters;
@@ -52,6 +49,7 @@ public class ManageImagesController implements Controller {
     Button getSettingsButton();
     Button getSaveTileSetButton();
     Button getResetConfigurationButton();
+    ToolBar getTabsToolbar();
     ManageConfigurationController.IManageConfigurationView getManageConfigurationView();
   }
 
@@ -67,7 +65,7 @@ public class ManageImagesController implements Controller {
     configurationController = new ManageConfigurationController(view.getManageConfigurationView());
     configurationController.bind();
     addListeners();
-    addImageTab("Test1", null);
+    addImageTab(SystemParameters.UNTITLED_TAB_NAME, null);
   }
 
   private void addListeners() {
@@ -75,7 +73,8 @@ public class ManageImagesController implements Controller {
 
     view.getTabPane().getSelectionModel().selectedItemProperty().addListener((observable, oldTab, newTab) -> {
       if (newTab != null) {
-        currentCanvas = (ImageCanvas) newTab.getUserData();
+        TabContentView content = (TabContentView) newTab.getUserData();
+        currentCanvas = (ImageCanvas) content.getCanvas();
         if (currentCanvas.getImage() != null) {
           configurationController.setViewState(IManageConfigurationViewState.FULL_SELECTION);
         } else {
@@ -83,12 +82,14 @@ public class ManageImagesController implements Controller {
         }
         configurationController.setListener(currentCanvas);
         currentCanvas.paint();
+        content.setToolBar(view.getTabsToolbar());
         canvasWasChanged();
       } else {
         currentCanvas = null;
         configurationController.setListener(null);
         configurationController.setViewState(IManageConfigurationViewState.NO_TAB_SELECTED);
         view.getSaveTileSetButton().setDisable(true);
+        addImageTab(SystemParameters.UNTITLED_TAB_NAME, null);
       }
     });
 
@@ -206,7 +207,6 @@ public class ManageImagesController implements Controller {
     ImageLoaderModel image = (ImageLoaderModel) currentCanvas.getUserData();
     String imagePath = image.getImagePath();
     String tileSetsPath = AppParameters.CURRENT_PROJECT.getTileSetsFile().getAbsolutePath();
-    System.out.println("imagePath: " + imagePath + " | tilesPath: " + tileSetsPath);
     view.getSaveTileSetButton().setDisable(imagePath.contains(tileSetsPath));
   }
 

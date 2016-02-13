@@ -9,6 +9,7 @@ import mapEditor.application.main_part.app_utils.constants.CssConstants;
 import mapEditor.application.main_part.app_utils.views.others.FillToolItem;
 import mapEditor.application.main_part.manage_images.configurations.ManageConfigurationController;
 import mapEditor.application.main_part.manage_images.configurations.ManageConfigurationView;
+import mapEditor.application.main_part.manage_images.utils.TabContentView;
 
 /**
  *
@@ -26,6 +27,8 @@ public class ManageImagesView implements ManageImagesController.IManageImagesVie
   private Button resetConfigurationButton;
   private ManageConfigurationController.IManageConfigurationView manageConfigurationView;
 
+  private ToolBar tabsToolbar;
+
   public ManageImagesView() {
     initGUI();
   }
@@ -39,48 +42,47 @@ public class ManageImagesView implements ManageImagesController.IManageImagesVie
     resetConfigurationButton = new Button("Reset");
     manageConfigurationView = new ManageConfigurationView();
     tabPane = new TabPane();
-    ToolBar tabsToolbar = new ToolBar();
+    tabsToolbar = new ToolBar();
     ToolBar configurationToolbar = new ToolBar();
-    BorderPane tabsContainer = new BorderPane();
-    BorderPane configurationPanel = new BorderPane();
-    SplitPane canvasSplitPane = new SplitPane(tabsContainer, configurationPanel);
-    ScrollPane leftScrollPane = new ScrollPane(manageConfigurationView.asNode());
-    BorderPane leftPane = new BorderPane(leftScrollPane);
-    mainSplitPane = new SplitPane(canvasSplitPane, leftPane);
+//    BorderPane tabsContainer = new BorderPane();
+//    BorderPane configurationPanel = new BorderPane();
+//    SplitPane canvasSplitPane = new SplitPane(tabsContainer, configurationPanel);
+    ScrollPane rightScrollPane = new ScrollPane(manageConfigurationView.asNode());
+    BorderPane rightPane = new BorderPane(rightScrollPane);
+    mainSplitPane = new SplitPane(tabPane, rightPane);
 
     tabsToolbar.getItems().addAll(addNewTabButton, removeTabButton, renameTabButton, settingsButton, new FillToolItem(),
             saveTileSetButton);
     configurationToolbar.getItems().addAll(resetConfigurationButton);
 
-    leftPane.setBottom(configurationToolbar);
+    rightPane.setBottom(configurationToolbar);
 
-    tabsContainer.setCenter(tabPane);
-    tabsContainer.setBottom(tabsToolbar);
+//    tabsContainer.setCenter(tabPane);
+//    tabsContainer.setBottom(tabsToolbar);
 
-    leftScrollPane.getStyleClass().add(CssConstants.SCROLL_PANE_BG);
-    leftScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-    leftScrollPane.setMinWidth(300);
-    manageConfigurationView.asNode().prefWidthProperty().bind(leftScrollPane.widthProperty());
+    rightScrollPane.getStyleClass().add(CssConstants.SCROLL_PANE_BG);
+    rightScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+    rightScrollPane.setMinWidth(300);
+    manageConfigurationView.asNode().prefWidthProperty().bind(rightScrollPane.widthProperty());
 
-    SplitPane.setResizableWithParent(leftPane, false);
-    SplitPane.setResizableWithParent(configurationPanel, false);
+    SplitPane.setResizableWithParent(rightPane, false);
+//    SplitPane.setResizableWithParent(tabPane, false);
     mainSplitPane.setOrientation(Orientation.HORIZONTAL);
     mainSplitPane.setDividerPositions(0.8);
-    canvasSplitPane.setOrientation(Orientation.VERTICAL);
-    canvasSplitPane.setDividerPositions(0.5);
+//    canvasSplitPane.setOrientation(Orientation.VERTICAL);
+//    canvasSplitPane.setDividerPositions(0.5);
   }
 
   public ScrollPane addTab(String title, Canvas canvas) {
-    ScrollPane pane = new ScrollPane(canvas);
+    TabContentView content = new TabContentView(canvas);
 
-    Tab tab = new Tab(title, pane);
+    Tab tab = new Tab(title, content.asNode());
     tab.setClosable(true);
-    tab.setUserData(canvas);
+    tab.setUserData(content);
     tabPane.getTabs().add(tab);
     tabPane.getSelectionModel().select(tab);
 
-    pane.getStyleClass().add(CssConstants.CANVAS_CONTAINER_LIGHT_BG);
-    return pane;
+    return content.getCanvasContainer();
   }
 
   public TabPane getTabPane() {
@@ -109,6 +111,10 @@ public class ManageImagesView implements ManageImagesController.IManageImagesVie
 
   public Button getResetConfigurationButton() {
     return resetConfigurationButton;
+  }
+
+  public ToolBar getTabsToolbar() {
+    return tabsToolbar;
   }
 
   public ManageConfigurationController.IManageConfigurationView getManageConfigurationView() {
