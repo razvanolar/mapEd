@@ -12,8 +12,8 @@ import mapEditor.application.repo.types.MapType;
 import mapEditor.application.repo.types.ProjectStatus;
 
 import java.io.*;
-import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -286,8 +286,11 @@ public class RepoController {
     } catch (IOException e) {
       System.out.println("*** Unable to copy file to the specified path. From: " + from + " To: " + where + " Error message: " + e.getMessage());
       return null;
+    } catch (InvalidPathException e) {
+      System.out.println("*** Unable to copy file to the specified path. From: " + from + " To: " + where + " Error message: " + e.getMessage());
+      return null;
     }
-  }
+   }
 
   private RepoUtil getRepoUtil() {
     if (repoUtil == null)

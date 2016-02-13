@@ -40,17 +40,21 @@ public class SaveImageController implements Controller {
 
   @Override
   public void bind() {
+    addListeners();
     view.getNameTextField().setText("*" + imageExtension.getExtension());
     view.getPathTextField().setText(rootFile.getAbsolutePath());
     view.getPathTextField().setTooltip(new Tooltip(rootFile.getAbsolutePath()));
-
-    addListeners();
   }
 
   private void addListeners() {
     view.getPathTextField().textProperty().addListener((observable, oldValue, newValue) -> {
-      completeSelectionNode.setDisable(newValue == null || !newValue.contains(rootFile.getAbsolutePath()));
-      view.getPathTextField().getTooltip().setText(newValue);
+      completeSelectionNode.setDisable(!isValidSelection(view.getNameTextField().getText(), newValue));
+      if (view.getPathTextField().getTooltip() != null)
+        view.getPathTextField().getTooltip().setText(newValue);
+    });
+
+    view.getNameTextField().textProperty().addListener((observable, oldValue, newValue) -> {
+      completeSelectionNode.setDisable(!isValidSelection(newValue, view.getPathTextField().getText()));
     });
 
     view.getPathButton().setOnAction(event -> doOnPathButtonSelection());
@@ -62,5 +66,10 @@ public class SaveImageController implements Controller {
     dialog.setContent(filesView.asNode());
 
     dialog.show();
+  }
+
+  private boolean isValidSelection(String name, String path) {
+    return name != null && name.matches("^[a-zA-Z0-9]+" + imageExtension.forRegex()) &&
+            path != null && path.contains(rootFile.getAbsolutePath());
   }
 }

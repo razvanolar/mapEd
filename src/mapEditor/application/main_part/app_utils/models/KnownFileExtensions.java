@@ -21,6 +21,10 @@ public enum KnownFileExtensions {
     return extension;
   }
 
+  public String forRegex() {
+    return "\\" + extension;
+  }
+
   public static List<KnownFileExtensions> getExtensions() {
     ArrayList<KnownFileExtensions> result = new ArrayList<>(Arrays.asList(values()));
     result.remove(UNKNOWN);
