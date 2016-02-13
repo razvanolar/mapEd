@@ -65,6 +65,11 @@ public class SaveImageController implements Controller {
     SystemFilesView filesView = new SystemFilesView(dialog.getOkButton(), rootFile, true, null);
     dialog.setContent(filesView.asNode());
 
+    dialog.getOkButton().setOnAction(event -> {
+      view.getPathTextField().setText(filesView.getSelectedPath());
+      dialog.close();
+    });
+
     dialog.show();
   }
 

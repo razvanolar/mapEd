@@ -150,6 +150,8 @@ public class ProjectTreeContextMenuView implements ProjectTreeContextMenuControl
     newTilesMenuItem.setDisable(!value);
     newCharactersMenuItem.setDisable(!value);
     newMapMenuItem.setDisable(!value);
+    openInImageEditorMenuItem.setDisable(!value);
+    useForDrawingMenuItem.setDisable(!value);
     renameMenuItem.setDisable(!value);
     deleteMenuItem.setDisable(!value);
     clearMenuItem.setDisable(!value);
