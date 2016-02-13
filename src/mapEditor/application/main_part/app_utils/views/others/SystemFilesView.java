@@ -2,6 +2,7 @@ package mapEditor.application.main_part.app_utils.views.others;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.value.ChangeListener;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.*;
@@ -40,18 +41,29 @@ public class SystemFilesView implements View {
   private boolean isAutoExpanding;
   /** The item that is used for completing a tree selection (i.e. Ok Button) */
   private Node completeSelectionNode;
+  private File rootFile;
+  private boolean showRoot;
 
-  public SystemFilesView(Node completeSelectionNode) {
+  /**
+   *
+   * @param completeSelectionNode - node that have the role of applying the selection
+   * @param rootFile - value of the root item; if it's null, the roots will be represented by system partitions
+   * @param showRoot - true if root must be shown; false otherwise
+   * @param scrollToPath - path of the item that should be selected as default
+   */
+  public SystemFilesView(Node completeSelectionNode, File rootFile, boolean showRoot, String scrollToPath) {
     this.completeSelectionNode = completeSelectionNode;
+    this.rootFile = rootFile != null && rootFile.exists() ? rootFile : null;
+    this.showRoot = showRoot;
     expandListener = createExpandListener();
     initGUI();
     addListeners();
     loadTree();
-    scrollToPath(AppParameters.SYSTEM_FILES_VIEW_PATH);
+    scrollToPath(scrollToPath);
   }
 
   private void initGUI() {
-    root = new TreeItem<>();
+    root = rootFile == null ? new TreeItem<>() : new LazyTreeItem(rootFile, rootFile.isDirectory());
     tree = new TreeView<>(root);
     mainContainer = new BorderPane(tree);
     currentPathTextField = new TextField();
@@ -73,7 +85,7 @@ public class SystemFilesView implements View {
             new Separator(),
             refreshButton);
 
-    tree.setShowRoot(false);
+    tree.setShowRoot(showRoot);
     tree.setPrefWidth(450);
     tree.setPrefHeight(400);
     tree.setCellFactory(new Callback<TreeView<File>, TreeCell<File>>() {
@@ -121,12 +133,25 @@ public class SystemFilesView implements View {
   }
 
   private void loadTree() {
-    File[] partitions = File.listRoots();
-    loadFilesForNode(partitions, root);
+    /* if the root file do not expand it */
+    if (rootFile != null) {
+      if (showRoot) {
+        tree.getSelectionModel().select(root);
+      } else {
+        loadFilesForNode(rootFile.listFiles(), root);
+        ObservableList<TreeItem<File>> children = root.getChildren();
+        TreeItem<File> item = children != null && !children.isEmpty() ? children.get(0) : null;
+        if (item != null)
+          tree.getSelectionModel().select(item);
+      }
+      return;
+    }
+    File[] files = File.listRoots();
+    loadFilesForNode(files, root);
 
-    File[] firstPartitionFiles = partitions[0].listFiles();
+    File[] firstChildren = files[0].listFiles();
     TreeItem<File> firstPartition = root.getChildren().get(0);
-    loadFilesForNode(firstPartitionFiles, firstPartition);
+    loadFilesForNode(firstChildren, firstPartition);
     firstPartition.setExpanded(true);
   }
 

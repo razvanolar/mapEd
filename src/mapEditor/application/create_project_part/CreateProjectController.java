@@ -73,7 +73,7 @@ public class CreateProjectController implements Controller {
   private void addListeners() {
     view.getPathButton().setOnAction(event -> {
       OkCancelDialog dialog = new OkCancelDialog("Choose Project Path", null, null, true);
-      SystemFilesView systemFilesView = new SystemFilesView(dialog.getOkButton());
+      SystemFilesView systemFilesView = new SystemFilesView(dialog.getOkButton(), null, false, AppParameters.SYSTEM_FILES_VIEW_PATH);
       dialog.setContent(systemFilesView.asNode());
       dialog.getOkButton().setOnAction(event1 -> {
         if (!StringValidator.isNullOrEmpty(systemFilesView.getSelectedPath()) && systemFilesView.isFolderSelected()) {

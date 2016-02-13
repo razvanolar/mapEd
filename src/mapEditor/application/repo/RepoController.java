@@ -12,6 +12,8 @@ import mapEditor.application.repo.types.MapType;
 import mapEditor.application.repo.types.ProjectStatus;
 
 import java.io.*;
+import java.nio.file.FileAlreadyExistsException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -258,21 +260,33 @@ public class RepoController {
   }
 
   /**
-   * Returns a list of all leaf items from the specified path.
-   * @param path - valid directory path
-   * @return result - if the path is valid and all leaf item were successfully traversed;
-   *         null - otherwise
+   * Copy the content of the file specified by 'from' into the directory represented by 'where'.
+   * Name of the saved file is represented by the 'name' parameter.
+   * @param from - file that will be copied
+   * @param where - path of the directory where the file will be copied
+   * @param name - name of the file that will be saved
+   * @return fileName - if the file was saved; null otherwise
    */
-  public List<File> loadLeafItemsFromPath(String path) {
-    return getRepoUtil().loadTileSetsFile(path);
-  }
+  public String copyToPath(String from, String where, String name) {
+    File fromFile = new File(from);
+    where = where.endsWith("\\") ? where : where + "\\";
+    File whereFile = new File(where + name);
+    if (!fromFile.exists())
+      return null;
+    if (whereFile.exists()) {
+      String auxName = getRepoUtil().getAlternativeNameForExistingFile(where, name);
+      if (auxName == null)
+        return null;
+      whereFile = new File(where + auxName);
+    }
 
-  /**
-   * Invalidates the cache on a the specified path maintained for application files.
-   * @param path - valid directory path
-   */
-  public void invalidateFileCachePath(String path) {
-    getRepoUtil().invalidateFileCachePath(path);
+    try {
+      Files.copy(fromFile.toPath(), whereFile.toPath());
+      return whereFile.getName();
+    } catch (IOException e) {
+      System.out.println("*** Unable to copy file to the specified path. From: " + from + " To: " + where + " Error message: " + e.getMessage());
+      return null;
+    }
   }
 
   private RepoUtil getRepoUtil() {

@@ -13,7 +13,8 @@ public class TreeFileNodeGraphicsProvider {
     switch (extension) {
       case UNKNOWN:
         return new ImageView(ImageProvider.genericFile());
+      default:
+        return new ImageView(ImageProvider.genericFile());
     }
-    return null;
   }
 }

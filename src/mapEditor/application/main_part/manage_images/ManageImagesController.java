@@ -9,7 +9,10 @@ import javafx.scene.control.TabPane;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.stage.Modality;
+import javafx.stage.StageStyle;
 import mapEditor.application.main_part.app_utils.AppParameters;
+import mapEditor.application.main_part.app_utils.inputs.FileExtensionUtil;
 import mapEditor.application.main_part.app_utils.inputs.ImagesLoader;
 import mapEditor.application.main_part.app_utils.inputs.StringValidator;
 import mapEditor.application.main_part.app_utils.models.ImageLoaderModel;
@@ -18,6 +21,8 @@ import mapEditor.application.main_part.app_utils.views.canvas.ImageCanvas;
 import mapEditor.application.main_part.app_utils.views.TabImageLoadView;
 import mapEditor.application.main_part.app_utils.views.dialogs.OkCancelDialog;
 import mapEditor.application.main_part.manage_images.configurations.ManageConfigurationController;
+import mapEditor.application.main_part.manage_images.utils.SaveImageController;
+import mapEditor.application.main_part.manage_images.utils.SaveImageView;
 import mapEditor.application.main_part.types.Controller;
 import mapEditor.application.main_part.types.View;
 import mapEditor.application.repo.SystemParameters;
@@ -77,13 +82,45 @@ public class ManageImagesController implements Controller {
         }
         configurationController.setListener(currentCanvas);
         currentCanvas.paint();
-        notifyCanvasChange();
+        canvasWasChanged();
       } else {
         currentCanvas = null;
         configurationController.setListener(null);
         configurationController.setViewState(IManageConfigurationViewState.NO_TAB_SELECTED);
         view.getSaveTileSetButton().setDisable(true);
       }
+    });
+
+    view.getSaveTileSetButton().setOnAction(event -> {
+      if (currentCanvas == null || currentCanvas.getUserData() == null || view.getSaveTileSetButton().isDisable())
+        return;
+
+      ImageLoaderModel image = (ImageLoaderModel) currentCanvas.getUserData();
+
+      OkCancelDialog dialog = new OkCancelDialog("Save Image", StageStyle.UTILITY, Modality.APPLICATION_MODAL, false);
+
+      SaveImageController.ISaveImageView saveImageView = new SaveImageView();
+      SaveImageController controller = new SaveImageController(saveImageView,
+              FileExtensionUtil.getFileExtension(image.getImageName()),
+              AppParameters.CURRENT_PROJECT.getTileSetsFile(),
+              dialog.getOkButton());
+      controller.bind();
+
+      dialog.getOkButton().setOnAction(event1 -> {
+        synchronized (SystemParameters.MESSAGE_KEY) {
+          SystemParameters.MESSAGE_KEY.setName(saveImageView.getNameTextField().getText());
+          SystemParameters.MESSAGE_KEY.setPath(saveImageView.getPathTextField().getText());
+          SystemParameters.MESSAGE_KEY.setImagePath(image.getImagePath());
+          SystemParameters.MESSAGE_KEY.setImageLoaderModel(image);
+          SystemParameters.MESSAGE_KEY.setButton(view.getSaveTileSetButton());
+          SystemParameters.MESSAGE_KEY.setMessageType(MessageType.SAVE_TILE_SET_IMAGE);
+          SystemParameters.MESSAGE_KEY.notify();
+          dialog.close();
+        }
+      });
+
+      dialog.setContent(saveImageView.asNode());
+      dialog.show();
     });
   }
 
@@ -98,7 +135,7 @@ public class ManageImagesController implements Controller {
     dialog.getOkButton().setOnAction(event -> {
       String tabName = loadView.getTabTitle();
       if (!StringValidator.isNullOrEmpty(tabName) && !checkIfTabNameExists(tabName)) {
-        addImageTab(tabName, loadView.getImage());
+        addImageTab(tabName, loadView.getImageModel());
         dialog.close();
       }
     });
@@ -130,13 +167,14 @@ public class ManageImagesController implements Controller {
       canvas.paint();
       configurationController.setListener(canvas);
       configurationController.setViewState(IManageConfigurationViewState.FULL_SELECTION);
-      notifyCanvasChange();
+      canvasWasChanged();
       return null;
     }, null);
   }
 
-  private void addImageTab(String title, Image image) {
-    ImageCanvas canvas = new ImageCanvas(image);
+  private void addImageTab(String title, ImageLoaderModel image) {
+    ImageCanvas canvas = new ImageCanvas(image != null ? image.getImage() : null);
+    canvas.setUserData(image);
 
     ScrollPane pane = view.addTab(title, canvas);
 
@@ -158,20 +196,17 @@ public class ManageImagesController implements Controller {
     return false;
   }
 
-  private void notifyCanvasChange() {
+  private void canvasWasChanged() {
     if (currentCanvas == null || currentCanvas.getUserData() == null) {
       view.getSaveTileSetButton().setDisable(true);
       return;
     }
 
     ImageLoaderModel image = (ImageLoaderModel) currentCanvas.getUserData();
-    synchronized (SystemParameters.MESSAGE_KEY) {
-      SystemParameters.MESSAGE_KEY.setImagePath(image.getImagePath());
-      SystemParameters.MESSAGE_KEY.setPathToVerify(AppParameters.CURRENT_PROJECT.getTileSetsFile().getAbsolutePath());
-      SystemParameters.MESSAGE_KEY.setButton(view.getSaveTileSetButton());
-      SystemParameters.MESSAGE_KEY.setMessageType(MessageType.VERIFY_CANVAS_TILE_SET_IMAGE);
-      SystemParameters.MESSAGE_KEY.notify();
-    }
+    String imagePath = image.getImagePath();
+    String tileSetsPath = AppParameters.CURRENT_PROJECT.getTileSetsFile().getAbsolutePath();
+    System.out.println("imagePath: " + imagePath + " | tilesPath: " + tileSetsPath);
+    view.getSaveTileSetButton().setDisable(imagePath.contains(tileSetsPath));
   }
 
   public View getView() {

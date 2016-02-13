@@ -1,12 +1,12 @@
 package mapEditor.application.main_part.app_utils.threads;
 
+import javafx.application.Platform;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import mapEditor.application.main_part.app_utils.models.ImageLoaderModel;
 import mapEditor.application.main_part.app_utils.models.MessageType;
 import mapEditor.application.repo.RepoController;
 import mapEditor.application.repo.SystemParameters;
-
-import java.io.File;
-import java.util.List;
 
 /**
  *
@@ -18,39 +18,40 @@ public class MessageHandler {
 
   public void handleMessage(MessageType messageType) {
     switch (messageType) {
-      case VERIFY_CANVAS_TILE_SET_IMAGE:
-        new Thread(verifyCanvasTileSetImage()).start();
+      case SAVE_TILE_SET_IMAGE:
+        new Thread(saveTileSetImage()).start();
         break;
     }
   }
 
-  private Runnable verifyCanvasTileSetImage() {
+  private Runnable saveTileSetImage() {
     return () -> {
-      System.out.println("verifyCanvasTileSetImage handler has started");
+      System.out.println("saveTileSetImage handler started");
       synchronized (repoController) {
+        String name = SystemParameters.MESSAGE_KEY.getName();
+        String toPath = SystemParameters.MESSAGE_KEY.getPath();
         String imagePath = SystemParameters.MESSAGE_KEY.getImagePath();
-        String pathToVerify = SystemParameters.MESSAGE_KEY.getPathToVerify();
         Button button = SystemParameters.MESSAGE_KEY.getButton();
-
-        List<File> result = repoController.loadLeafItemsFromPath(pathToVerify);
-
-        if (result == null) {
+        ImageLoaderModel image = SystemParameters.MESSAGE_KEY.getImageLoaderModel();
+        String imageName = repoController.copyToPath(imagePath, toPath, name);
+        if (imageName == null)
+          showWarningDialog(null, "Unable to copy the image in the tile_sets directory.");
+        else {
+          toPath = toPath.endsWith("\\") ? toPath : toPath + "\\";
           button.setDisable(true);
-          System.out.println("verifyCanvasTileSetImage finished (1)");
-          return;
+          image.setImageName(imageName);
+          image.setImagePath(toPath + imageName);
         }
-
-        for (File file : result) {
-          if (file.getAbsolutePath().equals(imagePath)) {
-            button.setDisable(true);
-            System.out.println("verifyCanvasTileSetImage finished (2)");
-            return;
-          }
-        }
-
-        button.setDisable(false);
-        System.out.println("verifyCanvasTileSetImage finished (3)");
       }
     };
+  }
+
+  private void showWarningDialog(String title, String message) {
+    Platform.runLater(() -> {
+      Alert alert = new Alert(Alert.AlertType.WARNING);
+      alert.setTitle(title == null ? "Warning" : title);
+      alert.setContentText(message);
+      alert.showAndWait();
+    });
   }
 }

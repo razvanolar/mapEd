@@ -105,8 +105,8 @@ public class TabImageLoadView {
     return tabTitleTextField.getText();
   }
 
-  public Image getImage() {
-    return imageModel != null ? imageModel.getImage() : null;
+  public ImageLoaderModel getImageModel() {
+    return imageModel;
   }
 
   public Node asNode() {

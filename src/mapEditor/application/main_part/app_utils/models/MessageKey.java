@@ -9,9 +9,11 @@ import javafx.scene.control.Button;
 public class MessageKey {
 
   private MessageType messageType;
-  private String pathToVerify;
+  private String path;
+  private String name;
   private String imagePath;
   private Button button;
+  private ImageLoaderModel imageLoaderModel;
 
   public MessageType getMessageType() {
     return messageType;
@@ -21,12 +23,20 @@ public class MessageKey {
     this.messageType = messageType;
   }
 
-  public String getPathToVerify() {
-    return pathToVerify;
+  public String getPath() {
+    return path;
   }
 
-  public void setPathToVerify(String pathToVerify) {
-    this.pathToVerify = pathToVerify;
+  public void setPath(String path) {
+    this.path = path;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
   }
 
   public String getImagePath() {
@@ -43,5 +53,13 @@ public class MessageKey {
 
   public void setButton(Button button) {
     this.button = button;
+  }
+
+  public ImageLoaderModel getImageLoaderModel() {
+    return imageLoaderModel;
+  }
+
+  public void setImageLoaderModel(ImageLoaderModel imageLoaderModel) {
+    this.imageLoaderModel = imageLoaderModel;
   }
 }

@@ -1,7 +1,6 @@
 package mapEditor.application.repo;
 
 import java.io.File;
-import java.util.*;
 
 /**
  *
@@ -9,43 +8,51 @@ import java.util.*;
  */
 public class RepoUtil {
 
-  private Map<String, List<File>> filesCachePerPath;
-
-  protected RepoUtil() {
-    filesCachePerPath = new HashMap<>();
-  }
-
-  public List<File> loadTileSetsFile(String path) {
-    if (path == null)
+  public String getAlternativeNameForExistingFile(String directory, String fileName) {
+    if (directory == null || fileName == null)
       return null;
-    List<File> result = filesCachePerPath.get(path);
-    if (result != null) {
-      System.out.println("load files from cache");
-      return result;
-    }
-    File pathFile = new File(path);
-    if (!pathFile.exists())
+    directory = directory.endsWith("\\") ? directory : directory + "\\";
+    File file = new File(directory + fileName);
+    if (!file.exists())
       return null;
 
-    result = new ArrayList<>();
-    File[] files = pathFile.listFiles();
-    if (files != null && files.length > 0) {
-      Queue<File> queue = new LinkedList<>();
-      queue.addAll(Arrays.asList(files));
-      while (!queue.isEmpty()) {
-        File file = queue.poll();
-        result.add(file);
-        files = file.listFiles();
-        if (files != null && files.length > 0)
-          queue.addAll(Arrays.asList(files));
-      }
+    String extension = getFileExtension(fileName);
+    String name = getFileNameWithoutExtension(fileName);
+    if (extension == null || name == null)
+      return null;
+
+    File[] files = new File(directory).listFiles();
+    if (files == null)
+      return null;
+    if (files.length == 0)
+      return fileName;
+    int k = 0;
+    for (File f : files) {
+      if (f.getName().matches(fileName) || f.getName().matches(name + "[(][0-9]+[)]" + extension))
+        k ++;
     }
-    filesCachePerPath.put(path, result);
-    return result;
+    if (k == 0)
+      return fileName;
+    return name + "(" + k + ")" + extension;
   }
 
-  public void invalidateFileCachePath(String path) {
-    if (path != null)
-      filesCachePerPath.remove(path);
+  public String getFileExtension(String fileName) {
+    if (fileName == null)
+      return null;
+    StringBuilder builder = new StringBuilder(fileName);
+    int index = builder.lastIndexOf(".");
+    if (index == -1)
+      return "";
+    return builder.substring(index, fileName.length());
+  }
+
+  public String getFileNameWithoutExtension(String fileName) {
+    if (fileName == null)
+      return null;
+    StringBuilder builder = new StringBuilder(fileName);
+    int index = builder.lastIndexOf(".");
+    if (index == -1)
+      return fileName;
+    return builder.substring(0, index);
   }
 }
