@@ -8,6 +8,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
 import javafx.scene.text.Text;
+import mapEditor.application.main_part.app_utils.constants.CssConstants;
 import mapEditor.application.main_part.types.View;
 
 /**
@@ -31,7 +32,7 @@ public class CroppedTilesPathView implements View {
     useForAllCheckBox = new CheckBox("Use for all");
     mainContainer = new GridPane();
 
-    pathTextField.setPrefWidth(200);
+    pathTextField.setPrefWidth(350);
 
     mainContainer.setAlignment(Pos.CENTER);
     mainContainer.setHgap(5);
@@ -40,6 +41,8 @@ public class CroppedTilesPathView implements View {
     mainContainer.add(pathButton, 2, 0);
     mainContainer.add(useForAllCheckBox, 3, 0);
     mainContainer.setPadding(new Insets(3));
+
+    mainContainer.getStyleClass().add(CssConstants.CROPPED_TILES_PATH_VIEW);
   }
 
   public TextField getPathTextField() {

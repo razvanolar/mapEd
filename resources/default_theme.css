@@ -34,11 +34,19 @@
 }
 
 .croppedTileView {
-    -fx-background-color: rgba(152, 150, 157, 0.56);
+    -fx-background-color: rgba(163, 167, 170, 0.56);
+}
+
+.croppedTileView:hover {
+    -fx-background-color: rgba(181, 185, 188, 0.56);
 }
 
 .tabContentViewTilesPane {
     -fx-background-color: #e7e8e8;
+}
+
+.croppedTilesPathView {
+    -fx-background-color: darkgray;
 }
 
 #test {
