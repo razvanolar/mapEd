@@ -23,6 +23,7 @@ public class ManageImagesView implements ManageImagesController.IManageImagesVie
   private Button removeTabButton;
   private Button renameTabButton;
   private Button settingsButton;
+  private Button cropSelectionButton;
   private Button saveTileSetButton;
   private Button resetConfigurationButton;
   private ManageConfigurationController.IManageConfigurationView manageConfigurationView;
@@ -38,27 +39,22 @@ public class ManageImagesView implements ManageImagesController.IManageImagesVie
     removeTabButton = new Button("Remove Tab");
     renameTabButton = new Button("Rename Tab");
     settingsButton = new Button("Settings");
+    cropSelectionButton = new Button("Crop Selection");
     saveTileSetButton = new Button("Save Tile Set");
     resetConfigurationButton = new Button("Reset");
     manageConfigurationView = new ManageConfigurationView();
     tabPane = new TabPane();
     tabsToolbar = new ToolBar();
     ToolBar configurationToolbar = new ToolBar();
-//    BorderPane tabsContainer = new BorderPane();
-//    BorderPane configurationPanel = new BorderPane();
-//    SplitPane canvasSplitPane = new SplitPane(tabsContainer, configurationPanel);
     ScrollPane rightScrollPane = new ScrollPane(manageConfigurationView.asNode());
     BorderPane rightPane = new BorderPane(rightScrollPane);
     mainSplitPane = new SplitPane(tabPane, rightPane);
 
     tabsToolbar.getItems().addAll(addNewTabButton, removeTabButton, renameTabButton, settingsButton, new FillToolItem(),
-            saveTileSetButton);
+            cropSelectionButton, saveTileSetButton);
     configurationToolbar.getItems().addAll(resetConfigurationButton);
 
     rightPane.setBottom(configurationToolbar);
-
-//    tabsContainer.setCenter(tabPane);
-//    tabsContainer.setBottom(tabsToolbar);
 
     rightScrollPane.getStyleClass().add(CssConstants.SCROLL_PANE_BG);
     rightScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
@@ -66,11 +62,22 @@ public class ManageImagesView implements ManageImagesController.IManageImagesVie
     manageConfigurationView.asNode().prefWidthProperty().bind(rightScrollPane.widthProperty());
 
     SplitPane.setResizableWithParent(rightPane, false);
-//    SplitPane.setResizableWithParent(tabPane, false);
     mainSplitPane.setOrientation(Orientation.HORIZONTAL);
     mainSplitPane.setDividerPositions(0.8);
-//    canvasSplitPane.setOrientation(Orientation.VERTICAL);
-//    canvasSplitPane.setDividerPositions(0.5);
+  }
+
+  public void setState(ManageImagesController.IManageConfigurationViewState state) {
+    switch (state) {
+      case NO_TAB_SELECTED:
+        cropSelectionButton.setDisable(true);
+        break;
+      case NO_IMAGE_SELECTED:
+        cropSelectionButton.setDisable(true);
+        break;
+      case FULL_SELECTION:
+        cropSelectionButton.setDisable(false);
+        break;
+    }
   }
 
   public ScrollPane addTab(String title, Canvas canvas) {
@@ -99,6 +106,10 @@ public class ManageImagesView implements ManageImagesController.IManageImagesVie
 
   public Button getRenameTabButton() {
     return renameTabButton;
+  }
+
+  public Button getCropSelectionButton() {
+    return cropSelectionButton;
   }
 
   public Button getSettingsButton() {

@@ -4,9 +4,12 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
+import javafx.scene.image.PixelReader;
+import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.util.Callback;
 import mapEditor.application.main_part.app_utils.AppParameters;
 
 /**
@@ -129,6 +132,17 @@ public class ImageCanvas extends Canvas implements StyleListener {
     g.fillText(noImageText, x, y);
   }
 
+  public void cropSelectedTile(Callback<Image, Void> callback) {
+    if (image == null)
+      return;
+    WritableImage writableImage = new WritableImage(image.getPixelReader(),
+            squareCellX * CELL_SIZE,
+            squareCellY * CELL_SIZE,
+            CELL_SIZE,
+            CELL_SIZE);
+    callback.call(writableImage);
+  }
+
   /**
    * Check to see if x and y coordinates are in the image bounds.
    * In other words, if the image is rendered over those coordinates.
@@ -175,14 +189,6 @@ public class ImageCanvas extends Canvas implements StyleListener {
    */
   private boolean isVerticalDraggableToBottom() {
     return isVerticalDraggable() && imageY < CELL_SIZE;
-  }
-
-  private boolean isBottomAdjustNeeded() {
-    return false;
-  }
-
-  private boolean isRightAdjustNeeded() {
-    return false;
   }
 
   public int getImageWidth() {

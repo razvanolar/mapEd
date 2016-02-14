@@ -33,6 +33,14 @@
     -fx-background-color: darkgray;
 }
 
+.croppedTileView {
+    -fx-background-color: rgba(152, 150, 157, 0.56);
+}
+
+.tabContentViewTilesPane {
+    -fx-background-color: #e7e8e8;
+}
+
 #test {
     -fx-background-image: url("canvas_container_light_bg.png");
 }

@@ -3,10 +3,12 @@ package mapEditor.application.main_part.manage_images;
 import javafx.beans.value.ChangeListener;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Modality;
 import javafx.stage.StageStyle;
+import javafx.util.Callback;
 import mapEditor.application.main_part.app_utils.AppParameters;
 import mapEditor.application.main_part.app_utils.inputs.FileExtensionUtil;
 import mapEditor.application.main_part.app_utils.inputs.ImagesLoader;
@@ -18,6 +20,8 @@ import mapEditor.application.main_part.app_utils.views.TabImageLoadView;
 import mapEditor.application.main_part.app_utils.views.dialogs.AlertDialog;
 import mapEditor.application.main_part.app_utils.views.dialogs.OkCancelDialog;
 import mapEditor.application.main_part.manage_images.configurations.ManageConfigurationController;
+import mapEditor.application.main_part.manage_images.cropped_tiles.CroppedTileController;
+import mapEditor.application.main_part.manage_images.cropped_tiles.CroppedTileView;
 import mapEditor.application.main_part.manage_images.utils.SaveImageController;
 import mapEditor.application.main_part.manage_images.utils.SaveImageView;
 import mapEditor.application.main_part.manage_images.utils.TabContentView;
@@ -30,6 +34,8 @@ import mapEditor.application.repo.SystemParameters;
  * Created by razvanolar on 24.01.2016.
  */
 public class ManageImagesController implements Controller {
+
+  private TabContentView currentTabContent;
 
   public enum IManageConfigurationViewState {
     /**
@@ -47,10 +53,12 @@ public class ManageImagesController implements Controller {
     Button getRemoveTabButton();
     Button getRenameTabButton();
     Button getSettingsButton();
+    Button getCropSelectionButton();
     Button getSaveTileSetButton();
     Button getResetConfigurationButton();
     ToolBar getTabsToolbar();
     ManageConfigurationController.IManageConfigurationView getManageConfigurationView();
+    void setState(IManageConfigurationViewState state);
   }
 
   private IManageImagesView view;
@@ -73,21 +81,25 @@ public class ManageImagesController implements Controller {
 
     view.getTabPane().getSelectionModel().selectedItemProperty().addListener((observable, oldTab, newTab) -> {
       if (newTab != null) {
-        TabContentView content = (TabContentView) newTab.getUserData();
-        currentCanvas = (ImageCanvas) content.getCanvas();
+        currentTabContent = (TabContentView) newTab.getUserData();
+        currentCanvas = (ImageCanvas) currentTabContent.getCanvas();
         if (currentCanvas.getImage() != null) {
           configurationController.setViewState(IManageConfigurationViewState.FULL_SELECTION);
+          view.setState(IManageConfigurationViewState.FULL_SELECTION);
         } else {
           configurationController.setViewState(IManageConfigurationViewState.NO_IMAGE_SELECTED);
+          view.setState(IManageConfigurationViewState.NO_IMAGE_SELECTED);
         }
         configurationController.setListener(currentCanvas);
         currentCanvas.paint();
-        content.setToolBar(view.getTabsToolbar());
+        currentTabContent.setToolBar(view.getTabsToolbar());
         canvasWasChanged();
       } else {
         currentCanvas = null;
+        currentTabContent = null;
         configurationController.setListener(null);
         configurationController.setViewState(IManageConfigurationViewState.NO_TAB_SELECTED);
+        view.setState(IManageConfigurationViewState.NO_TAB_SELECTED);
         view.getSaveTileSetButton().setDisable(true);
         addImageTab(SystemParameters.UNTITLED_TAB_NAME, null);
       }
@@ -123,6 +135,20 @@ public class ManageImagesController implements Controller {
 
       dialog.setContent(saveImageView.asNode());
       dialog.show();
+    });
+
+    view.getCropSelectionButton().setOnAction(event -> {
+      if (currentCanvas == null || currentTabContent == null)
+        return;
+      currentCanvas.cropSelectedTile(param -> {
+        if (param != null) {
+          CroppedTileController.ICroppedTileView croppedTileView = new CroppedTileView(param);
+          CroppedTileController croppedTileController = new CroppedTileController(croppedTileView);
+          croppedTileController.bind();
+          currentTabContent.addTileForm(croppedTileView.asNode());
+        }
+        return null;
+      });
     });
   }
 
@@ -200,6 +226,7 @@ public class ManageImagesController implements Controller {
   private void canvasWasChanged() {
     if (currentCanvas == null || currentCanvas.getUserData() == null) {
       view.getSaveTileSetButton().setDisable(true);
+      view.setState(IManageConfigurationViewState.NO_IMAGE_SELECTED);
       return;
     }
 
@@ -207,6 +234,7 @@ public class ManageImagesController implements Controller {
     String imagePath = image.getImagePath();
     String tileSetsPath = AppParameters.CURRENT_PROJECT.getTileSetsFile().getAbsolutePath();
     view.getSaveTileSetButton().setDisable(imagePath.contains(tileSetsPath));
+    view.setState(IManageConfigurationViewState.FULL_SELECTION);
   }
 
   public void addNewTab(String title, ImageLoaderModel image) {

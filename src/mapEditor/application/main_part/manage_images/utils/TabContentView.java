@@ -1,5 +1,6 @@
 package mapEditor.application.main_part.manage_images.utils;
 
+import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.ScrollPane;
@@ -32,8 +33,9 @@ public class TabContentView implements View {
   private void initGUI() {
     canvasContainer = new ScrollPane(canvas);
     borderPane = new BorderPane(canvasContainer);
-    tilesPane = new VBox();
-    splitPane = new SplitPane(borderPane, tilesPane);
+    tilesPane = new VBox(7);
+    ScrollPane scrollPane = new ScrollPane(tilesPane);
+    splitPane = new SplitPane(borderPane, scrollPane);
 
     splitPane.setOrientation(Orientation.VERTICAL);
     splitPane.setDividerPositions(1);
@@ -42,6 +44,14 @@ public class TabContentView implements View {
     canvasContainer.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
     canvasContainer.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
     canvasContainer.getStyleClass().add(CssConstants.CANVAS_CONTAINER_LIGHT_BG);
+
+    scrollPane.getStyleClass().add(CssConstants.TAB_CONTENT_VIEW_TILES_PANE);
+    tilesPane.setPadding(new Insets(5));
+    tilesPane.prefWidthProperty().bind(scrollPane.widthProperty());
+  }
+
+  public void addTileForm(Region node) {
+    tilesPane.getChildren().add(node);
   }
 
   public void setToolBar(ToolBar toolBar) {
