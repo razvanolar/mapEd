@@ -3,12 +3,10 @@ package mapEditor.application.main_part.manage_images;
 import javafx.beans.value.ChangeListener;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Modality;
 import javafx.stage.StageStyle;
-import javafx.util.Callback;
 import mapEditor.application.main_part.app_utils.AppParameters;
 import mapEditor.application.main_part.app_utils.inputs.FileExtensionUtil;
 import mapEditor.application.main_part.app_utils.inputs.ImagesLoader;
@@ -22,6 +20,7 @@ import mapEditor.application.main_part.app_utils.views.dialogs.OkCancelDialog;
 import mapEditor.application.main_part.manage_images.configurations.ManageConfigurationController;
 import mapEditor.application.main_part.manage_images.cropped_tiles.CroppedTileController;
 import mapEditor.application.main_part.manage_images.cropped_tiles.CroppedTileView;
+import mapEditor.application.main_part.manage_images.utils.ManageImagesListener;
 import mapEditor.application.main_part.manage_images.utils.SaveImageController;
 import mapEditor.application.main_part.manage_images.utils.SaveImageView;
 import mapEditor.application.main_part.manage_images.utils.TabContentView;
@@ -33,7 +32,7 @@ import mapEditor.application.repo.SystemParameters;
  *
  * Created by razvanolar on 24.01.2016.
  */
-public class ManageImagesController implements Controller {
+public class ManageImagesController implements Controller, ManageImagesListener {
 
   private TabContentView currentTabContent;
 
@@ -143,7 +142,7 @@ public class ManageImagesController implements Controller {
       currentCanvas.cropSelectedTile(param -> {
         if (param != null) {
           CroppedTileController.ICroppedTileView croppedTileView = new CroppedTileView(param);
-          CroppedTileController croppedTileController = new CroppedTileController(croppedTileView);
+          CroppedTileController croppedTileController = new CroppedTileController(croppedTileView, ManageImagesController.this);
           croppedTileController.bind();
           currentTabContent.addTileForm(croppedTileView.asNode());
         }
@@ -246,5 +245,18 @@ public class ManageImagesController implements Controller {
 
   public View getView() {
     return view;
+  }
+
+  @Override
+  public void saveCroppedImage(CroppedTileController.ICroppedTileView view) {
+    if (currentTabContent == null)
+      return;
+  }
+
+  @Override
+  public void dropCroppedTileView(CroppedTileController.ICroppedTileView view) {
+    if (currentTabContent == null)
+      return;
+    currentTabContent.removeTileForm(view.asNode());
   }
 }

@@ -46,12 +46,17 @@ public class TabContentView implements View {
     canvasContainer.getStyleClass().add(CssConstants.CANVAS_CONTAINER_LIGHT_BG);
 
     scrollPane.getStyleClass().add(CssConstants.TAB_CONTENT_VIEW_TILES_PANE);
+    scrollPane.setMinHeight(0);
     tilesPane.setPadding(new Insets(5));
     tilesPane.prefWidthProperty().bind(scrollPane.widthProperty());
   }
 
   public void addTileForm(Region node) {
     tilesPane.getChildren().add(node);
+  }
+
+  public void removeTileForm(Region node) {
+    tilesPane.getChildren().remove(node);
   }
 
   public void setToolBar(ToolBar toolBar) {

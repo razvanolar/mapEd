@@ -60,6 +60,14 @@ public class CroppedTileView implements CroppedTileController.ICroppedTileView {
     mainContainer.setPadding(new Insets(3));
   }
 
+  public Button getSaveButton() {
+    return saveButton;
+  }
+
+  public Button getDropButton() {
+    return dropButton;
+  }
+
   @Override
   public Region asNode() {
     return mainContainer;
