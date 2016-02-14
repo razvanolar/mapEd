@@ -9,6 +9,7 @@ import mapEditor.application.main_part.app_utils.constants.CssConstants;
 import mapEditor.application.main_part.app_utils.views.others.FillToolItem;
 import mapEditor.application.main_part.manage_images.configurations.ManageConfigurationController;
 import mapEditor.application.main_part.manage_images.configurations.ManageConfigurationView;
+import mapEditor.application.main_part.manage_images.cropped_tiles.CroppedTilesPathView;
 import mapEditor.application.main_part.manage_images.utils.TabContentView;
 
 /**
@@ -80,8 +81,8 @@ public class ManageImagesView implements ManageImagesController.IManageImagesVie
     }
   }
 
-  public ScrollPane addTab(String title, Canvas canvas) {
-    TabContentView content = new TabContentView(canvas);
+  public ScrollPane addTab(String title, Canvas canvas, CroppedTilesPathView pathView) {
+    TabContentView content = new TabContentView(canvas, pathView);
 
     Tab tab = new Tab(title, content.asNode());
     tab.setClosable(true);

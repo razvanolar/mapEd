@@ -60,12 +60,28 @@ public class CroppedTileView implements CroppedTileController.ICroppedTileView {
     mainContainer.setPadding(new Insets(3));
   }
 
+  public TextField getNameTextField() {
+    return nameTextField;
+  }
+
+  public TextField getPathTextField() {
+    return pathTextField;
+  }
+
+  public Button getPathButton() {
+    return pathButton;
+  }
+
   public Button getSaveButton() {
     return saveButton;
   }
 
   public Button getDropButton() {
     return dropButton;
+  }
+
+  public Image getImage() {
+    return image;
   }
 
   @Override

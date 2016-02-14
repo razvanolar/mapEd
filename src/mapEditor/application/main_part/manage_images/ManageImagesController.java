@@ -1,6 +1,7 @@
 package mapEditor.application.main_part.manage_images;
 
 import javafx.beans.value.ChangeListener;
+import javafx.collections.ListChangeListener;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
@@ -20,6 +21,7 @@ import mapEditor.application.main_part.app_utils.views.dialogs.OkCancelDialog;
 import mapEditor.application.main_part.manage_images.configurations.ManageConfigurationController;
 import mapEditor.application.main_part.manage_images.cropped_tiles.CroppedTileController;
 import mapEditor.application.main_part.manage_images.cropped_tiles.CroppedTileView;
+import mapEditor.application.main_part.manage_images.cropped_tiles.CroppedTilesPathView;
 import mapEditor.application.main_part.manage_images.utils.ManageImagesListener;
 import mapEditor.application.main_part.manage_images.utils.SaveImageController;
 import mapEditor.application.main_part.manage_images.utils.SaveImageView;
@@ -28,13 +30,16 @@ import mapEditor.application.main_part.types.Controller;
 import mapEditor.application.main_part.types.View;
 import mapEditor.application.repo.SystemParameters;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  *
  * Created by razvanolar on 24.01.2016.
  */
 public class ManageImagesController implements Controller, ManageImagesListener {
-
-  private TabContentView currentTabContent;
 
   public enum IManageConfigurationViewState {
     /**
@@ -46,7 +51,7 @@ public class ManageImagesController implements Controller, ManageImagesListener 
   }
 
   public interface IManageImagesView extends View {
-    ScrollPane addTab(String title, Canvas canvas);
+    ScrollPane addTab(String title, Canvas canvas, CroppedTilesPathView pathView);
     TabPane getTabPane();
     Button getAddNewTabButton();
     Button getRemoveTabButton();
@@ -63,12 +68,15 @@ public class ManageImagesController implements Controller, ManageImagesListener 
   private IManageImagesView view;
   private ManageConfigurationController configurationController;
   private ImageCanvas currentCanvas;
+  private TabContentView currentTabContent;
+  private Map<TabContentView, List<CroppedTileController>> tabControllersMap;
 
   public ManageImagesController(IManageImagesView view) {
     this.view = view;
   }
 
   public void bind() {
+    tabControllersMap = new HashMap<>();
     configurationController = new ManageConfigurationController(view.getManageConfigurationView());
     configurationController.bind();
     addListeners();
@@ -101,6 +109,16 @@ public class ManageImagesController implements Controller, ManageImagesListener 
         view.setState(IManageConfigurationViewState.NO_TAB_SELECTED);
         view.getSaveTileSetButton().setDisable(true);
         addImageTab(SystemParameters.UNTITLED_TAB_NAME, null);
+      }
+    });
+
+    view.getTabPane().getTabs().addListener((ListChangeListener<Tab>) c -> {
+      while (c.next()) {
+        if (c.getRemovedSize() > 0)
+          c.getRemoved().stream().filter(tab -> tab.getUserData() != null).forEach(tab -> {
+            TabContentView contentView = (TabContentView) tab.getUserData();
+            tabControllersMap.remove(contentView);
+          });
       }
     });
 
@@ -142,9 +160,18 @@ public class ManageImagesController implements Controller, ManageImagesListener 
       currentCanvas.cropSelectedTile(param -> {
         if (param != null) {
           CroppedTileController.ICroppedTileView croppedTileView = new CroppedTileView(param);
-          CroppedTileController croppedTileController = new CroppedTileController(croppedTileView, ManageImagesController.this);
+          CroppedTileController croppedTileController = new CroppedTileController(croppedTileView,
+                  AppParameters.CURRENT_PROJECT.getTilesFile(),
+                  ManageImagesController.this);
           croppedTileController.bind();
           currentTabContent.addTileForm(croppedTileView.asNode());
+          List<CroppedTileController> values = tabControllersMap.get(currentTabContent);
+          if (values == null) {
+            values = new ArrayList<>();
+            values.add(croppedTileController);
+            tabControllersMap.put(currentTabContent, values);
+          } else
+            values.add(croppedTileController);
         }
         return null;
       });
@@ -203,7 +230,7 @@ public class ManageImagesController implements Controller, ManageImagesListener 
     ImageCanvas canvas = new ImageCanvas(image != null ? image.getImage() : null);
     canvas.setUserData(image);
 
-    ScrollPane pane = view.addTab(title, canvas);
+    ScrollPane pane = view.addTab(title, canvas, createPathView());
 
     ChangeListener<Number> changeListener = (observable, oldValue, newValue) -> {
         canvas.paint();
@@ -213,6 +240,12 @@ public class ManageImagesController implements Controller, ManageImagesListener 
     pane.widthProperty().addListener(changeListener);
     pane.heightProperty().addListener(changeListener);
     addCanvasListeners(canvas);
+  }
+
+  private CroppedTilesPathView createPathView() {
+    CroppedTilesPathView pathView = new CroppedTilesPathView();
+
+    return pathView;
   }
 
   private boolean checkIfTabNameExists(String tabName) {
@@ -257,6 +290,8 @@ public class ManageImagesController implements Controller, ManageImagesListener 
   public void dropCroppedTileView(CroppedTileController.ICroppedTileView view) {
     if (currentTabContent == null)
       return;
-    currentTabContent.removeTileForm(view.asNode());
+    int remainedItems = currentTabContent.removeTileForm(view.asNode());
+    if (remainedItems == 0)
+      tabControllersMap.remove(currentTabContent);
   }
 }
