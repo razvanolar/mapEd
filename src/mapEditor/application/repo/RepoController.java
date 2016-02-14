@@ -87,7 +87,7 @@ public class RepoController {
    */
   public ProjectModel createProject(String name, String path) {
     try {
-      ProjectModel project = new ProjectModel(name, path, MapType.ORTHOGONAL, AppParameters.CELL_SIZE);
+      ProjectModel project = new ProjectModel(name, path, MapType.ORTHOGONAL, AppParameters.DEFAULT_CELL_SIZE);
       ProjectXMLConverter xmlConverter = new ProjectXMLConverter();
       String xmlResult  = xmlConverter.convertProjectToXML(project);
       if (!path.endsWith("\\"))

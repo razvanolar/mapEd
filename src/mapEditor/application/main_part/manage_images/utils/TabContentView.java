@@ -36,7 +36,7 @@ public class TabContentView implements View {
     splitPane = new SplitPane(borderPane, tilesPane);
 
     splitPane.setOrientation(Orientation.VERTICAL);
-    splitPane.setDividerPositions(0.8);
+    splitPane.setDividerPositions(1);
     SplitPane.setResizableWithParent(borderPane, false);
 
     canvasContainer.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);

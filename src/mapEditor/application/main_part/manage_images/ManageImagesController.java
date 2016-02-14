@@ -181,7 +181,6 @@ public class ManageImagesController implements Controller {
     ScrollPane pane = view.addTab(title, canvas);
 
     ChangeListener<Number> changeListener = (observable, oldValue, newValue) -> {
-      if (canvas == currentCanvas)
         canvas.paint();
     };
     canvas.widthProperty().bind(pane.widthProperty());

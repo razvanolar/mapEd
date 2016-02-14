@@ -7,6 +7,7 @@ import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import mapEditor.application.main_part.app_utils.AppParameters;
 
 /**
  *
@@ -27,6 +28,8 @@ public class ImageCanvas extends Canvas implements StyleListener {
   private Color squareBorderColor = Color.YELLOW;
   private Color squareFillColor = new Color(0, 0, 0, 0);
 
+  private int CELL_SIZE = AppParameters.CURRENT_PROJECT.getCellSize();
+
   public ImageCanvas(Image image) {
     this.image = image;
     this.colorAdjustEffect = image != null ? new ColorAdjust() : null;
@@ -42,8 +45,8 @@ public class ImageCanvas extends Canvas implements StyleListener {
       if (!event.isControlDown() && isInImageBounds(pressedX, pressedY)) {
         int lastSquareCellX = squareCellX;
         int lastSquareCellY = squareCellY;
-        squareCellX = (pressedX - imageX) / 32;
-        squareCellY = (pressedY - imageY) / 32;
+        squareCellX = (pressedX - imageX) / CELL_SIZE;
+        squareCellY = (pressedY - imageY) / CELL_SIZE;
         /* repaint only if coordinates were changed */
         if (lastSquareCellX != squareCellX || lastSquareCellY != squareCellY)
           paint();
@@ -95,8 +98,14 @@ public class ImageCanvas extends Canvas implements StyleListener {
     int imageHeight = (int) image.getHeight();
     if (imageWidth < width)
       imageX = (width - imageWidth) / 2;
+    else if (!isHorizontalDraggableToLeft())
+      imageX = (width - CELL_SIZE) - imageWidth;
+
     if (imageHeight < height)
       imageY = (height - imageHeight) / 2;
+    else if (!isVerticalDraggableToTop())
+      imageY = (height - CELL_SIZE) - imageHeight;
+
     g.drawImage(image, imageX, imageY, imageWidth, imageHeight);
 
     g.setEffect(null);
@@ -105,10 +114,10 @@ public class ImageCanvas extends Canvas implements StyleListener {
     g.setStroke(squareBorderColor);
     g.setFill(squareFillColor);
     g.setLineWidth(2);
-    int squareX = imageX + squareCellX * 32;
-    int squareY = imageY + squareCellY * 32;
-    g.fillRect(squareX, squareY, 32, 32);
-    g.strokeRect(squareX, squareY, 32, 32);
+    int squareX = imageX + squareCellX * CELL_SIZE;
+    int squareY = imageY + squareCellY * CELL_SIZE;
+    g.fillRect(squareX, squareY, CELL_SIZE, CELL_SIZE);
+    g.strokeRect(squareX, squareY, CELL_SIZE, CELL_SIZE);
   }
 
   private void paintNoImageText(GraphicsContext g, int canvasWidth, int canvasHeight) {
@@ -140,14 +149,14 @@ public class ImageCanvas extends Canvas implements StyleListener {
    * From right to left
    */
   private boolean isHorizontalDraggableToLeft() {
-    return isHorizontalDraggable() && (getImageWidth() - getCanvasWidth() - Math.abs(imageX)) > -32;
+    return isHorizontalDraggable() && (getImageWidth() - getCanvasWidth() - Math.abs(imageX)) > -CELL_SIZE;
   }
 
   /**
    * From left to right
    */
   private boolean isHorizontalDraggableToRight() {
-    return isHorizontalDraggable() && imageX < 32;
+    return isHorizontalDraggable() && imageX < CELL_SIZE;
   }
 
   private boolean isVerticalDraggable() {
@@ -158,14 +167,22 @@ public class ImageCanvas extends Canvas implements StyleListener {
    * From bottom to top
    */
   private boolean isVerticalDraggableToTop() {
-    return isVerticalDraggable() && (getImageHeight() - getCanvasHeight() - Math.abs(imageY)) > -32;
+    return isVerticalDraggable() && (getImageHeight() - getCanvasHeight() - Math.abs(imageY)) > -CELL_SIZE;
   }
 
   /**
    * From top to bottom
    */
   private boolean isVerticalDraggableToBottom() {
-    return isVerticalDraggable() && imageY < 32;
+    return isVerticalDraggable() && imageY < CELL_SIZE;
+  }
+
+  private boolean isBottomAdjustNeeded() {
+    return false;
+  }
+
+  private boolean isRightAdjustNeeded() {
+    return false;
   }
 
   public int getImageWidth() {

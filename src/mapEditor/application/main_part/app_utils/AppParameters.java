@@ -14,5 +14,5 @@ public class AppParameters {
   public static String SYSTEM_FILES_VIEW_PATH = "C:\\Users\\razvanolar\\Desktop\\MapEditor_Util\\projects";
   public static String XML_HEADER = "<?xml version=\"1.0\" encoding=\"utf-8\"?>";
 
-  public static int CELL_SIZE = 32;
+  public static int DEFAULT_CELL_SIZE = 32;
 }
