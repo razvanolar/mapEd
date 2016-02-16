@@ -81,9 +81,7 @@ public class ManageImagesView implements ManageImagesController.IManageImagesVie
     }
   }
 
-  public ScrollPane addTab(String title, Canvas canvas, CroppedTilesPathView pathView) {
-    TabContentView content = new TabContentView(canvas, pathView);
-
+  public ScrollPane addTab(String title, TabContentView content) {
     Tab tab = new Tab(title, content.asNode());
     tab.setClosable(true);
     tab.setUserData(content);

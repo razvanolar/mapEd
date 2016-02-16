@@ -1,9 +1,10 @@
 package mapEditor.application.main_part.manage_images;
 
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.ListChangeListener;
-import javafx.scene.canvas.Canvas;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Modality;
@@ -19,9 +20,11 @@ import mapEditor.application.main_part.app_utils.views.TabImageLoadView;
 import mapEditor.application.main_part.app_utils.views.dialogs.AlertDialog;
 import mapEditor.application.main_part.app_utils.views.dialogs.OkCancelDialog;
 import mapEditor.application.main_part.manage_images.configurations.ManageConfigurationController;
-import mapEditor.application.main_part.manage_images.cropped_tiles.CroppedTileController;
-import mapEditor.application.main_part.manage_images.cropped_tiles.CroppedTileView;
+import mapEditor.application.main_part.manage_images.cropped_tiles.detailed_view.CroppedTilesDetailedController;
+import mapEditor.application.main_part.manage_images.cropped_tiles.detailed_view.CroppedTileDetailedDetailedView;
 import mapEditor.application.main_part.manage_images.cropped_tiles.CroppedTilesPathView;
+import mapEditor.application.main_part.manage_images.cropped_tiles.simple_view.CroppedTileSimpleController;
+import mapEditor.application.main_part.manage_images.cropped_tiles.simple_view.CroppedTileSimpleView;
 import mapEditor.application.main_part.manage_images.utils.ManageImagesListener;
 import mapEditor.application.main_part.manage_images.utils.SaveImageController;
 import mapEditor.application.main_part.manage_images.utils.SaveImageView;
@@ -41,6 +44,8 @@ import java.util.Map;
  */
 public class ManageImagesController implements Controller, ManageImagesListener {
 
+  //TODO: refactor the listeners logic (many of them can be created only once)
+
   public enum IManageConfigurationViewState {
     /**
      * NO_TAB_SELECTED   - The tab pane of the ManageImagesView have no tab registered
@@ -51,7 +56,7 @@ public class ManageImagesController implements Controller, ManageImagesListener 
   }
 
   public interface IManageImagesView extends View {
-    ScrollPane addTab(String title, Canvas canvas, CroppedTilesPathView pathView);
+    ScrollPane addTab(String title, TabContentView content);
     TabPane getTabPane();
     Button getAddNewTabButton();
     Button getRemoveTabButton();
@@ -69,14 +74,16 @@ public class ManageImagesController implements Controller, ManageImagesListener 
   private ManageConfigurationController configurationController;
   private ImageCanvas currentCanvas;
   private TabContentView currentTabContent;
-  private Map<TabContentView, List<CroppedTileController>> tabControllersMap;
+  private Map<TabContentView, CroppedTilesDetailedController> tabDetailedControllerMap;
+  private Map<TabContentView, CroppedTileSimpleController> tabSimpleControllerMap;
 
   public ManageImagesController(IManageImagesView view) {
     this.view = view;
   }
 
   public void bind() {
-    tabControllersMap = new HashMap<>();
+    tabDetailedControllerMap = new HashMap<>();
+    tabSimpleControllerMap = new HashMap<>();
     configurationController = new ManageConfigurationController(view.getManageConfigurationView());
     configurationController.bind();
     addListeners();
@@ -117,7 +124,8 @@ public class ManageImagesController implements Controller, ManageImagesListener 
         if (c.getRemovedSize() > 0)
           c.getRemoved().stream().filter(tab -> tab.getUserData() != null).forEach(tab -> {
             TabContentView contentView = (TabContentView) tab.getUserData();
-            tabControllersMap.remove(contentView);
+            tabDetailedControllerMap.remove(contentView);
+            tabSimpleControllerMap.remove(contentView);
           });
       }
     });
@@ -159,19 +167,27 @@ public class ManageImagesController implements Controller, ManageImagesListener 
         return;
       currentCanvas.cropSelectedTile(param -> {
         if (param != null) {
-          CroppedTileController.ICroppedTileView croppedTileView = new CroppedTileView(param);
-          CroppedTileController croppedTileController = new CroppedTileController(croppedTileView,
-                  AppParameters.CURRENT_PROJECT.getTilesFile(),
-                  ManageImagesController.this);
-          croppedTileController.bind();
-          currentTabContent.addTileForm(croppedTileView.asNode());
-          List<CroppedTileController> values = tabControllersMap.get(currentTabContent);
-          if (values == null) {
-            values = new ArrayList<>();
-            values.add(croppedTileController);
-            tabControllersMap.put(currentTabContent, values);
-          } else
-            values.add(croppedTileController);
+          if (!currentTabContent.isSimpleView()) {
+            CroppedTilesDetailedController controller = tabDetailedControllerMap.get(currentTabContent);
+            if (controller == null) {
+              controller = new CroppedTilesDetailedController(AppParameters.CURRENT_PROJECT.getTilesFile(), ManageImagesController.this);
+              controller.bind();
+              tabDetailedControllerMap.put(currentTabContent, controller);
+            }
+            CroppedTilesDetailedController.ICroppedTileDetailedView croppedTileView = new CroppedTileDetailedDetailedView(param);
+            controller.addView(croppedTileView);
+            currentTabContent.addDetailedTileForm(croppedTileView.asNode());
+          } else {
+            CroppedTileSimpleController controller = tabSimpleControllerMap.get(currentTabContent);
+            if (controller == null) {
+              CroppedTileSimpleController.ICroppedTileSimpleView view = new CroppedTileSimpleView();
+              controller = new CroppedTileSimpleController(view);
+              controller.bind();
+              currentTabContent.setSimpleTileView(view.asNode());
+              tabSimpleControllerMap.put(currentTabContent, controller);
+            }
+            controller.addImage(param);
+          }
         }
         return null;
       });
@@ -226,11 +242,47 @@ public class ManageImagesController implements Controller, ManageImagesListener 
     }, null);
   }
 
+  private void addTabContentListener(TabContentView content) {
+    content.getSimpleViewButton().selectedProperty().addListener((observable, oldValue, newValue) -> {
+      if (newValue) {
+        CroppedTilesDetailedController detailedController = tabDetailedControllerMap.get(currentTabContent);
+        if (detailedController != null) {
+          List<Image> images = detailedController.getImages();
+          tabSimpleControllerMap.remove(currentTabContent);
+          CroppedTileSimpleController.ICroppedTileSimpleView simpleView = new CroppedTileSimpleView();
+          CroppedTileSimpleController simpleController = new CroppedTileSimpleController(simpleView);
+          simpleController.addImages(images);
+          tabSimpleControllerMap.put(currentTabContent, simpleController);
+          tabDetailedControllerMap.remove(currentTabContent);
+          currentTabContent.setSimpleTileView(simpleView.asNode());
+        }
+      } else {
+        CroppedTileSimpleController simpleController = tabSimpleControllerMap.get(currentTabContent);
+        if (simpleController != null) {
+          List<Image> images = simpleController.getImages();
+          tabDetailedControllerMap.remove(currentTabContent);
+          CroppedTilesDetailedController detailedController = new CroppedTilesDetailedController(
+                  AppParameters.CURRENT_PROJECT.getTilesFile(), this);
+          detailedController.bind();
+          currentTabContent.clearTilesPane();
+          for (Image image : images) {
+            CroppedTilesDetailedController.ICroppedTileDetailedView view = new CroppedTileDetailedDetailedView(image);
+            detailedController.addView(view);
+            currentTabContent.addDetailedTileForm(view.asNode());
+          }
+          tabDetailedControllerMap.put(currentTabContent, detailedController);
+          tabSimpleControllerMap.remove(currentTabContent);
+        }
+      }
+    });
+  }
+
   private void addImageTab(String title, ImageLoaderModel image) {
     ImageCanvas canvas = new ImageCanvas(image != null ? image.getImage() : null);
     canvas.setUserData(image);
 
-    ScrollPane pane = view.addTab(title, canvas, createPathView());
+    TabContentView content = new TabContentView(canvas, createPathView());
+    ScrollPane pane = view.addTab(title, content);
 
     ChangeListener<Number> changeListener = (observable, oldValue, newValue) -> {
         canvas.paint();
@@ -240,6 +292,8 @@ public class ManageImagesController implements Controller, ManageImagesListener 
     pane.widthProperty().addListener(changeListener);
     pane.heightProperty().addListener(changeListener);
     addCanvasListeners(canvas);
+
+    addTabContentListener(content);
   }
 
   private CroppedTilesPathView createPathView() {
@@ -281,17 +335,18 @@ public class ManageImagesController implements Controller, ManageImagesListener 
   }
 
   @Override
-  public void saveCroppedImage(CroppedTileController.ICroppedTileView view) {
+  public void saveCroppedImage(CroppedTilesDetailedController.ICroppedTileDetailedView view) {
     if (currentTabContent == null)
       return;
   }
 
   @Override
-  public void dropCroppedTileView(CroppedTileController.ICroppedTileView view) {
+  public void dropCroppedTileView(CroppedTilesDetailedController.ICroppedTileDetailedView view) {
     if (currentTabContent == null)
       return;
-    int remainedItems = currentTabContent.removeTileForm(view.asNode());
-    if (remainedItems == 0)
-      tabControllersMap.remove(currentTabContent);
+    int remainedItems = currentTabContent.removeDetailedTileForm(view.asNode());
+    if (remainedItems == 0) {
+      tabDetailedControllerMap.remove(currentTabContent);
+    }
   }
 }

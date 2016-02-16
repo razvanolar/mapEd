@@ -6,8 +6,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.SplitPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import mapEditor.application.create_project_part.CreateProjectController;
@@ -35,10 +35,15 @@ public class MapEditorView extends Application {
   private Scene createProjectScene;
   private Image logo;
 
+  private StackPane stackPane;
+  private BorderPane mask;
+
   @Override
   public void init() {
     MapEditorController.getInstance().setMapEditorView(this);
     logo = ImageProvider.logo();
+    mask = new BorderPane();
+    mask.setBackground(new Background(new BackgroundFill(new Color(.4, .4, .4, .5), null, null)));
     if (AppParameters.CURRENT_PROJECT != null)
       initPrimaryStageElements();
     else
@@ -88,7 +93,8 @@ public class MapEditorView extends Application {
     BorderPane mainContainer = new BorderPane();
     SplitPane centerSplitPane = new SplitPane();
     mainContainer.setCenter(centerSplitPane);
-    primaryScene = new Scene(mainContainer, 700, 400);
+    stackPane = new StackPane(mainContainer);
+    primaryScene = new Scene(stackPane, 700, 400);
     String cssPath = CssConstants.getDefaultTheme();
     if (cssPath != null)
       primaryScene.getStylesheets().add(cssPath);
@@ -116,6 +122,15 @@ public class MapEditorView extends Application {
       if (createProjectStage != null)
         createProjectStage.close();
     });
+  }
+
+  public void mask() {
+    stackPane.getChildren().add(mask);
+  }
+
+  public void unmask() {
+    if (stackPane.getChildren().contains(mask))
+      stackPane.getChildren().remove(mask);
   }
 
   public void clearCreateProjectView() {

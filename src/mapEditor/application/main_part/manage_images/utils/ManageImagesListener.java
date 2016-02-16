@@ -1,6 +1,6 @@
 package mapEditor.application.main_part.manage_images.utils;
 
-import mapEditor.application.main_part.manage_images.cropped_tiles.CroppedTileController;
+import mapEditor.application.main_part.manage_images.cropped_tiles.detailed_view.CroppedTilesDetailedController;
 
 /**
  *
@@ -8,6 +8,6 @@ import mapEditor.application.main_part.manage_images.cropped_tiles.CroppedTileCo
  */
 public interface ManageImagesListener {
 
-  void saveCroppedImage(CroppedTileController.ICroppedTileView view);
-  void dropCroppedTileView(CroppedTileController.ICroppedTileView view);
+  void saveCroppedImage(CroppedTilesDetailedController.ICroppedTileDetailedView view);
+  void dropCroppedTileView(CroppedTilesDetailedController.ICroppedTileDetailedView view);
 }

@@ -7,6 +7,10 @@
 .scroll-pane:focused {
     -fx-focus-color: transparent;
 }
+
+.tree-view {
+    -fx-background-color: transparent;
+}
 /* ************************** */
 
 .canvas_container_dark_bg {
@@ -34,7 +38,7 @@
 }
 
 .croppedTileView {
-    -fx-background-color: rgba(163, 167, 170, 0.56);
+    -fx-background-color: cornflowerblue;
 }
 
 .croppedTileView:hover {

@@ -160,6 +160,14 @@ public class MapEditorController {
     toolbarController.changeToImageEditorView();
   }
 
+  public void maskView() {
+    mapEditorView.mask();
+  }
+
+  public void unmaskView() {
+    mapEditorView.unmask();
+  }
+
   public void closeApp() {
     mapEditorView.close();
   }

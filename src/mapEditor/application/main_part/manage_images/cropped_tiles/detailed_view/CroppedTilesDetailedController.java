@@ -1,4 +1,4 @@
-package mapEditor.application.main_part.manage_images.cropped_tiles;
+package mapEditor.application.main_part.manage_images.cropped_tiles.detailed_view;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -16,14 +16,17 @@ import mapEditor.application.main_part.types.Controller;
 import mapEditor.application.main_part.types.View;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  *
  * Created by razvanolar on 14.02.2016.
  */
-public class CroppedTileController implements Controller {
+public class CroppedTilesDetailedController implements Controller {
 
-  public interface ICroppedTileView extends View {
+  public interface ICroppedTileDetailedView extends View {
     TextField getNameTextField();
     TextField getPathTextField();
     Button getPathButton();
@@ -32,38 +35,31 @@ public class CroppedTileController implements Controller {
     Image getImage();
   }
 
-  private ICroppedTileView view;
+  private List<ICroppedTileDetailedView> views;
   private ManageImagesListener listener;
   private File rootFile;
 
   private String lastPathValue;
-  private boolean setLastValue;
 
   private static EventHandler<ActionEvent> fileSystemHandler;
 
-  public CroppedTileController(ICroppedTileView view, File rootFile, ManageImagesListener listener) {
-    this.view = view;
+  public CroppedTilesDetailedController(File rootFile, ManageImagesListener listener) {
     this.rootFile = rootFile;
     this.listener = listener;
   }
 
   @Override
   public void bind() {
-    addListeners();
-    setLastValue = true;
-    view.getPathTextField().setText(rootFile.getAbsolutePath());
-    view.getPathTextField().setTooltip(new Tooltip(rootFile.getAbsolutePath()));
+    views = new ArrayList<>();
   }
 
-  private void addListeners() {
+  private void addListeners(ICroppedTileDetailedView view) {
     view.getNameTextField().textProperty().addListener((observable1, oldValue1, newValue) -> {
       view.getSaveButton().setDisable(!isValidSelection(newValue, view.getPathTextField().getText()));
     });
 
     view.getPathTextField().textProperty().addListener((observable, oldValue, newValue) -> {
       view.getSaveButton().setDisable(!isValidSelection(view.getNameTextField().getText(), newValue));
-      if (setLastValue)
-        lastPathValue = newValue;
       if (view.getPathTextField().getTooltip() != null)
         view.getPathTextField().getTooltip().setText(newValue);
     });
@@ -72,7 +68,17 @@ public class CroppedTileController implements Controller {
 
     view.getSaveButton().setOnAction(event1 -> listener.saveCroppedImage(view));
 
-    view.getDropButton().setOnAction(event -> listener.dropCroppedTileView(view));
+    view.getDropButton().setOnAction(event -> {
+      views.remove(view);
+      listener.dropCroppedTileView(view);
+    });
+  }
+
+  public void addView(ICroppedTileDetailedView view) {
+    views.add(view);
+    addListeners(view);
+    view.getPathTextField().setText(rootFile.getAbsolutePath());
+    view.getPathTextField().setTooltip(new Tooltip(rootFile.getAbsolutePath()));
   }
 
   private EventHandler<ActionEvent> getFileSystemHandler() {
@@ -89,5 +95,9 @@ public class CroppedTileController implements Controller {
   private boolean isValidSelection(String name, String path) {
     return name != null && (name.matches("^[a-zA-Z0-9[-_]]+") || (name.matches("[a-zA-Z0-9[-_]]+\\..*") && FileExtensionUtil.isImageFile(name))) &&
             path != null && path.contains(rootFile.getAbsolutePath());
+  }
+
+  public List<Image> getImages() {
+    return views.stream().map(ICroppedTileDetailedView::getImage).collect(Collectors.toList());
   }
 }

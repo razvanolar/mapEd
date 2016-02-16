@@ -1,6 +1,5 @@
-package mapEditor.application.main_part.manage_images.cropped_tiles;
+package mapEditor.application.main_part.manage_images.cropped_tiles.detailed_view;
 
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
@@ -9,13 +8,12 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
 import javafx.scene.text.Text;
-import mapEditor.application.main_part.app_utils.constants.CssConstants;
 
 /**
  *
  * Created by razvanolar on 14.02.2016.
  */
-public class CroppedTileView implements CroppedTileController.ICroppedTileView {
+public class CroppedTileDetailedDetailedView implements CroppedTilesDetailedController.ICroppedTileDetailedView {
 
   private GridPane mainContainer;
   private TextField nameTextField;
@@ -26,7 +24,7 @@ public class CroppedTileView implements CroppedTileController.ICroppedTileView {
 
   private Image image;
 
-  public CroppedTileView(Image image) {
+  public CroppedTileDetailedDetailedView(Image image) {
     this.image = image;
     initGUI();
   }
@@ -40,6 +38,7 @@ public class CroppedTileView implements CroppedTileController.ICroppedTileView {
     mainContainer = new GridPane();
     GridPane imageContainer = new GridPane();
 
+    nameTextField.setPrefWidth(120);
     pathTextField.setMinWidth(200);
 
     imageContainer.setAlignment(Pos.CENTER);
@@ -47,17 +46,16 @@ public class CroppedTileView implements CroppedTileController.ICroppedTileView {
 
     mainContainer.setAlignment(Pos.CENTER);
     mainContainer.setHgap(5);
-    mainContainer.setVgap(5);
-    mainContainer.add(imageContainer, 0, 0, 1, 2);
-    mainContainer.add(new Text("Tile Name: "), 1, 0);
-    mainContainer.add(nameTextField, 2, 0, 2, 1);
-    mainContainer.add(saveButton, 4, 0);
-    mainContainer.add(new Text("Tile Path: "), 1, 1);
-    mainContainer.add(pathTextField, 2, 1);
-    mainContainer.add(pathButton, 3, 1);
-    mainContainer.add(dropButton, 4, 1);
-    mainContainer.getStyleClass().add(CssConstants.CROPPED_TILE_VIEW);
-    mainContainer.setPadding(new Insets(3));
+    mainContainer.add(imageContainer, 0, 0);
+    mainContainer.add(new Text("Name: "), 1, 0);
+    mainContainer.add(nameTextField, 2, 0);
+    mainContainer.add(new Text("Path: "), 3, 0);
+    mainContainer.add(pathTextField, 4, 0);
+    mainContainer.add(pathButton, 5, 0);
+    mainContainer.add(saveButton, 6, 0);
+    mainContainer.add(dropButton, 7, 0);
+//    mainContainer.getStyleClass().add(CssConstants.CROPPED_TILE_VIEW);
+//    mainContainer.setPadding(new Insets(3));
   }
 
   public TextField getNameTextField() {

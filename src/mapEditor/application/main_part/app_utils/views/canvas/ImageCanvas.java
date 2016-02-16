@@ -1,11 +1,11 @@
 package mapEditor.application.main_part.app_utils.views.canvas;
 
+import javafx.geometry.Rectangle2D;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
-import javafx.scene.image.PixelReader;
-import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -32,6 +32,7 @@ public class ImageCanvas extends Canvas implements StyleListener {
   private Color squareFillColor = new Color(0, 0, 0, 0);
 
   private int CELL_SIZE = AppParameters.CURRENT_PROJECT.getCellSize();
+  private SnapshotParameters snapshotParameters;
 
   public ImageCanvas(Image image) {
     this.image = image;
@@ -117,10 +118,10 @@ public class ImageCanvas extends Canvas implements StyleListener {
     g.setStroke(squareBorderColor);
     g.setFill(squareFillColor);
     g.setLineWidth(2);
-    int squareX = imageX + squareCellX * CELL_SIZE;
-    int squareY = imageY + squareCellY * CELL_SIZE;
-    g.fillRect(squareX, squareY, CELL_SIZE, CELL_SIZE);
-    g.strokeRect(squareX, squareY, CELL_SIZE, CELL_SIZE);
+    int squareX = imageX + squareCellX * CELL_SIZE - 1;
+    int squareY = imageY + squareCellY * CELL_SIZE - 1;
+    g.fillRect(squareX, squareY, CELL_SIZE + 2, CELL_SIZE + 2);
+    g.strokeRect(squareX, squareY, CELL_SIZE + 2, CELL_SIZE + 2);
   }
 
   private void paintNoImageText(GraphicsContext g, int canvasWidth, int canvasHeight) {
@@ -135,12 +136,19 @@ public class ImageCanvas extends Canvas implements StyleListener {
   public void cropSelectedTile(Callback<Image, Void> callback) {
     if (image == null)
       return;
-    WritableImage writableImage = new WritableImage(image.getPixelReader(),
-            squareCellX * CELL_SIZE,
-            squareCellY * CELL_SIZE,
+
+    if (snapshotParameters == null)
+      snapshotParameters = new SnapshotParameters();
+
+    snapshotParameters.setViewport(new Rectangle2D(imageX + squareCellX * CELL_SIZE,
+            imageY + squareCellY * CELL_SIZE,
             CELL_SIZE,
-            CELL_SIZE);
-    callback.call(writableImage);
+            CELL_SIZE));
+
+    snapshot(param -> {
+      callback.call(param.getImage());
+      return null;
+    }, snapshotParameters, null);
   }
 
   /**

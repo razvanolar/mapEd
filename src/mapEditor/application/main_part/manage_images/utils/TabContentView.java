@@ -3,17 +3,19 @@ package mapEditor.application.main_part.manage_images.utils;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
+import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.control.Button;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.SplitPane;
-import javafx.scene.control.ToolBar;
+import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import mapEditor.application.main_part.app_utils.constants.CssConstants;
+import mapEditor.application.main_part.app_utils.views.others.HorizontalSeparatorBar;
 import mapEditor.application.main_part.manage_images.cropped_tiles.CroppedTilesPathView;
 import mapEditor.application.main_part.types.View;
 
@@ -32,6 +34,7 @@ public class TabContentView implements View {
   private Button downButton;
   private Button scrollDownButton;
   private Button clearButton;
+  private ToggleButton simpleViewButton;
 
   private Canvas canvas;
   private CroppedTilesPathView pathView;
@@ -53,12 +56,18 @@ public class TabContentView implements View {
     downButton = new Button("Down");
     scrollDownButton = new Button("Scroll");
     clearButton = new Button("Clear");
-    verticalToolBar = new ToolBar(new Group(upButton), new Group(downButton), new Group(scrollDownButton), new Group(clearButton));
+    simpleViewButton = new ToggleButton("Simple");
+    verticalToolBar = new ToolBar(new Group(upButton),
+            new Group(downButton),
+            new Group(scrollDownButton),
+            new Group(clearButton),
+            new Group(simpleViewButton));
 
     upButton.setRotate(-90);
     downButton.setRotate(-90);
     scrollDownButton.setRotate(-90);
     clearButton.setRotate(-90);
+    simpleViewButton.setRotate(-90);
 
     verticalToolBar.setOrientation(Orientation.VERTICAL);
     croppedTilesContainer.setLeft(verticalToolBar);
@@ -75,21 +84,36 @@ public class TabContentView implements View {
     scrollPane.setMinHeight(0);
     tilesPane.setPadding(new Insets(5));
     tilesPane.prefWidthProperty().bind(scrollPane.widthProperty());
+
+    //TODO: set the button based on a parameter from user preferences
+    simpleViewButton.setSelected(false);
   }
 
-  public void addTileForm(Region node) {
+  public void addDetailedTileForm(Region node) {
     ObservableList<Node> children = tilesPane.getChildren();
     if (children.isEmpty())
-      children.add(pathView.asNode());
-    children.add(node);
+      children.addAll(pathView.asNode(), new HorizontalSeparatorBar(2));
+    children.addAll(node, new HorizontalSeparatorBar(2));
   }
 
-  public int removeTileForm(Region node) {
+  public void setSimpleTileView(Region node) {
+    tilesPane.getChildren().clear();
+    tilesPane.getChildren().addAll(pathView.asNode(), node);
+  }
+
+  public int removeDetailedTileForm(Region node) {
     ObservableList<Node> children = tilesPane.getChildren();
+    int index = children.indexOf(node);
+    if (index != -1)
+      children.remove(index + 1);
     children.remove(node);
-    if (children.size() == 1)
+    if (children.size() == 2)
       children.clear();
     return children.size();
+  }
+
+  public void clearTilesPane() {
+    tilesPane.getChildren().clear();
   }
 
   public void setToolBar(ToolBar toolBar) {
@@ -102,6 +126,14 @@ public class TabContentView implements View {
 
   public Canvas getCanvas() {
     return canvas;
+  }
+
+  public ToggleButton getSimpleViewButton() {
+    return simpleViewButton;
+  }
+
+  public boolean isSimpleView() {
+    return simpleViewButton.isSelected();
   }
 
   @Override
