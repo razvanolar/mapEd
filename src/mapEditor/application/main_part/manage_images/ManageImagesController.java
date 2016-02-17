@@ -250,6 +250,7 @@ public class ManageImagesController implements Controller, ManageImagesListener 
           tabSimpleControllerMap.remove(currentTabContent);
           CroppedTileSimpleController.ICroppedTileSimpleView simpleView = new CroppedTileSimpleView();
           CroppedTileSimpleController simpleController = new CroppedTileSimpleController(simpleView);
+          simpleController.bind();
           simpleController.addImages(images);
           tabSimpleControllerMap.put(currentTabContent, simpleController);
           tabDetailedControllerMap.remove(currentTabContent);

@@ -73,16 +73,18 @@ public class OkCancelDialog {
 
   public void show() {
     addListeners();
-    scene = new Scene(mainContainer);
-    String themePath = CssConstants.getDefaultTheme();
-    if (themePath != null)
-      scene.getStylesheets().add(themePath);
-    stage.setScene(scene);
-    stage.setTitle(title);
-    stage.setAlwaysOnTop(true);
-    stage.sizeToScene();
-    stage.initModality(modality);
-    stage.setResizable(isResizable);
+    if (scene == null) {
+      scene = new Scene(mainContainer);
+      String themePath = CssConstants.getDefaultTheme();
+      if (themePath != null)
+        scene.getStylesheets().add(themePath);
+      stage.setScene(scene);
+      stage.setTitle(title);
+      stage.setAlwaysOnTop(true);
+      stage.sizeToScene();
+      stage.initModality(modality);
+      stage.setResizable(isResizable);
+    }
     stage.show();
   }
 

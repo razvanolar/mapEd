@@ -30,13 +30,8 @@ public class CroppedTileSimpleView implements CroppedTileSimpleController.ICropp
     mainContainer.setAlignment(Pos.CENTER);
   }
 
-  public void addImage(ImageModel image) {
-    mainContainer.getChildren().add(new ImageView(image.getImage()));
-    images.add(image);
-  }
-
-  public List<ImageModel> getImages() {
-    return images;
+  public void addImage(ImageView image) {
+    mainContainer.getChildren().add(image);
   }
 
   @Override

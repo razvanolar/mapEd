@@ -20,7 +20,13 @@ import java.io.File;
  */
 public class SaveImageController implements Controller {
 
+  public enum ISaveImageViewState {
+    NAME, PATH, BOTH
+  }
+
   public interface ISaveImageView extends View {
+    void setState(ISaveImageViewState state);
+    ISaveImageViewState getState();
     TextField getNameTextField();
     TextField getPathTextField();
     Button getPathButton();
@@ -74,7 +80,19 @@ public class SaveImageController implements Controller {
   }
 
   private boolean isValidSelection(String name, String path) {
-    return name != null && name.matches("^[a-zA-Z0-9[-_]]+" + imageExtension.forRegex()) &&
-            path != null && path.contains(rootFile.getAbsolutePath());
+    ISaveImageViewState state = view.getState();
+    boolean isNameValid = name != null && name.matches("^[a-zA-Z0-9[-_]]+" + imageExtension.forRegex());
+    boolean isPathValid = path != null && path.contains(rootFile.getAbsolutePath());
+    return state == ISaveImageViewState.NAME && isNameValid ||
+            state == ISaveImageViewState.PATH && isPathValid ||
+            state == ISaveImageViewState.BOTH && isNameValid && isPathValid;
+  }
+
+  public void validateInput() {
+    completeSelectionNode.setDisable(!isValidSelection(view.getNameTextField().getText(), view.getPathTextField().getText()));
+  }
+
+  public ISaveImageView getView() {
+    return view;
   }
 }
