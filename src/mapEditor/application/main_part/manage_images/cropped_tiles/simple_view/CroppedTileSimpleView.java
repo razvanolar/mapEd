@@ -6,6 +6,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Region;
+import mapEditor.application.main_part.app_utils.models.ImageModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +18,7 @@ import java.util.List;
 public class CroppedTileSimpleView implements CroppedTileSimpleController.ICroppedTileSimpleView {
 
   private FlowPane mainContainer;
-  private List<Image> images;
+  private List<ImageModel> images;
 
   public CroppedTileSimpleView() {
     initGUI();
@@ -29,12 +30,12 @@ public class CroppedTileSimpleView implements CroppedTileSimpleController.ICropp
     mainContainer.setAlignment(Pos.CENTER);
   }
 
-  public void addImage(Image image) {
-    mainContainer.getChildren().add(new ImageView(image));
+  public void addImage(ImageModel image) {
+    mainContainer.getChildren().add(new ImageView(image.getImage()));
     images.add(image);
   }
 
-  public List<Image> getImages() {
+  public List<ImageModel> getImages() {
     return images;
   }
 

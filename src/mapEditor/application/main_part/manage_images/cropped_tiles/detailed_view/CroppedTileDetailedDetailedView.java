@@ -8,6 +8,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
 import javafx.scene.text.Text;
+import mapEditor.application.main_part.app_utils.models.ImageModel;
 
 /**
  *
@@ -22,9 +23,9 @@ public class CroppedTileDetailedDetailedView implements CroppedTilesDetailedCont
   private Button saveButton;
   private Button dropButton;
 
-  private Image image;
+  private ImageModel image;
 
-  public CroppedTileDetailedDetailedView(Image image) {
+  public CroppedTileDetailedDetailedView(ImageModel image) {
     this.image = image;
     initGUI();
   }
@@ -42,7 +43,7 @@ public class CroppedTileDetailedDetailedView implements CroppedTilesDetailedCont
     pathTextField.setMinWidth(200);
 
     imageContainer.setAlignment(Pos.CENTER);
-    imageContainer.add(new ImageView(image), 0, 0);
+    imageContainer.add(new ImageView(image.getImage()), 0, 0);
 
     mainContainer.setAlignment(Pos.CENTER);
     mainContainer.setHgap(5);
@@ -78,7 +79,7 @@ public class CroppedTileDetailedDetailedView implements CroppedTilesDetailedCont
     return dropButton;
   }
 
-  public Image getImage() {
+  public ImageModel getImage() {
     return image;
   }
 

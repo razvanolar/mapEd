@@ -4,7 +4,7 @@ import javafx.scene.image.Image;
 import javafx.stage.FileChooser;
 import javafx.stage.Window;
 import javafx.util.Callback;
-import mapEditor.application.main_part.app_utils.models.ImageLoaderModel;
+import mapEditor.application.main_part.app_utils.models.ImageModel;
 
 import java.io.File;
 
@@ -27,12 +27,12 @@ public class ImagesLoader {
     }
   }
 
-  public void loadImageModel(Callback<ImageLoaderModel, Void> callback, Window owner) {
+  public void loadImageModel(Callback<ImageModel, Void> callback, Window owner) {
     FileChooser fileChooser = new FileChooser();
     fileChooser.setInitialDirectory(new File(DEFAULT_PATH));
     File file = fileChooser.showOpenDialog(owner);
     if (file != null && (file.getName().endsWith(".png") || file.getName().endsWith(".jpg"))) {
-      callback.call(new ImageLoaderModel(ImageProvider.getImage(file), file.getAbsolutePath(), file.getName()));
+      callback.call(new ImageModel(ImageProvider.getImage(file), file.getAbsolutePath(), file.getName()));
     }
   }
 

@@ -6,13 +6,13 @@ import javafx.scene.image.Image;
  *
  * Created by razvanolar on 30.01.2016.
  */
-public class ImageLoaderModel {
+public class ImageModel {
 
   private Image image;
   private String imagePath;
   private String imageName;
 
-  public ImageLoaderModel(Image image, String imagePath, String imageName) {
+  public ImageModel(Image image, String imagePath, String imageName) {
     this.image = image;
     this.imagePath = imagePath;
     this.imageName = imageName;

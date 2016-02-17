@@ -7,13 +7,12 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
 import javafx.stage.Window;
 import mapEditor.application.main_part.app_utils.constants.CssConstants;
 import mapEditor.application.main_part.app_utils.inputs.ImagesLoader;
-import mapEditor.application.main_part.app_utils.models.ImageLoaderModel;
+import mapEditor.application.main_part.app_utils.models.ImageModel;
 import mapEditor.application.main_part.app_utils.views.canvas.FitImageCanvas;
 
 /**
@@ -29,7 +28,7 @@ public class TabImageLoadView {
   private ScrollPane canvasContainer;
   private FitImageCanvas fitImageCanvas;
 
-  private ImageLoaderModel imageModel;
+  private ImageModel imageModel;
   private Window owner;
 
   public TabImageLoadView(Window owner) {
@@ -105,7 +104,7 @@ public class TabImageLoadView {
     return tabTitleTextField.getText();
   }
 
-  public ImageLoaderModel getImageModel() {
+  public ImageModel getImageModel() {
     return imageModel;
   }
 

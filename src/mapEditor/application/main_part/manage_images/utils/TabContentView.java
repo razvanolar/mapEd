@@ -86,7 +86,7 @@ public class TabContentView implements View {
     tilesPane.prefWidthProperty().bind(scrollPane.widthProperty());
 
     //TODO: set the button based on a parameter from user preferences
-    simpleViewButton.setSelected(false);
+    simpleViewButton.setSelected(true);
   }
 
   public void addDetailedTileForm(Region node) {

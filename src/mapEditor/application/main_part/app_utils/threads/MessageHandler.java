@@ -1,9 +1,8 @@
 package mapEditor.application.main_part.app_utils.threads;
 
 import javafx.application.Platform;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import mapEditor.application.main_part.app_utils.models.ImageLoaderModel;
+import mapEditor.application.main_part.app_utils.models.ImageModel;
 import mapEditor.application.main_part.app_utils.models.MessageType;
 import mapEditor.application.main_part.app_utils.views.dialogs.AlertDialog;
 import mapEditor.application.repo.RepoController;
@@ -33,7 +32,7 @@ public class MessageHandler {
         String toPath = SystemParameters.MESSAGE_KEY.getPath();
         String imagePath = SystemParameters.MESSAGE_KEY.getImagePath();
         Button button = SystemParameters.MESSAGE_KEY.getButton();
-        ImageLoaderModel image = SystemParameters.MESSAGE_KEY.getImageLoaderModel();
+        ImageModel image = SystemParameters.MESSAGE_KEY.getImageModel();
         String imageName = repoController.copyToPath(imagePath, toPath, name);
         if (imageName == null)
           showWarningDialog(null, "Unable to copy the image in the tile_sets directory.");

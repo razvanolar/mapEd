@@ -13,7 +13,7 @@ public class MessageKey {
   private String name;
   private String imagePath;
   private Button button;
-  private ImageLoaderModel imageLoaderModel;
+  private ImageModel imageModel;
 
   public MessageType getMessageType() {
     return messageType;
@@ -55,11 +55,11 @@ public class MessageKey {
     this.button = button;
   }
 
-  public ImageLoaderModel getImageLoaderModel() {
-    return imageLoaderModel;
+  public ImageModel getImageModel() {
+    return imageModel;
   }
 
-  public void setImageLoaderModel(ImageLoaderModel imageLoaderModel) {
-    this.imageLoaderModel = imageLoaderModel;
+  public void setImageModel(ImageModel imageModel) {
+    this.imageModel = imageModel;
   }
 }

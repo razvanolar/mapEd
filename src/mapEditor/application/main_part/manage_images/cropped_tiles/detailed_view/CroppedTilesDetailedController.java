@@ -9,6 +9,7 @@ import javafx.scene.image.Image;
 import javafx.stage.Modality;
 import javafx.stage.StageStyle;
 import mapEditor.application.main_part.app_utils.inputs.FileExtensionUtil;
+import mapEditor.application.main_part.app_utils.models.ImageModel;
 import mapEditor.application.main_part.app_utils.views.dialogs.OkCancelDialog;
 import mapEditor.application.main_part.app_utils.views.others.SystemFilesView;
 import mapEditor.application.main_part.manage_images.utils.ManageImagesListener;
@@ -32,7 +33,7 @@ public class CroppedTilesDetailedController implements Controller {
     Button getPathButton();
     Button getSaveButton();
     Button getDropButton();
-    Image getImage();
+    ImageModel getImage();
   }
 
   private List<ICroppedTileDetailedView> views;
@@ -97,7 +98,7 @@ public class CroppedTilesDetailedController implements Controller {
             path != null && path.contains(rootFile.getAbsolutePath());
   }
 
-  public List<Image> getImages() {
+  public List<ImageModel> getImages() {
     return views.stream().map(ICroppedTileDetailedView::getImage).collect(Collectors.toList());
   }
 }

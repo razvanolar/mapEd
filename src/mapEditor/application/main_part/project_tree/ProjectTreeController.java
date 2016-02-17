@@ -9,7 +9,7 @@ import mapEditor.MapEditorController;
 import mapEditor.application.main_part.app_utils.AppParameters;
 import mapEditor.application.main_part.app_utils.inputs.FileExtensionUtil;
 import mapEditor.application.main_part.app_utils.inputs.ImageProvider;
-import mapEditor.application.main_part.app_utils.models.ImageLoaderModel;
+import mapEditor.application.main_part.app_utils.models.ImageModel;
 import mapEditor.application.main_part.app_utils.models.LazyTreeItem;
 import mapEditor.application.main_part.app_utils.models.TreeItemType;
 import mapEditor.application.main_part.manage_images.ManageImagesController;
@@ -158,7 +158,7 @@ public class ProjectTreeController implements Controller, ProjectTreeContextMenu
       MapEditorController.getInstance().changeToImageEditorView();
     File file = item.getValue();
     Image image = ImageProvider.getImage(file);
-    ImageLoaderModel imageModel = new ImageLoaderModel(image, file.getAbsolutePath(), file.getName());
+    ImageModel imageModel = new ImageModel(image, file.getAbsolutePath(), file.getName());
     if (manageImagesController != null)
       manageImagesController.addNewTab(file.getName(), imageModel);
   }
