@@ -9,7 +9,7 @@ import javafx.scene.input.MouseButton;
 import mapEditor.MapEditorController;
 import mapEditor.application.main_part.app_utils.AppParameters;
 import mapEditor.application.main_part.app_utils.inputs.StringValidator;
-import mapEditor.application.main_part.app_utils.views.dialogs.AlertDialog;
+import mapEditor.application.main_part.app_utils.views.dialogs.Dialog;
 import mapEditor.application.main_part.app_utils.views.dialogs.OkCancelDialog;
 import mapEditor.application.main_part.app_utils.views.others.SystemFilesView;
 import mapEditor.application.main_part.types.Controller;
@@ -100,17 +100,17 @@ public class CreateProjectController implements Controller {
     CreateProjectStatus status = RepoController.getInstance().checkIfProjectFieldsAreValid(confFile, path);
 
     if (status == CreateProjectStatus.NOT_DIRECTORY) {
-      AlertDialog.showDialog(null, "You can't use the selected path because it's not a directory.");
+      Dialog.showAlertDialog(null, "You can't use the selected path because it's not a directory.");
       return;
     }
 
     if (status == CreateProjectStatus.ANOTHER_CREATED) {
-      AlertDialog.showDialog(null, "There is another .med project created. Please choose another file");
+      Dialog.showAlertDialog(null, "There is another .med project created. Please choose another file");
       return;
     }
 
     if (status == CreateProjectStatus.NAME_EXISTS) {
-      AlertDialog.showDialog(null, "There is another file with the same name. Please rename the project.");
+      Dialog.showAlertDialog(null, "There is another file with the same name. Please rename the project.");
       return;
     }
 
@@ -130,7 +130,7 @@ public class CreateProjectController implements Controller {
   private void createProjectFiles(String name, String path) {
     ProjectModel project = RepoController.getInstance().createProject(name, path);
     if (project == null) {
-      AlertDialog.showDialog(null, "Failed to create project files.");
+      Dialog.showAlertDialog(null, "Failed to create project files.");
       return;
     }
     MapEditorController.getInstance().loadProject(project, true);

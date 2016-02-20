@@ -3,15 +3,11 @@ package mapEditor.application.main_part.manage_images.utils;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
-import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import mapEditor.application.main_part.app_utils.constants.CssConstants;
@@ -29,10 +25,8 @@ public class TabContentView implements View {
   private ScrollPane canvasContainer;
   private BorderPane borderPane;
   private VBox tilesPane;
-  private ToolBar verticalToolBar;
   private Button upButton;
   private Button downButton;
-  private Button scrollDownButton;
   private Button clearButton;
   private ToggleButton simpleViewButton;
 
@@ -54,18 +48,15 @@ public class TabContentView implements View {
     splitPane = new SplitPane(borderPane, croppedTilesContainer);
     upButton = new Button("Up");
     downButton = new Button("Down");
-    scrollDownButton = new Button("Scroll");
     clearButton = new Button("Clear");
     simpleViewButton = new ToggleButton("Simple");
-    verticalToolBar = new ToolBar(new Group(upButton),
+    ToolBar verticalToolBar = new ToolBar(new Group(upButton),
             new Group(downButton),
-            new Group(scrollDownButton),
             new Group(clearButton),
             new Group(simpleViewButton));
 
     upButton.setRotate(-90);
     downButton.setRotate(-90);
-    scrollDownButton.setRotate(-90);
     clearButton.setRotate(-90);
     simpleViewButton.setRotate(-90);
 

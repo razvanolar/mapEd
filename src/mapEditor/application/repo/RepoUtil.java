@@ -36,6 +36,15 @@ public class RepoUtil {
     return name + "(" + k + ")" + extension;
   }
 
+  public String checkNameOrGetAnAlternativeOne(String directory, String fileName) {
+    if (!directory.endsWith("\\"))
+      directory += "\\";
+    File file = new File(directory + fileName);
+    if (file.exists())
+      return getAlternativeNameForExistingFile(directory, fileName);
+    return fileName;
+  }
+
   public String getFileExtension(String fileName) {
     if (fileName == null)
       return null;

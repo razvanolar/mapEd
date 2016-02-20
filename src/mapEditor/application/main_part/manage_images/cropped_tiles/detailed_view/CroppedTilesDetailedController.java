@@ -5,11 +5,12 @@ import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
-import javafx.scene.image.Image;
 import javafx.stage.Modality;
 import javafx.stage.StageStyle;
 import mapEditor.application.main_part.app_utils.inputs.FileExtensionUtil;
+import mapEditor.application.main_part.app_utils.inputs.StringValidator;
 import mapEditor.application.main_part.app_utils.models.ImageModel;
+import mapEditor.application.main_part.app_utils.models.KnownFileExtensions;
 import mapEditor.application.main_part.app_utils.views.dialogs.OkCancelDialog;
 import mapEditor.application.main_part.app_utils.views.others.SystemFilesView;
 import mapEditor.application.main_part.manage_images.utils.ManageImagesListener;
@@ -38,9 +39,8 @@ public class CroppedTilesDetailedController implements Controller {
 
   private List<ICroppedTileDetailedView> views;
   private ManageImagesListener listener;
+  private KnownFileExtensions extension;
   private File rootFile;
-
-  private String lastPathValue;
 
   private static EventHandler<ActionEvent> fileSystemHandler;
 
@@ -52,6 +52,7 @@ public class CroppedTilesDetailedController implements Controller {
   @Override
   public void bind() {
     views = new ArrayList<>();
+    extension = KnownFileExtensions.PNG;
   }
 
   private void addListeners(ICroppedTileDetailedView view) {
@@ -78,8 +79,17 @@ public class CroppedTilesDetailedController implements Controller {
   public void addView(ICroppedTileDetailedView view) {
     views.add(view);
     addListeners(view);
-    view.getPathTextField().setText(rootFile.getAbsolutePath());
-    view.getPathTextField().setTooltip(new Tooltip(rootFile.getAbsolutePath()));
+
+    ImageModel imageModel = view.getImage();
+    String name = imageModel.getImageName();
+    String path = imageModel.getImagePath();
+    name = StringValidator.isNullOrEmpty(name) ? "*.png" : name;
+    path =StringValidator.isNullOrEmpty(path) ? rootFile.getAbsolutePath() : path;
+
+    view.getNameTextField().setText(name);
+    view.getPathTextField().setText(path);
+    view.getPathTextField().setTooltip(new Tooltip(path));
+
   }
 
   private EventHandler<ActionEvent> getFileSystemHandler() {
@@ -94,11 +104,27 @@ public class CroppedTilesDetailedController implements Controller {
   }
 
   private boolean isValidSelection(String name, String path) {
-    return name != null && (name.matches("^[a-zA-Z0-9[-_]]+") || (name.matches("[a-zA-Z0-9[-_]]+\\..*") && FileExtensionUtil.isImageFile(name))) &&
-            path != null && path.contains(rootFile.getAbsolutePath());
+    return isValidName(name) && isValidPath(path);
+  }
+
+  private boolean isValidName(String name) {
+    return name != null && (name.matches("^[a-zA-Z0-9[-_]]+") || (name.matches("[a-zA-Z0-9[-_]]+\\..*") && FileExtensionUtil.isPngFile(name)));
+  }
+
+  private boolean isValidPath(String path) {
+    return path != null && path.contains(rootFile.getAbsolutePath());
   }
 
   public List<ImageModel> getImages() {
-    return views.stream().map(ICroppedTileDetailedView::getImage).collect(Collectors.toList());
+    List<ImageModel> result = new ArrayList<>();
+    for (ICroppedTileDetailedView view : views) {
+      ImageModel image = view.getImage();
+      String name = view.getNameTextField().getText();
+      String path = view.getPathTextField().getText();
+      image.setImageName(isValidName(name) ? name : "");
+      image.setImagePath(isValidPath(path) ? path : "");
+      result.add(image);
+    }
+    return result;
   }
 }

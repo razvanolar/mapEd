@@ -309,6 +309,10 @@ public class RepoController {
     }
    }
 
+  public boolean saveImages() {
+    return false;
+  }
+
   private RepoUtil getRepoUtil() {
     if (repoUtil == null)
       repoUtil = new RepoUtil();

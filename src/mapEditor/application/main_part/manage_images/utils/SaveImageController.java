@@ -6,6 +6,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.stage.Modality;
 import javafx.stage.StageStyle;
+import mapEditor.application.main_part.app_utils.inputs.StringValidator;
 import mapEditor.application.main_part.app_utils.models.KnownFileExtensions;
 import mapEditor.application.main_part.app_utils.views.dialogs.OkCancelDialog;
 import mapEditor.application.main_part.app_utils.views.others.SystemFilesView;
@@ -94,5 +95,27 @@ public class SaveImageController implements Controller {
 
   public ISaveImageView getView() {
     return view;
+  }
+
+  public String getName() {
+    return view.getNameTextField().getText();
+  }
+
+  public String getPath() {
+    return view.getPathTextField().getText();
+  }
+
+  public void setName(String name) {
+    if (!StringValidator.isNullOrEmpty(name))
+      view.getNameTextField().setText(name);
+    else
+      view.getNameTextField().setText("*" + imageExtension.getExtension());
+  }
+
+  public void setPath(String path) {
+    if (!StringValidator.isNullOrEmpty(path))
+      view.getPathTextField().setText(path);
+    else
+      view.getPathTextField().setText(rootFile.getAbsolutePath());
   }
 }

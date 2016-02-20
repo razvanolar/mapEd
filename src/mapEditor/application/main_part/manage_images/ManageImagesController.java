@@ -3,21 +3,23 @@ package mapEditor.application.main_part.manage_images;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.ListChangeListener;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Modality;
 import javafx.stage.StageStyle;
+import mapEditor.MapEditorController;
 import mapEditor.application.main_part.app_utils.AppParameters;
 import mapEditor.application.main_part.app_utils.inputs.FileExtensionUtil;
 import mapEditor.application.main_part.app_utils.inputs.ImagesLoader;
 import mapEditor.application.main_part.app_utils.inputs.StringValidator;
 import mapEditor.application.main_part.app_utils.models.ImageModel;
+import mapEditor.application.main_part.app_utils.models.KnownFileExtensions;
 import mapEditor.application.main_part.app_utils.models.MessageType;
 import mapEditor.application.main_part.app_utils.views.canvas.ImageCanvas;
 import mapEditor.application.main_part.app_utils.views.TabImageLoadView;
-import mapEditor.application.main_part.app_utils.views.dialogs.AlertDialog;
+import mapEditor.application.main_part.app_utils.views.dialogs.Dialog;
 import mapEditor.application.main_part.app_utils.views.dialogs.OkCancelDialog;
+import mapEditor.application.main_part.app_utils.views.others.SystemFilesView;
 import mapEditor.application.main_part.manage_images.configurations.ManageConfigurationController;
 import mapEditor.application.main_part.manage_images.cropped_tiles.detailed_view.CroppedTilesDetailedController;
 import mapEditor.application.main_part.manage_images.cropped_tiles.detailed_view.CroppedTileDetailedDetailedView;
@@ -59,6 +61,7 @@ public class ManageImagesController implements Controller, ManageImagesListener 
     Button getAddNewTabButton();
     Button getRemoveTabButton();
     Button getRenameTabButton();
+    Button getSaveCroppedTilesButton();
     Button getSettingsButton();
     Button getCropSelectionButton();
     Button getSaveTileSetButton();
@@ -90,6 +93,8 @@ public class ManageImagesController implements Controller, ManageImagesListener 
 
   private void addListeners() {
     view.getAddNewTabButton().setOnAction(event -> onAddButtonSelection());
+
+    view.getSaveCroppedTilesButton().setOnAction(event -> onSaveCroppedTilesSelection());
 
     view.getTabPane().getSelectionModel().selectedItemProperty().addListener((observable, oldTab, newTab) -> {
       if (newTab != null) {
@@ -213,6 +218,64 @@ public class ManageImagesController implements Controller, ManageImagesListener 
     dialog.show();
   }
 
+  private void onSaveCroppedTilesSelection() {
+    if (currentTabContent == null)
+      return;
+    if (currentTabContent.isSimpleView()) {
+      CroppedTileSimpleController controller = tabSimpleControllerMap.get(currentTabContent);
+      if (controller == null)
+        return;
+      saveCroppedTiles(controller.getImages());
+    } else {
+      CroppedTilesDetailedController controller = tabDetailedControllerMap.get(currentTabContent);
+      if (controller == null)
+        return;
+      saveCroppedTiles(controller.getImages());
+    }
+  }
+
+  private void saveCroppedTiles(List<ImageModel> images) {
+    if (images == null || images.isEmpty())
+      return;
+    boolean areImagesWithNoName = false;
+    boolean areImagesWithNoPath = false;
+    /*
+      check and inform the user if there are images without a name or path set
+     */
+    for (ImageModel image : images) {
+      if (StringValidator.isNullOrEmpty(image.getImageName()))
+        areImagesWithNoName = true;
+      if (StringValidator.isNullOrEmpty(image.getImagePath()))
+        areImagesWithNoPath = true;
+    }
+
+    if (areImagesWithNoName) {
+      boolean result = Dialog.showConfirmDialog(null, "There are images without name set. Do you want to add automatically a name for them ?");
+      if (!result)
+        return;
+    }
+
+    if (areImagesWithNoPath) {
+      boolean result = Dialog.showConfirmDialog(null, "There are images without path set. Do you want to use the default path for them ?");
+      if (!result)
+        return;
+    }
+
+    /*
+      if there are such images and the user wants to continue, automatically set the values
+     */
+    if (areImagesWithNoName || areImagesWithNoPath) {
+      for (ImageModel image : images) {
+        if (StringValidator.isNullOrEmpty(image.getImageName()))
+          image.setImageName(AppParameters.CURRENT_PROJECT.nextHexValue() + KnownFileExtensions.PNG);
+        if (StringValidator.isNullOrEmpty(image.getImagePath()))
+          image.setImagePath(AppParameters.CURRENT_PROJECT.getTilesFile().getAbsolutePath());
+      }
+    }
+
+    MapEditorController.getInstance().maskView();
+  }
+
   private void addCanvasListeners(ImageCanvas canvas) {
     canvas.addEventHandler(MouseEvent.MOUSE_PRESSED, event -> {
       if (event.getButton().equals(MouseButton.PRIMARY) && canvas.getImage() == null) {
@@ -297,6 +360,29 @@ public class ManageImagesController implements Controller, ManageImagesListener 
   private CroppedTilesPathView createPathView() {
     CroppedTilesPathView pathView = new CroppedTilesPathView();
 
+    pathView.getPathTextField().textProperty().addListener((observable, oldValue, newValue) -> {
+      if (newValue == null || !newValue.contains(AppParameters.CURRENT_PROJECT.getTilesFile().getAbsolutePath())) {
+        pathView.getUseForAllCheckBox().setSelected(false);
+        pathView.getUseForAllCheckBox().setDisable(true);
+      } else
+        pathView.getUseForAllCheckBox().setDisable(false);
+    });
+
+    pathView.getPathButton().setOnAction(event -> {
+      OkCancelDialog dialog = new OkCancelDialog("Select Path", StageStyle.UTILITY, Modality.APPLICATION_MODAL, true);
+      SystemFilesView filesView = new SystemFilesView(dialog.getOkButton(), AppParameters.CURRENT_PROJECT.getTilesFile(), true, null);
+      dialog.setContent(filesView.asNode());
+
+      dialog.getOkButton().setOnAction(event1 -> {
+        pathView.getPathTextField().setText(filesView.getSelectedPath());
+        dialog.close();
+      });
+
+      dialog.show();
+    });
+
+    pathView.getPathTextField().setText(AppParameters.CURRENT_PROJECT.getTilesFile().getAbsolutePath());
+
     return pathView;
   }
 
@@ -325,7 +411,7 @@ public class ManageImagesController implements Controller, ManageImagesListener 
     if (!checkIfTabNameExists(title))
       addImageTab(title, image);
     else
-      AlertDialog.showDialog(null, "A tab named '" + title + "' already exists.");
+      Dialog.showAlertDialog(null, "A tab named '" + title + "' already exists.");
   }
 
   public View getView() {

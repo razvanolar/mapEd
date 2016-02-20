@@ -38,6 +38,7 @@ public class CroppedTileSimpleController implements Controller {
     ImageView imageView = new ImageView(image.getImage());
     view.addImage(imageView);
     images.add(image);
+    imageView.setUserData(image);
     addImageViewListeners(imageView);
   }
 
@@ -46,6 +47,7 @@ public class CroppedTileSimpleController implements Controller {
       ImageView imageView = new ImageView(image.getImage());
       view.addImage(imageView);
       this.images.add(image);
+      imageView.setUserData(image);
       addImageViewListeners(imageView);
     }
   }
@@ -55,6 +57,10 @@ public class CroppedTileSimpleController implements Controller {
       if (event.getButton() == MouseButton.PRIMARY || !(event.getSource() instanceof ImageView))
         return;
       ImageView image = (ImageView) event.getSource();
+      if (image.getUserData() == null || !(image.getUserData() instanceof ImageModel))
+        return;
+      ImageModel imageModel = (ImageModel) imageView.getUserData();
+      getContextMenuController().setCurrentImageModel(imageModel);
       getContextMenuController().showContextMenu(image);
     });
   }

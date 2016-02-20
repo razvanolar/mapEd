@@ -24,4 +24,8 @@ public class FileExtensionUtil {
     KnownFileExtensions ext = getFileExtension(name);
     return extensions.contains(ext);
   }
+
+  public static boolean isPngFile(String name) {
+    return !(name == null || getFileExtension(name) != KnownFileExtensions.PNG);
+  }
 }

@@ -23,6 +23,7 @@ public class ManageImagesView implements ManageImagesController.IManageImagesVie
   private Button addNewTabButton;
   private Button removeTabButton;
   private Button renameTabButton;
+  private Button saveCroppedTilesButton;
   private Button settingsButton;
   private Button cropSelectionButton;
   private Button saveTileSetButton;
@@ -39,6 +40,7 @@ public class ManageImagesView implements ManageImagesController.IManageImagesVie
     addNewTabButton = new Button("Add Tab");
     removeTabButton = new Button("Remove Tab");
     renameTabButton = new Button("Rename Tab");
+    saveCroppedTilesButton = new Button("Save Tiles");
     settingsButton = new Button("Settings");
     cropSelectionButton = new Button("Crop Selection");
     saveTileSetButton = new Button("Save Tile Set");
@@ -51,9 +53,9 @@ public class ManageImagesView implements ManageImagesController.IManageImagesVie
     BorderPane rightPane = new BorderPane(rightScrollPane);
     mainSplitPane = new SplitPane(tabPane, rightPane);
 
-    tabsToolbar.getItems().addAll(addNewTabButton, removeTabButton, renameTabButton, settingsButton, new FillToolItem(),
-            cropSelectionButton, saveTileSetButton);
-    configurationToolbar.getItems().addAll(resetConfigurationButton);
+    tabsToolbar.getItems().addAll(addNewTabButton, removeTabButton, renameTabButton, saveCroppedTilesButton,
+            new FillToolItem(), cropSelectionButton, saveTileSetButton);
+    configurationToolbar.getItems().addAll(resetConfigurationButton, settingsButton);
 
     rightPane.setBottom(configurationToolbar);
 
@@ -105,6 +107,10 @@ public class ManageImagesView implements ManageImagesController.IManageImagesVie
 
   public Button getRenameTabButton() {
     return renameTabButton;
+  }
+
+  public Button getSaveCroppedTilesButton() {
+    return saveCroppedTilesButton;
   }
 
   public Button getCropSelectionButton() {
