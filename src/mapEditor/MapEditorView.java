@@ -62,6 +62,8 @@ public class MapEditorView extends Application {
 
   @Override
   public void stop() throws Exception {
+    RepoController.getInstance().saveProject(AppParameters.CURRENT_PROJECT);
+
     for (Thread thread : SystemParameters.watchers) {
       thread.interrupt();
       System.out.println("> Thread " + thread.getName() + " stopped.");

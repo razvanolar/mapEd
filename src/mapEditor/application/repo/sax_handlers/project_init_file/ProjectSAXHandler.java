@@ -26,6 +26,9 @@ public class ProjectSAXHandler extends DefaultHandler {
         project.setCellSize(Integer.parseInt(attributes.getValue("cellSize")));
         project.setMapType(MapType.valueOf(attributes.getValue("type")));
         break;
+      case "hex_counter":
+        project.setHexValue(attributes.getValue("value"));
+        break;
     }
   }
 

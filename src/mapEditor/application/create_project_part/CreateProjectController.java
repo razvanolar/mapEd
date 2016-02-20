@@ -141,7 +141,7 @@ public class CreateProjectController implements Controller {
       ProjectModel project = RepoController.getInstance().loadProject(lwProject, true);
       lwProject.setLastAccessedTime(System.currentTimeMillis());
       lwProject.setStatus(ProjectStatus.OPENED);
-      RepoController.getInstance().saveProjects(SystemParameters.PROJECTS);
+      RepoController.getInstance().saveLWProjects(SystemParameters.PROJECTS);
       project.setHomePath(lwProject.getPath());
       MapEditorController.getInstance().loadProject(project, true);
       return project;

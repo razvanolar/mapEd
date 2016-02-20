@@ -58,10 +58,10 @@ public class RepoController {
     if (existingProjects == null)
       existingProjects = new ArrayList<>();
     existingProjects.add(newProject);
-    saveProjects(existingProjects);
+    saveLWProjects(existingProjects);
   }
 
-  public void saveProjects(List<LWProjectModel> projects) {
+  public void saveLWProjects(List<LWProjectModel> projects) {
     if (projects == null)
       return;
     try {
@@ -92,7 +92,7 @@ public class RepoController {
       String xmlResult  = xmlConverter.convertProjectToXML(project);
       if (!path.endsWith("\\"))
         path += "\\";
-      writeContentToFile(xmlResult, path + name + ".med");
+      writeContentToFile(xmlResult, path + name + SystemParameters.PROJECT_FILE_EXT);
       saveToExistingProjects(SystemParameters.PROJECTS, new LWProjectModel(name, path, System.currentTimeMillis(), ProjectStatus.OPENED));
       createProjectFiles(path);
       return project;
@@ -189,6 +189,23 @@ public class RepoController {
     return null;
   }
 
+  /**
+   * Saves the project settings into its configuration file.
+   * @param project ProjectModel
+   * @return true if the project was saved successfully; false otherwise
+   */
+  public boolean saveProject(ProjectModel project) {
+    try {
+      ProjectXMLConverter xmlConverter = new ProjectXMLConverter();
+      String result = xmlConverter.convertProjectToXML(project);
+      writeContentToFile(result, project.getConfigFilePath());
+      return true;
+    } catch (Exception ex) {
+      System.out.println("RepoController - saveProject - Unable to save project. Error message: " + ex.getMessage());
+    }
+    return false;
+  }
+
   public boolean closeProject(String projectPath) {
     if (projectPath == null || projectPath.isEmpty())
       return false;
@@ -199,7 +216,7 @@ public class RepoController {
         break;
       }
     }
-    saveProjects(SystemParameters.PROJECTS);
+    saveLWProjects(SystemParameters.PROJECTS);
     return true;
   }
 

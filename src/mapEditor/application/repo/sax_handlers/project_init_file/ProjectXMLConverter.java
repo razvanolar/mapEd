@@ -28,6 +28,8 @@ public class ProjectXMLConverter {
     builder.append(Integer.toString(project.getCellSize()));
     builder.append("\" />\n");
 
+    builder.append("\t<hex_counter value=\"").append(project.getHexValue()).append("\" />\n");
+
     builder.append("</project>");
 
     return builder.toString();

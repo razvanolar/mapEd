@@ -1,5 +1,7 @@
 package mapEditor.application.repo.models;
 
+import mapEditor.application.repo.HexCounter;
+import mapEditor.application.repo.SystemParameters;
 import mapEditor.application.repo.types.MapType;
 
 import java.io.File;
@@ -14,6 +16,7 @@ public class ProjectModel {
   private String homePath;
   private MapType mapType;
   private int cellSize;
+  private String hexValue = HexCounter.DEFAULT_VALUE;
 
   private File tileGroupsFile;
   private File tileSetsFile;
@@ -49,6 +52,10 @@ public class ProjectModel {
     return cellSize;
   }
 
+  public String getHexValue() {
+    return hexValue;
+  }
+
   public File getTileGroupsFile() {
     return tileGroupsFile;
   }
@@ -75,6 +82,8 @@ public class ProjectModel {
 
   public void setHomePath(String homePath) {
     this.homePath = homePath;
+    if (!this.homePath.endsWith("\\"))
+      this.homePath += "\\";
   }
 
   public void setMapType(MapType mapType) {
@@ -103,5 +112,27 @@ public class ProjectModel {
 
   public void setTilesFile(File tilesFile) {
     this.tilesFile = tilesFile;
+  }
+
+  public void setHexValue(String hexValue) {
+    this.hexValue = hexValue;
+  }
+
+  /**
+   * @return the absolute path of project config file (.med file)
+   */
+  public String getConfigFilePath() {
+    return homePath + name + SystemParameters.PROJECT_FILE_EXT;
+  }
+
+  /**
+   * Calculate and return the next hex project value.
+   * @return hex string
+   */
+  public String nextHexValue() {
+    String value = HexCounter.getNextValue(hexValue);
+    if (value != null)
+      hexValue = value;
+    return getHexValue();
   }
 }
