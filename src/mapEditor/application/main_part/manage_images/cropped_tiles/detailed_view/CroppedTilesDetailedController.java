@@ -20,7 +20,6 @@ import mapEditor.application.main_part.types.View;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  *
@@ -83,7 +82,7 @@ public class CroppedTilesDetailedController implements Controller {
     ImageModel imageModel = view.getImage();
     String name = imageModel.getImageName();
     String path = imageModel.getImagePath();
-    name = StringValidator.isNullOrEmpty(name) ? "*.png" : name;
+    name = StringValidator.isNullOrEmpty(name) ? "*" + extension.getExtension() : name;
     path =StringValidator.isNullOrEmpty(path) ? rootFile.getAbsolutePath() : path;
 
     view.getNameTextField().setText(name);
@@ -126,5 +125,9 @@ public class CroppedTilesDetailedController implements Controller {
       result.add(image);
     }
     return result;
+  }
+
+  public void deleteAllImages() {
+    views.clear();
   }
 }

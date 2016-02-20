@@ -1,16 +1,22 @@
 package mapEditor.application.repo;
 
+import javafx.embed.swing.SwingFXUtils;
 import mapEditor.application.main_part.app_utils.AppParameters;
+import mapEditor.application.main_part.app_utils.models.ImageModel;
+import mapEditor.application.main_part.app_utils.models.KnownFileExtensions;
 import mapEditor.application.repo.models.LWProjectModel;
 import mapEditor.application.repo.models.ProjectModel;
+import mapEditor.application.repo.results.SaveImagesResult;
 import mapEditor.application.repo.sax_handlers.config.projects.KnownProjectsXMLConverter;
 import mapEditor.application.repo.sax_handlers.config.projects.KnownProjectsXMLHandler;
 import mapEditor.application.repo.sax_handlers.project_init_file.ProjectXMLConverter;
 import mapEditor.application.repo.sax_handlers.project_init_file.ProjectXMLHandler;
+import mapEditor.application.repo.statuses.SaveImagesStatus;
 import mapEditor.application.repo.types.CreateProjectStatus;
 import mapEditor.application.repo.types.MapType;
 import mapEditor.application.repo.types.ProjectStatus;
 
+import javax.imageio.ImageIO;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
@@ -309,8 +315,30 @@ public class RepoController {
     }
    }
 
-  public boolean saveImages() {
-    return false;
+  public SaveImagesResult saveImages(List<ImageModel> images) {
+    SaveImagesStatus status = SaveImagesStatus.NONE;
+    if (images == null || images.isEmpty())
+      return new SaveImagesResult(status, null);
+    List<ImageModel> unsavedImages = new ArrayList<>();
+
+    RepoUtil repoUtil = getRepoUtil();
+    boolean areUnsavedImages = false;
+    for (ImageModel image : images) {
+      String name = image.getImageName();
+      String path = image.getImagePath();
+      path = !path.endsWith("\\") ? path + "\\" : path;
+      name = repoUtil.checkNameOrGetAnAlternativeOne(path, name);
+      try {
+        ImageIO.write(SwingFXUtils.fromFXImage(image.getImage(), null), KnownFileExtensions.PNG.getFormat(), new File(path + name));
+      } catch (Exception ex) {
+        areUnsavedImages = true;
+        unsavedImages.add(image);
+        System.out.println("*** Unable to save image. Name: " + image.getImagePath() + " path: " + image.getImagePath() +
+                      " Error message: " + ex.getMessage());
+      }
+    }
+
+    return !areUnsavedImages ? new SaveImagesResult(SaveImagesStatus.COMPLETE, null) : new SaveImagesResult(SaveImagesStatus.PARTIAL, unsavedImages);
   }
 
   private RepoUtil getRepoUtil() {

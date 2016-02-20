@@ -127,6 +127,14 @@ public class TabContentView implements View {
     return simpleViewButton.isSelected();
   }
 
+  public CroppedTilesPathView getPathView() {
+    return pathView;
+  }
+
+  public boolean isEmptyTilesPane() {
+    return tilesPane.getChildren().isEmpty();
+  }
+
   @Override
   public Region asNode() {
     return splitPane;

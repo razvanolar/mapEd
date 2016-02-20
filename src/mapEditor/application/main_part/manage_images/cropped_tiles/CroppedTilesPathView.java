@@ -57,6 +57,14 @@ public class CroppedTilesPathView implements View {
     return useForAllCheckBox;
   }
 
+  public String getSelectedPath() {
+    return pathTextField.getText();
+  }
+
+  public boolean usePathForAllTiles() {
+    return !useForAllCheckBox.isDisable() && useForAllCheckBox.isSelected();
+  }
+
   @Override
   public Region asNode() {
     return mainContainer;

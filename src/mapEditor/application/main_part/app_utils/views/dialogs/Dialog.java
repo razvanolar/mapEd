@@ -11,17 +11,28 @@ import mapEditor.application.main_part.app_utils.inputs.StringValidator;
 public class Dialog {
 
   public static void showAlertDialog(String title, String message) {
-    Alert alert = new Alert(Alert.AlertType.WARNING);
-    alert.setTitle(StringValidator.isNullOrEmpty(title) ? "Warning" : title);
-    alert.setContentText(message);
+    title = StringValidator.isNullOrEmpty(title) ? "Warning" : title;
+    Alert alert = createAlertDialog(Alert.AlertType.WARNING, title, message);
     alert.showAndWait();
   }
 
   public static boolean showConfirmDialog(String title, String message) {
-    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-    alert.setTitle(StringValidator.isNullOrEmpty(title) ? "Confirm" : title);
-    alert.setContentText(message);
+    title = StringValidator.isNullOrEmpty(title) ? "Confirm" : title;
+    Alert alert = createAlertDialog(Alert.AlertType.CONFIRMATION, title, message);
     alert.showAndWait();
     return alert.getResult() == ButtonType.OK;
+  }
+
+  public static void showInformDialog(String title, String message) {
+    title = StringValidator.isNullOrEmpty(title) ? "Info" : title;
+    Alert alert = createAlertDialog(Alert.AlertType.INFORMATION, title, message);
+    alert.showAndWait();
+  }
+
+  private static Alert createAlertDialog(Alert.AlertType type, String title, String message) {
+    Alert alert = new Alert(type);
+    alert.setTitle(title);
+    alert.setContentText(message);
+    return alert;
   }
 }

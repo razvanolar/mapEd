@@ -19,6 +19,7 @@ public class CroppedTileSimpleController implements Controller {
 
   public interface ICroppedTileSimpleView extends View {
     void addImage(ImageView image);
+    void clearImages();
   }
 
   private ICroppedTileSimpleView view;
@@ -69,11 +70,20 @@ public class CroppedTileSimpleController implements Controller {
     return images;
   }
 
+  public void deleteAllImages() {
+    images.clear();
+    view.clearImages();
+  }
+
   public SimpleCroppedTileContextMenuController getContextMenuController() {
     if (contextMenuController == null) {
       contextMenuController = new SimpleCroppedTileContextMenuController(new SimpleCroppedTileContextMenuView());
       contextMenuController.bind();
     }
     return contextMenuController;
+  }
+
+  public ICroppedTileSimpleView getView() {
+    return view;
   }
 }

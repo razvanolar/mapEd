@@ -9,18 +9,24 @@ import java.util.List;
  * Created by razvanolar on 03.02.2016.
  */
 public enum KnownFileExtensions {
-  UNKNOWN(""), PNG(".png"), JPG(".jpg");
+  UNKNOWN("", ""), PNG(".png", "png"), JPG(".jpg", "jpg");
 
 
   String extension;
+  String format;
   static List<KnownFileExtensions> allExtensions;
   static List<KnownFileExtensions> imageExtensions;
-  KnownFileExtensions(String extension) {
+  KnownFileExtensions(String extension, String format) {
     this.extension = extension;
+    this.format = format;
   }
 
   public String getExtension() {
     return extension;
+  }
+
+  public String getFormat() {
+    return format;
   }
 
   public String forRegex() {
