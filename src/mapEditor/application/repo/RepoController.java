@@ -1,6 +1,7 @@
 package mapEditor.application.repo;
 
 import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.image.Image;
 import mapEditor.application.main_part.app_utils.AppParameters;
 import mapEditor.application.main_part.app_utils.models.ImageModel;
 import mapEditor.application.main_part.app_utils.models.KnownFileExtensions;
@@ -314,6 +315,47 @@ public class RepoController {
       return null;
     }
    }
+
+  /**
+   * Save the image with using the specified name to 'where' location.
+   * The final image name could be different than the specified one, if at that location, already exist
+   * a file using it. In this case, an integer value will be assigned for the new image.
+   * @param image
+   * Image that will be saved.
+   * @param where
+   * Represents a directory path. The location where the image will be saved.
+   * @param name
+   * Name of the saved image
+   * @return null in case that one of the specified parameters is null or if an error occurs during the saving
+   *         process;
+   *         otherwise the name of the image will be returned.
+   */
+  public String saveImage(Image image, String where, String name) {
+    if (image == null || where == null || name == null)
+      return null;
+
+    try {
+      where = where.endsWith("\\") ? where : where + "\\";
+      File whereFile = new File(where + name);
+      if (whereFile.exists()) {
+        String auxName = getRepoUtil().getAlternativeNameForExistingFile(where, name);
+        if (auxName == null)
+          return null;
+        name = auxName;
+        whereFile = new File(where + auxName);
+      }
+
+      try {
+        ImageIO.write(SwingFXUtils.fromFXImage(image, null), getRepoUtil().getFileExtensionWithoutDot(name), whereFile);
+        return name;
+      } catch (IOException e) {
+        System.out.println("*** Unable to save image to disk. Location: " + where + " image name: " + name + " Error message: " + e.getMessage());
+      }
+    } catch (Exception ex) {
+      System.out.println("*** Unexpected error occurred while saving the image. Error message: " + ex.getMessage());
+    }
+    return null;
+  }
 
   public SaveImagesResult saveImages(List<ImageModel> images) {
     SaveImagesStatus status = SaveImagesStatus.NONE;

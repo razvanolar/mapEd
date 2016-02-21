@@ -11,7 +11,6 @@ public class MessageKey {
   private MessageType messageType;
   private String path;
   private String name;
-  private String imagePath;
   private Button button;
   private ImageModel imageModel;
 
@@ -37,14 +36,6 @@ public class MessageKey {
 
   public void setName(String name) {
     this.name = name;
-  }
-
-  public String getImagePath() {
-    return imagePath;
-  }
-
-  public void setImagePath(String imagePath) {
-    this.imagePath = imagePath;
   }
 
   public Button getButton() {

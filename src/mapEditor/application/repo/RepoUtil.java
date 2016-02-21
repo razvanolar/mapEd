@@ -45,6 +45,19 @@ public class RepoUtil {
     return fileName;
   }
 
+  public String getFileExtensionWithoutDot(String fileName) {
+    String ext = getFileExtension(fileName);
+    if (ext == null)
+      return null;
+    if (ext.length() == 0)
+      return "";
+    StringBuilder builder = new StringBuilder(ext);
+    int index = builder.lastIndexOf(".");
+    if (index == -1)
+      return ext;
+    return builder.substring(index + 1, ext.length());
+  }
+
   public String getFileExtension(String fileName) {
     if (fileName == null)
       return null;

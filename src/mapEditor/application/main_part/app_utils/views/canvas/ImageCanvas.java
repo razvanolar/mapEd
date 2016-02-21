@@ -6,6 +6,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -131,6 +132,23 @@ public class ImageCanvas extends Canvas implements StyleListener {
     g.setFont(Font.font(null, FontWeight.BOLD, 15));
     String noImageText = "No image selected. Click here to load one.";
     g.fillText(noImageText, x, y);
+  }
+
+  public void cropFullImage(Callback<Image, Void> callback) {
+    if (image == null)
+      return;
+    if (snapshotParameters == null)
+      snapshotParameters = new SnapshotParameters();
+
+    ImageView imageView = new ImageView(image);
+    if (colorAdjustEffect != null)
+      imageView.setEffect(colorAdjustEffect);
+    snapshotParameters.setViewport(new Rectangle2D(0, 0, image.getWidth(), image.getHeight()));
+
+    imageView.snapshot(param -> {
+      callback.call(param.getImage());
+      return null;
+    }, snapshotParameters, null);
   }
 
   public void cropSelectedTile(Callback<Image, Void> callback) {

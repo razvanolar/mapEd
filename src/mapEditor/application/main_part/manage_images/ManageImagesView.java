@@ -1,7 +1,6 @@
 package mapEditor.application.main_part.manage_images;
 
 import javafx.geometry.Orientation;
-import javafx.scene.canvas.Canvas;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
@@ -9,7 +8,6 @@ import mapEditor.application.main_part.app_utils.constants.CssConstants;
 import mapEditor.application.main_part.app_utils.views.others.FillToolItem;
 import mapEditor.application.main_part.manage_images.configurations.ManageConfigurationController;
 import mapEditor.application.main_part.manage_images.configurations.ManageConfigurationView;
-import mapEditor.application.main_part.manage_images.cropped_tiles.CroppedTilesPathView;
 import mapEditor.application.main_part.manage_images.utils.TabContentView;
 
 /**

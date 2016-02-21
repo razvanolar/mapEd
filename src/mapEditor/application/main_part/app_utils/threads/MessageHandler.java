@@ -30,10 +30,9 @@ public class MessageHandler {
       synchronized (repoController) {
         String name = SystemParameters.MESSAGE_KEY.getName();
         String toPath = SystemParameters.MESSAGE_KEY.getPath();
-        String imagePath = SystemParameters.MESSAGE_KEY.getImagePath();
         Button button = SystemParameters.MESSAGE_KEY.getButton();
         ImageModel image = SystemParameters.MESSAGE_KEY.getImageModel();
-        String imageName = repoController.copyToPath(imagePath, toPath, name);
+        String imageName = repoController.saveImage(image.getImage(), toPath, name);
         if (imageName == null)
           showWarningDialog(null, "Unable to copy the image in the tile_sets directory.");
         else {

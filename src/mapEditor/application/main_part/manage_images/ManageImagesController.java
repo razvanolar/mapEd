@@ -150,18 +150,18 @@ public class ManageImagesController implements Controller, ManageImagesListener 
               dialog.getOkButton());
       controller.bind();
 
-      dialog.getOkButton().setOnAction(event1 -> {
+      dialog.getOkButton().setOnAction(event1 -> currentCanvas.cropFullImage(param -> {
         synchronized (SystemParameters.MESSAGE_KEY) {
           SystemParameters.MESSAGE_KEY.setName(saveImageView.getNameTextField().getText());
           SystemParameters.MESSAGE_KEY.setPath(saveImageView.getPathTextField().getText());
-          SystemParameters.MESSAGE_KEY.setImagePath(image.getImagePath());
-          SystemParameters.MESSAGE_KEY.setImageModel(image);
+          SystemParameters.MESSAGE_KEY.setImageModel(new ImageModel(param, image.getImagePath(), image.getImageName()));
           SystemParameters.MESSAGE_KEY.setButton(view.getSaveTileSetButton());
           SystemParameters.MESSAGE_KEY.setMessageType(MessageType.SAVE_TILE_SET_IMAGE);
           SystemParameters.MESSAGE_KEY.notify();
           dialog.close();
         }
-      });
+        return null;
+      }));
 
       dialog.setContent(saveImageView.asNode());
       dialog.show();
