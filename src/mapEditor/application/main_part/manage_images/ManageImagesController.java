@@ -80,6 +80,8 @@ public class ManageImagesController implements Controller, ManageImagesListener 
   private Map<TabContentView, CroppedTilesDetailedController> tabDetailedControllerMap;
   private Map<TabContentView, CroppedTileSimpleController> tabSimpleControllerMap;
 
+  private OkCancelDialog saveTilesetDialog;
+
   public ManageImagesController(IManageImagesView view) {
     this.view = view;
   }
@@ -139,31 +141,11 @@ public class ManageImagesController implements Controller, ManageImagesListener 
       if (currentCanvas == null || currentCanvas.getUserData() == null || view.getSaveTileSetButton().isDisable())
         return;
 
+      OkCancelDialog dialog = getSaveTilesetDialog();
       ImageModel image = (ImageModel) currentCanvas.getUserData();
-
-      OkCancelDialog dialog = new OkCancelDialog("Save Image", StageStyle.UTILITY, Modality.APPLICATION_MODAL, false);
-
-      SaveImageController.ISaveImageView saveImageView = new SaveImageView();
-      SaveImageController controller = new SaveImageController(saveImageView,
-              FileExtensionUtil.getFileExtension(image.getImageName()),
-              AppParameters.CURRENT_PROJECT.getTileSetsFile(),
-              dialog.getOkButton());
-      controller.bind();
-
-      dialog.getOkButton().setOnAction(event1 -> currentCanvas.cropFullImage(param -> {
-        synchronized (SystemParameters.MESSAGE_KEY) {
-          SystemParameters.MESSAGE_KEY.setName(saveImageView.getNameTextField().getText());
-          SystemParameters.MESSAGE_KEY.setPath(saveImageView.getPathTextField().getText());
-          SystemParameters.MESSAGE_KEY.setImageModel(new ImageModel(param, image.getImagePath(), image.getImageName()));
-          SystemParameters.MESSAGE_KEY.setButton(view.getSaveTileSetButton());
-          SystemParameters.MESSAGE_KEY.setMessageType(MessageType.SAVE_TILE_SET_IMAGE);
-          SystemParameters.MESSAGE_KEY.notify();
-          dialog.close();
-        }
-        return null;
-      }));
-
-      dialog.setContent(saveImageView.asNode());
+      SaveImageController controller = (SaveImageController) dialog.getController();
+      controller.setImageModel(image);
+      dialog.setShowAdditionalButton(controller.isOverwriteActive());
       dialog.show();
     });
 
@@ -432,10 +414,11 @@ public class ManageImagesController implements Controller, ManageImagesListener 
       return;
     }
 
-    ImageModel image = (ImageModel) currentCanvas.getUserData();
-    String imagePath = image.getImagePath();
-    String tileSetsPath = AppParameters.CURRENT_PROJECT.getTileSetsFile().getAbsolutePath();
-    view.getSaveTileSetButton().setDisable(imagePath.contains(tileSetsPath));
+//    ImageModel image = (ImageModel) currentCanvas.getUserData();
+//    String imagePath = image.getImagePath();
+//    String tileSetsPath = AppParameters.CURRENT_PROJECT.getTileSetsFile().getAbsolutePath();
+//    view.getSaveTileSetButton().setDisable(imagePath.contains(tileSetsPath));
+    view.getSaveTileSetButton().setDisable(false);
     view.setState(IManageConfigurationViewState.FULL_SELECTION);
   }
 
@@ -476,5 +459,75 @@ public class ManageImagesController implements Controller, ManageImagesListener 
     if (remainedItems == 0) {
       tabDetailedControllerMap.remove(currentTabContent);
     }
+  }
+
+  private OkCancelDialog getSaveTilesetDialog() {
+    if (saveTilesetDialog == null) {
+      saveTilesetDialog = new OkCancelDialog("Save Image", StageStyle.UTILITY, Modality.APPLICATION_MODAL, false);
+
+      SaveImageController.ISaveImageView saveImageView = new SaveImageView();
+      SaveImageController controller = new SaveImageController(saveImageView,
+              KnownFileExtensions.PNG,
+              AppParameters.CURRENT_PROJECT.getTileSetsFile(),
+              saveTilesetDialog.getOkButton());
+      controller.bind();
+
+      saveTilesetDialog.setController(controller);
+      saveTilesetDialog.getOkButton().setOnAction(event1 -> currentCanvas.cropFullImage(param -> {
+        ImageModel image = controller.getImageModel();
+        if (image != null) {
+          synchronized (SystemParameters.MESSAGE_KEY) {
+            SystemParameters.MESSAGE_KEY.setName(saveImageView.getNameTextField().getText());
+            SystemParameters.MESSAGE_KEY.setPath(saveImageView.getPathTextField().getText());
+            SystemParameters.MESSAGE_KEY.setImageModel(new ImageModel(param, image.getImagePath(), image.getImageName()));
+            SystemParameters.MESSAGE_KEY.setMessageType(MessageType.SAVE_TILE_SET_IMAGE);
+            SystemParameters.MESSAGE_KEY.notify();
+            saveTilesetDialog.close();
+          }
+        }
+        return null;
+      }));
+
+      Button overwriteButton = new Button("Overwrite");
+      overwriteButton.setOnAction(event -> overwriteTileset(controller));
+
+      saveTilesetDialog.setAdditionButton(overwriteButton);
+      saveTilesetDialog.setContent(saveImageView.asNode());
+    }
+    return saveTilesetDialog;
+  }
+
+  private void saveNewTileset(SaveImageController controller) {
+    currentCanvas.cropFullImage(param -> {
+      ImageModel image = controller.getImageModel();
+      if (image != null) {
+        synchronized (SystemParameters.MESSAGE_KEY) {
+          SystemParameters.MESSAGE_KEY.setName(controller.getName());
+          SystemParameters.MESSAGE_KEY.setPath(controller.getPath());
+          SystemParameters.MESSAGE_KEY.setImageModel(new ImageModel(param, image.getImagePath(), image.getImageName()));
+          SystemParameters.MESSAGE_KEY.setMessageType(MessageType.SAVE_TILE_SET_IMAGE);
+          SystemParameters.MESSAGE_KEY.notify();
+          saveTilesetDialog.close();
+        }
+      }
+      return null;
+    });
+  }
+
+  private void overwriteTileset(SaveImageController controller) {
+    currentCanvas.cropFullImage(param -> {
+      ImageModel image = controller.getImageModel();
+      if (image != null && controller.isValidSelection(image.getImageName(), image.getImagePath())) {
+        synchronized (SystemParameters.MESSAGE_KEY) {
+          SystemParameters.MESSAGE_KEY.setName(image.getImageName());
+          SystemParameters.MESSAGE_KEY.setPath(image.getImagePath());
+          SystemParameters.MESSAGE_KEY.setImageModel(new ImageModel(param, image.getImagePath(), image.getImageName()));
+          SystemParameters.MESSAGE_KEY.setMessageType(MessageType.OVERWRITE_TILE_SETIMAGE);
+          SystemParameters.MESSAGE_KEY.notify();
+          saveTilesetDialog.close();
+        }
+      }
+      return null;
+    });
   }
 }

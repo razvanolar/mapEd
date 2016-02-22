@@ -19,25 +19,26 @@ public class MessageHandler {
   public void handleMessage(MessageType messageType) {
     switch (messageType) {
       case SAVE_TILE_SET_IMAGE:
-        new Thread(saveTileSetImage()).start();
+        new Thread(saveTileSetImage(false)).start();
+        break;
+      case OVERWRITE_TILE_SETIMAGE:
+        new Thread(saveTileSetImage(true)).start();
         break;
     }
   }
 
-  private Runnable saveTileSetImage() {
+  private Runnable saveTileSetImage(boolean overwriteImage) {
     return () -> {
       System.out.println("saveTileSetImage handler started");
       synchronized (repoController) {
         String name = SystemParameters.MESSAGE_KEY.getName();
         String toPath = SystemParameters.MESSAGE_KEY.getPath();
-        Button button = SystemParameters.MESSAGE_KEY.getButton();
         ImageModel image = SystemParameters.MESSAGE_KEY.getImageModel();
-        String imageName = repoController.saveImage(image.getImage(), toPath, name);
+        String imageName = repoController.saveImage(image.getImage(), toPath, name, overwriteImage);
         if (imageName == null)
           showWarningDialog(null, "Unable to copy the image in the tile_sets directory.");
         else {
           toPath = toPath.endsWith("\\") ? toPath : toPath + "\\";
-          button.setDisable(true);
           image.setImageName(imageName);
           image.setImagePath(toPath + imageName);
         }

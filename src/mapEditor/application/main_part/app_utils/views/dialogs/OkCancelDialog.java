@@ -11,6 +11,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import mapEditor.application.main_part.app_utils.constants.CssConstants;
+import mapEditor.application.main_part.types.Controller;
 
 /**
  *
@@ -19,6 +20,7 @@ import mapEditor.application.main_part.app_utils.constants.CssConstants;
 public class OkCancelDialog {
 
   private BorderPane mainContainer;
+  private HBox buttonsContainer;
   private String title;
   private Button okButton;
   private Button cancelButton;
@@ -28,6 +30,14 @@ public class OkCancelDialog {
   private StageStyle stageStyle = StageStyle.UTILITY;
   private Modality modality = Modality.APPLICATION_MODAL;
   private boolean isResizable;
+
+  /**
+   * Used to customize the default dialog UI and add a new functionality to the dialog.
+   */
+  private Button additionButton;
+  private boolean showAdditionalButton;
+
+  private Controller controller;
 
   /**
    * Standard MapEditor Ok-Cancel dialog window.
@@ -48,7 +58,7 @@ public class OkCancelDialog {
     stage = new Stage(stageStyle);
     okButton = new Button("OK");
     cancelButton = new Button("Cancel");
-    HBox buttonsContainer = new HBox(5, okButton, cancelButton);
+    buttonsContainer = new HBox(5, okButton, cancelButton);
     mainContainer = new BorderPane();
 
     okButton.setPrefWidth(70);
@@ -99,5 +109,35 @@ public class OkCancelDialog {
 
   public Stage getStage() {
     return stage;
+  }
+
+  public Controller getController() {
+    return controller;
+  }
+
+  public void setController(Controller controller) {
+    this.controller = controller;
+  }
+
+  public void setAdditionButton(Button additionButton) {
+    this.additionButton = additionButton;
+  }
+
+  public void setShowAdditionalButton(boolean showAdditionalButton) {
+    this.showAdditionalButton = showAdditionalButton;
+    if (showAdditionalButton)
+      addAdditionalButton();
+    else
+      removeAdditionalButton();
+  }
+
+  private void addAdditionalButton() {
+    if (additionButton != null && !buttonsContainer.getChildren().contains(additionButton))
+      buttonsContainer.getChildren().add(0, additionButton);
+  }
+
+  private void removeAdditionalButton() {
+    if (additionButton != null && buttonsContainer.getChildren().contains(additionButton))
+      buttonsContainer.getChildren().remove(additionButton);
   }
 }

@@ -64,7 +64,7 @@ public class TabContentView implements View {
     croppedTilesContainer.setLeft(verticalToolBar);
 
     splitPane.setOrientation(Orientation.VERTICAL);
-    splitPane.setDividerPositions(1);
+    splitPane.setDividerPositions(0.8);
     SplitPane.setResizableWithParent(borderPane, false);
 
     canvasContainer.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);

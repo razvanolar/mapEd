@@ -326,18 +326,20 @@ public class RepoController {
    * Represents a directory path. The location where the image will be saved.
    * @param name
    * Name of the saved image
+   * @param overwrite
+   * True, to overwrite the image if already exists. False, otherwise.
    * @return null in case that one of the specified parameters is null or if an error occurs during the saving
    *         process;
    *         otherwise the name of the image will be returned.
    */
-  public String saveImage(Image image, String where, String name) {
+  public String saveImage(Image image, String where, String name, boolean overwrite) {
     if (image == null || where == null || name == null)
       return null;
 
     try {
       where = where.endsWith("\\") ? where : where + "\\";
       File whereFile = new File(where + name);
-      if (whereFile.exists()) {
+      if (whereFile.exists() && !overwrite) {
         String auxName = getRepoUtil().getAlternativeNameForExistingFile(where, name);
         if (auxName == null)
           return null;

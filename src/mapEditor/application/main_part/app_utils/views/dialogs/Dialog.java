@@ -10,6 +10,10 @@ import mapEditor.application.main_part.app_utils.inputs.StringValidator;
  */
 public class Dialog {
 
+  public enum DialogButtonType {
+    YES, NO
+  }
+
   public static void showAlertDialog(String title, String message) {
     title = StringValidator.isNullOrEmpty(title) ? "Warning" : title;
     Alert alert = createAlertDialog(Alert.AlertType.WARNING, title, message);
@@ -27,6 +31,11 @@ public class Dialog {
     title = StringValidator.isNullOrEmpty(title) ? "Info" : title;
     Alert alert = createAlertDialog(Alert.AlertType.INFORMATION, title, message);
     alert.showAndWait();
+  }
+
+  public static boolean showYesNoDialog(String title, String message) {
+    title = StringValidator.isNullOrEmpty(title) ? "Info" : title;
+    return YesNoDialog.getInstance().showAndWait(title, message);
   }
 
   private static Alert createAlertDialog(Alert.AlertType type, String title, String message) {

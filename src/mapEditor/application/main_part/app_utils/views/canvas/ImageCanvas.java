@@ -144,6 +144,7 @@ public class ImageCanvas extends Canvas implements StyleListener {
     if (colorAdjustEffect != null)
       imageView.setEffect(colorAdjustEffect);
     snapshotParameters.setViewport(new Rectangle2D(0, 0, image.getWidth(), image.getHeight()));
+    snapshotParameters.setFill(Color.TRANSPARENT);
 
     imageView.snapshot(param -> {
       callback.call(param.getImage());

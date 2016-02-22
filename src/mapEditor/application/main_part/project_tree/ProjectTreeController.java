@@ -158,7 +158,7 @@ public class ProjectTreeController implements Controller, ProjectTreeContextMenu
       MapEditorController.getInstance().changeToImageEditorView();
     File file = item.getValue();
     Image image = ImageProvider.getImage(file);
-    ImageModel imageModel = new ImageModel(image, file.getAbsolutePath(), file.getName());
+    ImageModel imageModel = new ImageModel(image, file.getParentFile().getAbsolutePath(), file.getName());
     if (manageImagesController != null)
       manageImagesController.addNewTab(file.getName(), imageModel);
   }

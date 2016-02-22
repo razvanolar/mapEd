@@ -6,7 +6,9 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.stage.Modality;
 import javafx.stage.StageStyle;
+import mapEditor.application.main_part.app_utils.inputs.FileExtensionUtil;
 import mapEditor.application.main_part.app_utils.inputs.StringValidator;
+import mapEditor.application.main_part.app_utils.models.ImageModel;
 import mapEditor.application.main_part.app_utils.models.KnownFileExtensions;
 import mapEditor.application.main_part.app_utils.views.dialogs.OkCancelDialog;
 import mapEditor.application.main_part.app_utils.views.others.SystemFilesView;
@@ -37,6 +39,8 @@ public class SaveImageController implements Controller {
   private KnownFileExtensions imageExtension;
   private File rootFile;
   private Node completeSelectionNode;
+
+  private ImageModel imageModel;
 
   public SaveImageController(ISaveImageView view, KnownFileExtensions imageExtension, File rootFile, Node completeSelectionNode) {
     this.view = view;
@@ -80,13 +84,21 @@ public class SaveImageController implements Controller {
     dialog.show();
   }
 
-  private boolean isValidSelection(String name, String path) {
+  public boolean isValidSelection(String name, String path) {
     ISaveImageViewState state = view.getState();
-    boolean isNameValid = name != null && name.matches("^[a-zA-Z0-9[-_]]+" + imageExtension.forRegex());
-    boolean isPathValid = path != null && path.contains(rootFile.getAbsolutePath());
+    boolean isNameValid = isValidName(name);
+    boolean isPathValid = isValidPath(path);
     return state == ISaveImageViewState.NAME && isNameValid ||
             state == ISaveImageViewState.PATH && isPathValid ||
             state == ISaveImageViewState.BOTH && isNameValid && isPathValid;
+  }
+
+  private boolean isValidName(String name) {
+    return !StringValidator.isNullOrEmpty(name) && name.matches("^[a-zA-Z0-9[-_()]]+" + imageExtension.forRegex());
+  }
+
+  private boolean isValidPath(String path) {
+    return !StringValidator.isNullOrEmpty(path) && path.contains(rootFile.getAbsolutePath());
   }
 
   public void validateInput() {
@@ -106,16 +118,37 @@ public class SaveImageController implements Controller {
   }
 
   public void setName(String name) {
-    if (!StringValidator.isNullOrEmpty(name))
+    if (isValidName(name))
       view.getNameTextField().setText(name);
     else
       view.getNameTextField().setText("*" + imageExtension.getExtension());
   }
 
   public void setPath(String path) {
-    if (!StringValidator.isNullOrEmpty(path))
+    if (isValidPath(path))
       view.getPathTextField().setText(path);
     else
       view.getPathTextField().setText(rootFile.getAbsolutePath());
+  }
+
+  public ImageModel getImageModel() {
+    return imageModel;
+  }
+
+  public void setImageModel(ImageModel imageModel) {
+    this.imageModel = imageModel;
+    if (imageModel != null) {
+      KnownFileExtensions ext = FileExtensionUtil.getFileExtension(imageModel.getImageName());
+      if (ext != KnownFileExtensions.UNKNOWN)
+        imageExtension = ext;
+      setName(imageModel.getImageName());
+      setPath(imageModel.getImagePath());
+    }
+  }
+
+  public boolean isOverwriteActive() {
+    return imageModel != null &&
+            imageModel.getImageName().equals(view.getNameTextField().getText()) &&
+            imageModel.getImagePath().equals(view.getPathTextField().getText());
   }
 }
