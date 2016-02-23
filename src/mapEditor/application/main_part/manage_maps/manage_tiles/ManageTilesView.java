@@ -1,4 +1,4 @@
-package mapEditor.application.main_part.manage_tiles;
+package mapEditor.application.main_part.manage_maps.manage_tiles;
 
 import javafx.scene.control.Button;
 import javafx.scene.control.Tab;

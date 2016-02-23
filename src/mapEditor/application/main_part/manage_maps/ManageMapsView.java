@@ -3,12 +3,16 @@ package mapEditor.application.main_part.manage_maps;
 import javafx.geometry.Orientation;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import mapEditor.MapEditorController;
 import mapEditor.application.main_part.app_utils.constants.CssConstants;
-import mapEditor.application.main_part.manage_tiles.ManageTilesController;
-import mapEditor.application.main_part.manage_tiles.ManageTilesView;
+import mapEditor.application.main_part.manage_maps.layers.LayersController;
+import mapEditor.application.main_part.manage_maps.layers.LayersView;
+import mapEditor.application.main_part.manage_maps.manage_tiles.ManageTilesController;
+import mapEditor.application.main_part.manage_maps.manage_tiles.ManageTilesView;
 import mapEditor.application.main_part.manage_maps.primary_map.PrimaryMapView;
 
 /**
@@ -22,6 +26,8 @@ public class ManageMapsView implements ManageMapsController.IMangeMapsView {
   private PrimaryMapView primaryMapView;
   private ScrollPane canvasScrollPane;
   /* right */
+  private TabPane layersAndMinimapTabPane;
+  private LayersController.ILayersView layersView;
   private ManageTilesController.IManageTilesView manageTilesView;
 
   public ManageMapsView() {
@@ -31,9 +37,11 @@ public class ManageMapsView implements ManageMapsController.IMangeMapsView {
   private void initGUI() {
     primaryMapView = new PrimaryMapView();
     canvasScrollPane = new ScrollPane(primaryMapView);
+    layersView = new LayersView();
+    layersAndMinimapTabPane = new TabPane(new Tab("Layers", layersView.asNode()));
     manageTilesView = new ManageTilesView();
 
-    SplitPane rightSplitPane = new SplitPane(new StackPane(), manageTilesView.asNode());
+    SplitPane rightSplitPane = new SplitPane(layersAndMinimapTabPane, manageTilesView.asNode());
     rightSplitPane.setOrientation(Orientation.VERTICAL);
     rightSplitPane.setDividerPositions(0.5);
 
@@ -41,7 +49,7 @@ public class ManageMapsView implements ManageMapsController.IMangeMapsView {
 
     splitPane = new SplitPane(canvasScrollPane, rightSplitPane);
     splitPane.setOrientation(Orientation.HORIZONTAL);
-    splitPane.setDividerPositions(0.4);
+    splitPane.setDividerPositions(0.3);
     splitPane.prefWidthProperty().bind(MapEditorController.getInstance().getScene().widthProperty());
     splitPane.prefHeightProperty().bind(MapEditorController.getInstance().getScene().heightProperty());
     SplitPane.setResizableWithParent(rightSplitPane, false);
@@ -53,6 +61,10 @@ public class ManageMapsView implements ManageMapsController.IMangeMapsView {
 
   public ScrollPane getCanvasScrollPane() {
     return canvasScrollPane;
+  }
+
+  public LayersController.ILayersView getLayersView() {
+    return layersView;
   }
 
   public ManageTilesController.IManageTilesView getManageTilesView() {

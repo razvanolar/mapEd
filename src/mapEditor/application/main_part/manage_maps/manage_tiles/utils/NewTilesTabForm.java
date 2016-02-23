@@ -1,4 +1,4 @@
-package mapEditor.application.main_part.manage_tiles.utils;
+package mapEditor.application.main_part.manage_maps.manage_tiles.utils;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;

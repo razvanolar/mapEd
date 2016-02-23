@@ -53,6 +53,10 @@
     -fx-background-color: darkgray;
 }
 
+.layersView {
+    -fx-background-image: url("layers_bg.png");
+}
+
 #test {
     -fx-background-image: url("canvas_container_light_bg.png");
 }

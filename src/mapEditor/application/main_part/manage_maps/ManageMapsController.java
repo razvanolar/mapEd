@@ -2,7 +2,8 @@ package mapEditor.application.main_part.manage_maps;
 
 import javafx.beans.value.ChangeListener;
 import javafx.scene.control.ScrollPane;
-import mapEditor.application.main_part.manage_tiles.ManageTilesController;
+import mapEditor.application.main_part.manage_maps.layers.LayersController;
+import mapEditor.application.main_part.manage_maps.manage_tiles.ManageTilesController;
 import mapEditor.application.main_part.manage_maps.primary_map.PrimaryMapController;
 import mapEditor.application.main_part.manage_maps.primary_map.PrimaryMapView;
 import mapEditor.application.main_part.types.Controller;
@@ -17,11 +18,13 @@ public class ManageMapsController implements Controller {
   public interface IMangeMapsView extends View {
     PrimaryMapView getPrimaryMapView();
     ScrollPane getCanvasScrollPane();
+    LayersController.ILayersView getLayersView();
     ManageTilesController.IManageTilesView getManageTilesView();
   }
 
   private IMangeMapsView view;
   private PrimaryMapController primaryMapController;
+  private LayersController layersController;
   private ManageTilesController manageTilesController;
 
   public ManageMapsController(IMangeMapsView view) {
@@ -44,6 +47,9 @@ public class ManageMapsController implements Controller {
   private void initControllers() {
     primaryMapController = new PrimaryMapController(view.getPrimaryMapView(), view.getCanvasScrollPane());
     primaryMapController.bind();
+
+    layersController = new LayersController(view.getLayersView());
+    layersController.bind();
 
     manageTilesController = new ManageTilesController(view.getManageTilesView());
     manageTilesController.bind();

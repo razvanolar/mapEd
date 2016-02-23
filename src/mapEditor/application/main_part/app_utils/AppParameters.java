@@ -1,5 +1,8 @@
 package mapEditor.application.main_part.app_utils;
 
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.paint.Color;
 import mapEditor.application.repo.models.ProjectModel;
 
 /**
@@ -9,6 +12,11 @@ import mapEditor.application.repo.models.ProjectModel;
 public class AppParameters {
 
   public static ProjectModel CURRENT_PROJECT;
+
+  public static Color HOVERED_LAYER_COLOR = Color.LAVENDER;
+  public static Color SELECTED_LAYER_COLOR = Color.CORNFLOWERBLUE;
+  public static Background HOVERED_LAYER_BG = new Background(new BackgroundFill(HOVERED_LAYER_COLOR, null, null));
+  public static Background SELECTED_LAYER_BG = new Background(new BackgroundFill(SELECTED_LAYER_COLOR, null, null));
 
   public static String DEFAULT_PROJECT_NAME = "Unnamed";
   public static String SYSTEM_FILES_VIEW_PATH = "C:\\Users\\razvanolar\\Desktop\\MapEditor_Util\\projects";

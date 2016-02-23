@@ -1,4 +1,4 @@
-package mapEditor.application.main_part.manage_tiles;
+package mapEditor.application.main_part.manage_maps.manage_tiles;
 
 import javafx.scene.control.Button;
 import javafx.scene.control.Tab;
@@ -8,7 +8,7 @@ import javafx.scene.layout.Region;
 import mapEditor.application.main_part.app_utils.inputs.StringValidator;
 import mapEditor.application.main_part.app_utils.views.dialogs.OkCancelDialog;
 import mapEditor.application.main_part.app_utils.views.canvas.TilesCanvas;
-import mapEditor.application.main_part.manage_tiles.utils.NewTilesTabForm;
+import mapEditor.application.main_part.manage_maps.manage_tiles.utils.NewTilesTabForm;
 import mapEditor.application.main_part.types.Controller;
 
 import java.util.HashMap;

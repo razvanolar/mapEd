@@ -159,6 +159,7 @@ public class ImageCanvas extends Canvas implements StyleListener {
     if (snapshotParameters == null)
       snapshotParameters = new SnapshotParameters();
 
+    snapshotParameters.setFill(Color.TRANSPARENT);
     snapshotParameters.setViewport(new Rectangle2D(imageX + squareCellX * CELL_SIZE,
             imageY + squareCellY * CELL_SIZE,
             CELL_SIZE,

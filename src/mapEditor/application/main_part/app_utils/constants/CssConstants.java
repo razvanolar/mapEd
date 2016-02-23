@@ -20,6 +20,7 @@ public class CssConstants {
   public static final String CROPPED_TILE_VIEW = "croppedTileView";
   public static final String TAB_CONTENT_VIEW_TILES_PANE = "tabContentViewTilesPane";
   public static final String CROPPED_TILES_PATH_VIEW = "croppedTilesPathView";
+  public static final String LAYERS_VIEW = "layersView";
 
   public static String getDefaultTheme() {
     return getFilePath(new File(PATH + DEFAULT_THEME));
