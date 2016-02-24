@@ -1,6 +1,8 @@
 package mapEditor.application.main_part.manage_maps.layers;
 
+import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ToolBar;
 import javafx.scene.layout.BorderPane;
@@ -45,6 +47,66 @@ public class LayersView implements LayersController.ILayersView {
   @Override
   public void addLayer(Region layer) {
     layersContainer.getChildren().add(layer);
+  }
+
+  @Override
+  public void removeLayer(Region layer) {
+    layersContainer.getChildren().remove(layer);
+  }
+
+  @Override
+  public void moveLayerUp(Region layer) {
+    int index = getLayerIndex(layer);
+    if (index == -1 || index == 0)
+      return;
+    layersContainer.getChildren().remove(index);
+    layersContainer.getChildren().add(index - 1, layer);
+  }
+
+  @Override
+  public void moveLayerDown(Region layer) {
+    int size = layersContainer.getChildren().size();
+    if (size == 0)
+      return;
+    int index = getLayerIndex(layer);
+    if (index == -1 || index == size - 1)
+      return;
+    layersContainer.getChildren().remove(index);
+    layersContainer.getChildren().add(index + 1, layer);
+  }
+
+  @Override
+  public int getLayerIndex(Region layer) {
+    return layersContainer.getChildren().indexOf(layer);
+  }
+
+  @Override
+  public int getLayersNumber() {
+    return layersContainer.getChildren().size();
+  }
+
+  public Button getAddLayerButton() {
+    return addLayerButton;
+  }
+
+  public Button getEditLayerButton() {
+    return editLayerButton;
+  }
+
+  public Button getDeleteLayerButton() {
+    return deleteLayerButton;
+  }
+
+  public Button getMoveLayerUpButton() {
+    return moveLayerUpButton;
+  }
+
+  public Button getMoveLayerDownButton() {
+    return moveLayerDownButton;
+  }
+
+  public ObservableList<Node> getLayers() {
+    return layersContainer.getChildren();
   }
 
   @Override

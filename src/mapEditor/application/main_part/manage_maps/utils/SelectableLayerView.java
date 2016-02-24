@@ -12,7 +12,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import mapEditor.application.main_part.app_utils.AppParameters;
-import mapEditor.application.main_part.app_utils.models.LayerType;
+import mapEditor.application.main_part.app_utils.models.LayerModel;
 
 /**
  *
@@ -30,13 +30,11 @@ public class SelectableLayerView extends StackPane {
   private HBox container;
 
   private SelectableLayerListener listener;
-  private LayerType type;
-  private String name;
+  private LayerModel layerModel;
   private boolean isSelected;
 
-  public SelectableLayerView(LayerType type, String name, SelectableLayerListener listener) {
-    this.type = type;
-    this.name = name;
+  public SelectableLayerView(LayerModel layerModel, SelectableLayerListener listener) {
+    this.layerModel = layerModel;
     this.listener = listener;
     initGUI();
     addListeners();
@@ -44,7 +42,7 @@ public class SelectableLayerView extends StackPane {
 
   private void initGUI() {
     checkBox = new CheckBox();
-    text = new Text(name);
+    text = new Text(layerModel.getName());
     container = new HBox(5, checkBox, text);
 
     checkBox.setSelected(true);
@@ -109,5 +107,14 @@ public class SelectableLayerView extends StackPane {
       };
     }
     return onMouseClickedListener;
+  }
+
+  public LayerModel getLayerModel() {
+    return layerModel;
+  }
+
+  public void updateModel(LayerModel layerModel) {
+    this.layerModel = layerModel;
+    text.setText(layerModel.getName());
   }
 }
