@@ -1,6 +1,7 @@
 package mapEditor.application.main_part.manage_maps.layers;
 
 import javafx.collections.ObservableList;
+import javafx.geometry.Side;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.layout.Region;
@@ -9,6 +10,10 @@ import javafx.stage.StageStyle;
 import mapEditor.application.main_part.app_utils.models.LayerModel;
 import mapEditor.application.main_part.app_utils.models.LayerType;
 import mapEditor.application.main_part.app_utils.views.dialogs.OkCancelDialog;
+import mapEditor.application.main_part.manage_maps.layers.create_edit_layers.CreateEditLayersContextMenuController;
+import mapEditor.application.main_part.manage_maps.layers.create_edit_layers.CreateEditLayersContextMenuView;
+import mapEditor.application.main_part.manage_maps.layers.create_edit_layers.CreateEditLayersController;
+import mapEditor.application.main_part.manage_maps.layers.create_edit_layers.CreateEditLayersView;
 import mapEditor.application.main_part.manage_maps.utils.SelectableLayerListener;
 import mapEditor.application.main_part.manage_maps.utils.SelectableLayerView;
 import mapEditor.application.main_part.types.Controller;
@@ -40,6 +45,7 @@ public class LayersController implements Controller, SelectableLayerListener {
 
   private ILayersView view;
   private SelectableLayerView selectedLayer;
+  private CreateEditLayersContextMenuController contextMenuController;
 
   public LayersController(ILayersView view) {
     this.view = view;
@@ -75,7 +81,7 @@ public class LayersController implements Controller, SelectableLayerListener {
   /**
    * Called when editing selected layer
    */
-  private void onEditLayerButtonSelection() {
+  public void onEditLayerButtonSelection() {
     if (selectedLayer == null)
       return;
     OkCancelDialog dialog = createAddEditDialog("Edit Layer", selectedLayer.getLayerModel());
@@ -90,7 +96,7 @@ public class LayersController implements Controller, SelectableLayerListener {
   /**
    * Called when deleting selected layer
    */
-  private void onDeleteLayerButtonSelection() {
+  public void onDeleteLayerButtonSelection() {
     if (selectedLayer == null)
       return;
     view.removeLayer(selectedLayer);
@@ -100,7 +106,7 @@ public class LayersController implements Controller, SelectableLayerListener {
   /**
    * Called when trying to move selected layer up.
    */
-  private void onMoveLayerUpButtonSelection() {
+  public void onMoveLayerUpButtonSelection() {
     if (selectedLayer == null)
       return;
     int index = view.getLayerIndex(selectedLayer);
@@ -113,7 +119,7 @@ public class LayersController implements Controller, SelectableLayerListener {
   /**
    * Called when trying to move selected layer down.
    */
-  private void onMoveLayerDownButtonSelection() {
+  public void onMoveLayerDownButtonSelection() {
     if (selectedLayer == null)
       return;
     int size = view.getLayersNumber();
@@ -136,13 +142,26 @@ public class LayersController implements Controller, SelectableLayerListener {
     return dialog;
   }
 
+  private void initContextMenuController() {
+    if (contextMenuController == null) {
+      contextMenuController = new CreateEditLayersContextMenuController(new CreateEditLayersContextMenuView(), this);
+      contextMenuController.bind();
+    }
+  }
+
   @Override
-  public void selectedLayerChanged(SelectableLayerView selectedLayer) {
+  public void selectedLayerChanged(SelectableLayerView selectedLayer, boolean showContextMenu, double x, double y) {
     if (this.selectedLayer == null)
       this.selectedLayer = selectedLayer;
     else if (this.selectedLayer != selectedLayer) {
       this.selectedLayer.unselect();
       this.selectedLayer = selectedLayer;
+    }
+
+    if (showContextMenu && this.selectedLayer != null) {
+      initContextMenuController();
+      contextMenuController.getContextMenu().hide();
+      contextMenuController.getContextMenu().show(this.selectedLayer, x, y);
     }
   }
 

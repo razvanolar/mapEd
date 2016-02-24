@@ -4,6 +4,7 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.CheckBox;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
@@ -58,10 +59,10 @@ public class SelectableLayerView extends StackPane {
     this.setOnMouseClicked(getOnMouseClickedListener());
   }
 
-  public void select() {
+  public void select(boolean isRightClick, double x, double y) {
     isSelected = true;
     container.setBackground(AppParameters.SELECTED_LAYER_BG);
-    listener.selectedLayerChanged(this);
+    listener.selectedLayerChanged(this, isRightClick, x, y);
   }
 
   public void unselect() {
@@ -103,7 +104,7 @@ public class SelectableLayerView extends StackPane {
     if (onMouseClickedListener == null) {
       onMouseClickedListener = event -> {
         SelectableLayerView source = (SelectableLayerView) event.getSource();
-        source.select();
+        source.select(event.getButton() == MouseButton.SECONDARY, event.getSceneX(), event.getScreenY());
       };
     }
     return onMouseClickedListener;

@@ -1,4 +1,4 @@
-package mapEditor.application.main_part.manage_maps.layers;
+package mapEditor.application.main_part.manage_maps.layers.create_edit_layers;
 
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -52,7 +52,11 @@ public class CreateEditLayersController implements Controller {
   private void addListeners() {
     view.getLayerNameTextField().textProperty().addListener((observable, oldValue, newValue) -> {
       if (!StringValidator.isNullOrEmpty(newValue)) {
-        completeSelectionButton.setDisable(checkIfExist(newValue));
+        boolean newValueExist = checkIfExist(newValue);
+        if (layerModel == null)
+          completeSelectionButton.setDisable(newValueExist);
+        else
+          completeSelectionButton.setDisable(newValueExist && !layerModel.getName().equals(newValue));
       } else
         completeSelectionButton.setDisable(true);
     });
@@ -60,7 +64,7 @@ public class CreateEditLayersController implements Controller {
 
   private boolean checkIfExist(String name) {
     if (layers == null)
-      return true;
+      return false;
     for (LayerModel model : layers) {
       if (model.getName().equals(name))
         return true;
