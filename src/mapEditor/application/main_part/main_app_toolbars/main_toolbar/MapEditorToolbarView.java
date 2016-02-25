@@ -39,16 +39,16 @@ public class MapEditorToolbarView implements MapEditorToolbarController.IMapEdit
     toolBar.getItems().addAll(newMapButton, new FillToolItem(), mapEditorViewButton, imageEditorViewButton);
   }
 
+  public Button getNewMapButton() {
+    return newMapButton;
+  }
+
   public ToggleButton getMapEditorViewButton() {
     return mapEditorViewButton;
   }
 
   public ToggleButton getImageEditorViewButton() {
     return imageEditorViewButton;
-  }
-
-  public ToggleGroup getToggleGroup() {
-    return toggleGroup;
   }
 
   @Override

@@ -2,6 +2,7 @@ package mapEditor.application.main_part.manage_maps;
 
 import javafx.beans.value.ChangeListener;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import mapEditor.application.main_part.manage_maps.layers.LayersController;
 import mapEditor.application.main_part.manage_maps.manage_tiles.ManageTilesController;
@@ -9,6 +10,7 @@ import mapEditor.application.main_part.manage_maps.primary_map.PrimaryMapControl
 import mapEditor.application.main_part.manage_maps.primary_map.PrimaryMapView;
 import mapEditor.application.main_part.types.Controller;
 import mapEditor.application.main_part.types.View;
+import mapEditor.application.repo.SystemParameters;
 
 /**
  *
@@ -51,6 +53,8 @@ public class ManageMapsController implements Controller {
           mapView.heightProperty().bind(scrollPane.heightProperty());
         }
         mapView.paint();
+      } else {
+        addNewMap(SystemParameters.UNTITLED_MAP_TAB);
       }
 
       if (oldItem != null) {
@@ -86,6 +90,21 @@ public class ManageMapsController implements Controller {
     scrollPane.heightProperty().addListener(sizeChangeListener);
 
     controller.bind();
+  }
+
+  /**
+   * Checks to see if there is an SystemParameters.UNTITLED_MAP_TAB in the tab pane items.
+   * If there is such a tab, it will be removed.
+   */
+  private void removeUntitledTab() {
+    Tab untitledTab = null;
+    for (Tab tab : view.getMapsTabPane().getTabs())
+      if (tab.getText().equals(SystemParameters.UNTITLED_MAP_TAB)) {
+        untitledTab = tab;
+        break;
+      }
+    if (untitledTab != null)
+      view.getMapsTabPane().getTabs().remove(untitledTab);
   }
 
   // TODO: delete

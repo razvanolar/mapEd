@@ -21,6 +21,11 @@ public class SystemParameters {
   public static final String CHARACTERS_FOLDER_PATH = "characters\\";
   public static final String MAPS_FOLDER_PATH = "maps\\";
   public static final String UNTITLED_TAB_NAME = "*Untitled";
+  public static final String UNTITLED_MAP_TAB = UNTITLED_TAB_NAME + ".map";
+
+  public static final int MAP_MIN_SIZE_NUMBER = 1;
+  public static final int MAP_MAX_SIZE_NUMBER = 9999;
+  public static final int MAP_DEFAULT_SIZE_NUMBER = 40;
 
   public static List<LWProjectModel> PROJECTS;
 

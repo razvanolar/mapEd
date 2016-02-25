@@ -3,6 +3,7 @@ package mapEditor;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.SplitPane;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
@@ -78,6 +79,20 @@ public class MapEditorController {
     setProjectTreeView();
 
     changeView();
+
+    addListeners();
+  }
+
+  private void addListeners() {
+    if (scene != null) {
+      scene.setOnKeyPressed(event -> {
+        boolean isCtrlDown = event.isControlDown();
+        if (isCtrlDown) {
+          if (event.getCode() == KeyCode.N)
+            toolbarController.showCreateMapDialog();
+        }
+      });
+    }
   }
 
   public void initCreateProjectView(CreateProjectController.ICreateProjectView createProjectView) {
