@@ -20,6 +20,8 @@ import mapEditor.application.main_part.menu_bar.MapEditorMenuBarController;
 import mapEditor.application.main_part.menu_bar.MapEditorMenuBarView;
 import mapEditor.application.main_part.project_tree.ProjectTreeController;
 import mapEditor.application.main_part.project_tree.ProjectTreeView;
+import mapEditor.application.main_part.status_bar.StatusBarController;
+import mapEditor.application.main_part.status_bar.StatusBarView;
 import mapEditor.application.repo.RepoController;
 import mapEditor.application.repo.models.ProjectModel;
 
@@ -59,7 +61,12 @@ public class MapEditorController {
     toolbarController = new MapEditorToolbarController(toolbarView);
     toolbarController.bind();
 
-    addMapEditorMenuBarAndToolbar(menuBarView.asNode(), toolbarView.asNode());
+    /* init status bar */
+    StatusBarController.IStatusBarView statusBarView = new StatusBarView();
+    StatusBarController statusBarController = new StatusBarController(statusBarView);
+    statusBarController.bind();
+
+    addMapEditorToolBarsAndStatusBars(menuBarView.asNode(), toolbarView.asNode(), statusBarView.asNode());
 
     /* init left side toolbar : project toolbar */
     ProjectVerticalToolbarController.IProjectVerticalToolbarView projectVerticalToolbarView = new ProjectVerticalToolbarView();
@@ -136,10 +143,11 @@ public class MapEditorController {
       centerSplitPane.setDividerPositions(dividerPositions);
   }
 
-  private void addMapEditorMenuBarAndToolbar(Region menuBar, Region toolbar) {
+  private void addMapEditorToolBarsAndStatusBars(Region menuBar, Region toolbar, Region statusBar) {
     VBox pane = new VBox();
     pane.getChildren().addAll(menuBar, toolbar);
     mainContainer.setTop(pane);
+    mainContainer.setBottom(statusBar);
   }
 
   /**

@@ -5,8 +5,8 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
-import javafx.scene.layout.StackPane;
 import mapEditor.MapEditorController;
 import mapEditor.application.main_part.app_utils.constants.CssConstants;
 import mapEditor.application.main_part.manage_maps.layers.LayersController;
@@ -23,8 +23,7 @@ public class ManageMapsView implements ManageMapsController.IMangeMapsView {
 
   private SplitPane splitPane;
   /* left */
-  private PrimaryMapView primaryMapView;
-  private ScrollPane canvasScrollPane;
+  private TabPane mapsTabPane;
   /* right */
   private TabPane layersAndMinimapTabPane;
   private LayersController.ILayersView layersView;
@@ -35,8 +34,7 @@ public class ManageMapsView implements ManageMapsController.IMangeMapsView {
   }
 
   private void initGUI() {
-    primaryMapView = new PrimaryMapView();
-    canvasScrollPane = new ScrollPane(primaryMapView);
+    mapsTabPane = new TabPane();
     layersView = new LayersView();
     layersAndMinimapTabPane = new TabPane(new Tab("Layers", layersView.asNode()));
     manageTilesView = new ManageTilesView();
@@ -45,9 +43,7 @@ public class ManageMapsView implements ManageMapsController.IMangeMapsView {
     rightSplitPane.setOrientation(Orientation.VERTICAL);
     rightSplitPane.setDividerPositions(0.5);
 
-    canvasScrollPane.getStyleClass().add(CssConstants.CANVAS_CONTAINER_LIGHT_BG);
-
-    splitPane = new SplitPane(canvasScrollPane, rightSplitPane);
+    splitPane = new SplitPane(mapsTabPane, rightSplitPane);
     splitPane.setOrientation(Orientation.HORIZONTAL);
     splitPane.setDividerPositions(0.3);
     splitPane.prefWidthProperty().bind(MapEditorController.getInstance().getScene().widthProperty());
@@ -55,12 +51,26 @@ public class ManageMapsView implements ManageMapsController.IMangeMapsView {
     SplitPane.setResizableWithParent(rightSplitPane, false);
   }
 
-  public PrimaryMapView getPrimaryMapView() {
-    return primaryMapView;
+  @Override
+  public ScrollPane addMap(String title, PrimaryMapView mapView) {
+    ScrollPane scrollPane = new ScrollPane(mapView);
+//    BorderPane borderPane = new BorderPane(scrollPane);
+
+    scrollPane.getStyleClass().add(CssConstants.CANVAS_CONTAINER_LIGHT_BG);
+    scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+    scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+
+    mapView.widthProperty().bind(scrollPane.widthProperty());
+    mapView.heightProperty().bind(scrollPane.heightProperty());
+
+    Tab tab = new Tab(title, scrollPane);
+    tab.setUserData(mapView);
+    mapsTabPane.getTabs().add(tab);
+    return scrollPane;
   }
 
-  public ScrollPane getCanvasScrollPane() {
-    return canvasScrollPane;
+  public TabPane getMapsTabPane() {
+    return mapsTabPane;
   }
 
   public LayersController.ILayersView getLayersView() {

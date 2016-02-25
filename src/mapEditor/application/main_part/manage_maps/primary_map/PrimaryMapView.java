@@ -94,7 +94,7 @@ public class PrimaryMapView extends MapCanvas {
   }
 
   public void onScrollEvent(ScrollEvent event) {
-        /* If the mouse position is not situated in the map borders, zoom actions are not applied */
+    /* If the mouse position is not situated in the map borders, zoom actions are not applied */
     if(!checkMouseBorders((int) event.getX(), (int) event.getY()))
       return;
 

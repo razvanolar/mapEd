@@ -22,6 +22,7 @@ public class PrimaryMapController implements Controller {
   @Override
   public void bind() {
     addListeners();
+    canvas.paint();
   }
 
   private void addListeners() {
