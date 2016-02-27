@@ -9,7 +9,7 @@ import java.util.List;
  * Created by razvanolar on 03.02.2016.
  */
 public enum KnownFileExtensions {
-  UNKNOWN("", ""), PNG(".png", "png"), JPG(".jpg", "jpg");
+  NONE("", ""), UNKNOWN("", ""), PNG(".png", "png"), JPG(".jpg", "jpg"), MAP(".map", "map");
 
 
   String extension;
@@ -37,6 +37,7 @@ public enum KnownFileExtensions {
     if (allExtensions == null) {
       allExtensions = new ArrayList<>(Arrays.asList(values()));
       allExtensions.remove(UNKNOWN);
+      allExtensions.remove(NONE);
     }
     return allExtensions;
   }

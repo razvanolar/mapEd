@@ -9,6 +9,7 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import mapEditor.application.create_project_part.CreateProjectController;
 import mapEditor.application.main_part.app_utils.AppParameters;
+import mapEditor.application.main_part.app_utils.models.MapDetailsModel;
 import mapEditor.application.main_part.main_app_toolbars.project_tree_toolbar.ProjectVerticalToolbarController;
 import mapEditor.application.main_part.main_app_toolbars.project_tree_toolbar.ProjectVerticalToolbarView;
 import mapEditor.application.main_part.manage_images.ManageImagesController;
@@ -177,6 +178,18 @@ public class MapEditorController {
 
     if (loadFromCreateProjectView)
       mapEditorView.clearCreateProjectView();
+  }
+
+  /**
+   * Create a new map instance based on the provided model.
+   * If the map name already exist, a new one will be provided with a higher order number.
+   * @param mapModel
+   * MapDetailsModel
+   */
+  public void createNewMap(MapDetailsModel mapModel) {
+    String name = repoController.getFileAlternativeNameIfExists(mapModel.getPath(), mapModel.getName());
+    mapModel.setName(name);
+    manageMapsController.addNewMap(mapModel);
   }
 
   public void changeToImageEditorView() {

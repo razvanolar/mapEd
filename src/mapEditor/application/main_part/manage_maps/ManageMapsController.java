@@ -4,6 +4,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import mapEditor.application.main_part.app_utils.models.MapDetailsModel;
 import mapEditor.application.main_part.manage_maps.layers.LayersController;
 import mapEditor.application.main_part.manage_maps.manage_tiles.ManageTilesController;
 import mapEditor.application.main_part.manage_maps.primary_map.PrimaryMapController;
@@ -37,7 +38,7 @@ public class ManageMapsController implements Controller {
   public void bind() {
     addListeners();
     initControllers();
-    addTestMaps();
+    createMap(SystemParameters.UNTITLED_MAP_TAB, false);
   }
 
   private void addListeners() {
@@ -54,7 +55,7 @@ public class ManageMapsController implements Controller {
         }
         mapView.paint();
       } else {
-        addNewMap(SystemParameters.UNTITLED_MAP_TAB);
+        createMap(SystemParameters.UNTITLED_MAP_TAB, false);
       }
 
       if (oldItem != null) {
@@ -76,7 +77,7 @@ public class ManageMapsController implements Controller {
     manageTilesController.bind();
   }
 
-  private void addNewMap(String name) {
+  private void createMap(String name, boolean removeUntitled) {
     PrimaryMapView primaryMapView = new PrimaryMapView();
     ScrollPane scrollPane = view.addMap(name, primaryMapView);
     PrimaryMapController controller = new PrimaryMapController(primaryMapView, scrollPane);
@@ -90,6 +91,9 @@ public class ManageMapsController implements Controller {
     scrollPane.heightProperty().addListener(sizeChangeListener);
 
     controller.bind();
+
+    if (removeUntitled)
+      removeUntitledTab();
   }
 
   /**
@@ -107,11 +111,8 @@ public class ManageMapsController implements Controller {
       view.getMapsTabPane().getTabs().remove(untitledTab);
   }
 
-  // TODO: delete
-  private void addTestMaps() {
-    addNewMap("test1.map");
-    addNewMap("test2.map");
-    addNewMap("test3.map");
+  public void addNewMap(MapDetailsModel mapModel) {
+    createMap(mapModel.getName(), true);
   }
 
   public View getView() {

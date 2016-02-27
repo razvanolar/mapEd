@@ -67,6 +67,34 @@ public class CreateMapView implements CreateMapController.ICreateMapView {
     mainContainer.add(infoButton, 4, 5);
   }
 
+  public TextField getNameTextField() {
+    return nameTextField;
+  }
+
+  public TextField getPathTextField() {
+    return pathTextField;
+  }
+
+  public Button getPathButton() {
+    return pathButton;
+  }
+
+  public Spinner<Integer> getRowSpinner() {
+    return rowSpinner;
+  }
+
+  public Spinner<Integer> getColumnSpinner() {
+    return columnSpinner;
+  }
+
+  public ColorPicker getBackgroundColorPicker() {
+    return backgroundColorPicker;
+  }
+
+  public ColorPicker getGridColorPicker() {
+    return gridColorPicker;
+  }
+
   @Override
   public Region asNode() {
     return mainContainer;

@@ -15,13 +15,14 @@ public class SystemParameters {
   public static final String CONFIG_FILE_PATH = "med_config\\";
   public static final String KNOWN_PROJECTS_FILE_PATH = CONFIG_FILE_PATH + "projects\\";
   public static final String PROJECT_FILE_EXT = ".med";
+  public static final String MAP_FILE_EXT = ".map";
   public static final String TILE_GROUPS_FOLDER_PATH = "tile_groups\\";
   public static final String TILES_FOLDER_PATH = TILE_GROUPS_FOLDER_PATH + "tiles\\";
   public static final String TILE_SETS_FOLDER_PATH = TILE_GROUPS_FOLDER_PATH + "tile_sets\\";
   public static final String CHARACTERS_FOLDER_PATH = "characters\\";
   public static final String MAPS_FOLDER_PATH = "maps\\";
   public static final String UNTITLED_TAB_NAME = "*Untitled";
-  public static final String UNTITLED_MAP_TAB = UNTITLED_TAB_NAME + ".map";
+  public static final String UNTITLED_MAP_TAB = UNTITLED_TAB_NAME + MAP_FILE_EXT;
 
   public static final int MAP_MIN_SIZE_NUMBER = 1;
   public static final int MAP_MAX_SIZE_NUMBER = 9999;

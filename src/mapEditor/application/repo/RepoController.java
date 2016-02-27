@@ -385,6 +385,23 @@ public class RepoController {
     return !areUnsavedImages ? new SaveImagesResult(SaveImagesStatus.COMPLETE, null) : new SaveImagesResult(SaveImagesStatus.PARTIAL, unsavedImages);
   }
 
+  /**
+   * Return the file name with a higher order number if the specified file already exists.
+   * @param path
+   * Valid directory path.
+   * @param name
+   * File name.
+   * @return A new file with a higher order number if the file exists; otherwise, the specified file name will
+   *         be returned without being changed.
+   */
+  public String getFileAlternativeNameIfExists(String path, String name) {
+    if (path == null || name == null)
+      return null;
+    path = path.endsWith("\\") ? path : path + "\\";
+    File file = new File(path + name);
+    return file.exists() ? getRepoUtil().getAlternativeNameForExistingFile(path, name) : name;
+  }
+
   private RepoUtil getRepoUtil() {
     if (repoUtil == null)
       repoUtil = new RepoUtil();
