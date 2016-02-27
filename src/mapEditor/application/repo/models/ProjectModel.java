@@ -1,10 +1,14 @@
 package mapEditor.application.repo.models;
 
+import mapEditor.application.main_part.app_utils.models.LWMapModel;
+import mapEditor.application.main_part.app_utils.models.MapModel;
 import mapEditor.application.repo.HexCounter;
 import mapEditor.application.repo.SystemParameters;
 import mapEditor.application.repo.types.MapType;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -24,6 +28,9 @@ public class ProjectModel {
   private File charactersFile;
   private File mapsFile;
 
+  private List<LWMapModel> lwMapModels;
+  private List<MapModel> mapModels = new ArrayList<>();
+
   public ProjectModel() {}
 
   public ProjectModel(String name, String homePath, MapType mapType, int cellSize) {
@@ -35,6 +42,8 @@ public class ProjectModel {
     if (!this.homePath.endsWith("\\"))
       this.homePath += "\\";
   }
+
+
 
   public String getName() {
     return name;
@@ -74,6 +83,14 @@ public class ProjectModel {
 
   public File getTilesFile() {
     return tilesFile;
+  }
+
+  public List<MapModel> getMapModels() {
+    return mapModels;
+  }
+
+  public List<LWMapModel> getLwMapModels() {
+    return lwMapModels;
   }
 
   public void setName(String name) {
@@ -118,6 +135,10 @@ public class ProjectModel {
     this.hexValue = hexValue;
   }
 
+  public void setLwMapModels(List<LWMapModel> lwMapModels) {
+    this.lwMapModels = lwMapModels;
+  }
+
   /**
    * @return the absolute path of project config file (.med file)
    */
@@ -134,5 +155,15 @@ public class ProjectModel {
     if (value != null)
       hexValue = value;
     return getHexValue();
+  }
+
+  public void addMapModel(MapModel mapModel) {
+    if (!mapModels.contains(mapModel))
+      mapModels.add(mapModel);
+  }
+
+  public void removeMapModel(MapModel mapModel) {
+    if (mapModels.contains(mapModel))
+      mapModels.remove(mapModel);
   }
 }

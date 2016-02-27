@@ -5,11 +5,14 @@ import javafx.scene.image.Image;
 import mapEditor.application.main_part.app_utils.AppParameters;
 import mapEditor.application.main_part.app_utils.models.ImageModel;
 import mapEditor.application.main_part.app_utils.models.KnownFileExtensions;
+import mapEditor.application.main_part.app_utils.models.LWMapModel;
+import mapEditor.application.main_part.app_utils.models.MapModel;
 import mapEditor.application.repo.models.LWProjectModel;
 import mapEditor.application.repo.models.ProjectModel;
 import mapEditor.application.repo.results.SaveImagesResult;
-import mapEditor.application.repo.sax_handlers.config.projects.KnownProjectsXMLConverter;
-import mapEditor.application.repo.sax_handlers.config.projects.KnownProjectsXMLHandler;
+import mapEditor.application.repo.sax_handlers.config.known_projects.KnownProjectsXMLConverter;
+import mapEditor.application.repo.sax_handlers.config.known_projects.KnownProjectsXMLHandler;
+import mapEditor.application.repo.sax_handlers.maps.MapXMLConverter;
 import mapEditor.application.repo.sax_handlers.project_init_file.ProjectXMLConverter;
 import mapEditor.application.repo.sax_handlers.project_init_file.ProjectXMLHandler;
 import mapEditor.application.repo.statuses.SaveImagesStatus;
@@ -129,15 +132,44 @@ public class RepoController {
   }
 
   /**
-   * Load the project settings.
-   * @param path - project path
+   * Load the project settings (i.e. hex counter, light weight version of the maps that were opened when the project was closed).
+   * @param lwProject - light weight version of the project
    * @return model - ProjectModel
    * @throws Exception
    */
-  public ProjectModel loadProjectSettings(String path) throws Exception {
-    String content = readContentFromFile(path);
+  public ProjectModel loadProjectSettings(LWProjectModel lwProject) throws Exception {
+    // compute project file path
+    String projectFilePath = lwProject.getPath();
+    if (!projectFilePath.endsWith("\\"))
+      projectFilePath += "\\";
+    projectFilePath += lwProject.getName() + SystemParameters.PROJECT_FILE_EXT;
+
+    // parse the file
+    String content = readContentFromFile(projectFilePath);
     ProjectXMLHandler handler = new ProjectXMLHandler(content);
-    return handler.parse();
+    handler.parse();
+    ProjectModel projectModel = handler.getProjectModel();
+
+    projectModel.setHomePath(lwProject.getPath());
+    projectModel.setLwMapModels(handler.getMapModels());
+
+    return projectModel;
+  }
+
+  public void loadProjectMapModels(ProjectModel project) {
+    if (project == null)
+      return;
+    List<LWMapModel> lwMapModels = project.getLwMapModels();
+    if (lwMapModels == null || lwMapModels.isEmpty())
+      return;
+
+    for (LWMapModel model : lwMapModels) {
+      try {
+
+      } catch (Exception ex) {
+
+      }
+    }
   }
 
   /**
@@ -180,13 +212,9 @@ public class RepoController {
    */
   public ProjectModel loadProject(LWProjectModel model, boolean throwException) throws Exception {
     try {
-      String filePath = model.getPath();
-      if (!filePath.endsWith("\\"))
-        filePath += "\\";
-      filePath += model.getName() + SystemParameters.PROJECT_FILE_EXT;
-      ProjectModel projectModel = loadProjectSettings(filePath);
-      projectModel.setHomePath(model.getPath());
+      ProjectModel projectModel = loadProjectSettings(model);
       loadProjectFiles(projectModel);
+      loadProjectMapModels(projectModel);
       return projectModel;
     } catch (Exception ex) {
       System.out.println("RepoController - loadProject - Unable to load project. Error message: " + ex.getMessage());
@@ -211,6 +239,36 @@ public class RepoController {
       System.out.println("RepoController - saveProject - Unable to save project. Error message: " + ex.getMessage());
     }
     return false;
+  }
+
+  /**
+   * Saves the map on the disk, into XML format
+   * @param mapModel
+   * MapModel
+   * @return The name of the map that was saved on the disk (if a map with the same name already exist into that
+   *         directory, a new name will be computed with a higher order number)
+   * @throws Exception
+   */
+  public String saveMap(MapModel mapModel) throws Exception {
+    String mapAbsolutePath = mapModel.getAbsolutePath();
+    String mapName = mapModel.getName();
+    if (mapAbsolutePath == null || mapName == null)
+      return null;
+    mapAbsolutePath = mapAbsolutePath.endsWith("\\") ? mapAbsolutePath : mapAbsolutePath + "\\";
+    mapName = getFileAlternativeNameIfExists(mapAbsolutePath, mapName);
+    if (mapName == null)
+      return null;
+
+    MapXMLConverter converter = new MapXMLConverter();
+    try {
+      String result = converter.convertMapToXML(mapModel);
+      writeContentToFile(result, mapAbsolutePath + mapName);
+      return mapName;
+    } catch (Exception ex) {
+      System.out.println("*** RepoController - saveMap - Unable to save map. name: " + mapName +
+      " path: " + mapAbsolutePath + " Error message: " + ex.getMessage());
+    }
+    return null;
   }
 
   public boolean closeProject(String projectPath) {

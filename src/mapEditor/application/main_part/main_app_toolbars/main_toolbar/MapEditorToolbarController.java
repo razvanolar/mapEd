@@ -3,12 +3,11 @@ package mapEditor.application.main_part.main_app_toolbars.main_toolbar;
 import javafx.beans.value.ChangeListener;
 import javafx.scene.control.Button;
 import javafx.scene.control.ToggleButton;
-import javafx.scene.control.ToggleGroup;
 import javafx.stage.Modality;
 import javafx.stage.StageStyle;
 import mapEditor.MapEditorController;
 import mapEditor.application.main_part.app_utils.AppParameters;
-import mapEditor.application.main_part.app_utils.models.MapDetailsModel;
+import mapEditor.application.main_part.app_utils.models.MapModel;
 import mapEditor.application.main_part.app_utils.views.dialogs.OkCancelDialog;
 import mapEditor.application.main_part.main_app_toolbars.main_toolbar.create_maps.CreateMapController;
 import mapEditor.application.main_part.main_app_toolbars.main_toolbar.create_maps.CreateMapView;
@@ -59,9 +58,9 @@ public class MapEditorToolbarController implements Controller {
     createMapController.bind();
 
     dialog.getOkButton().setOnAction(event -> {
-      MapDetailsModel mapModel = createMapController.getMapDetailsModel();
-      MapEditorController.getInstance().createNewMap(mapModel);
+      MapModel mapModel = createMapController.getMapDetailsModel();
       dialog.close();
+      MapEditorController.getInstance().createNewMap(mapModel);
     });
     dialog.setContent(createMapView.asNode());
     dialog.show();

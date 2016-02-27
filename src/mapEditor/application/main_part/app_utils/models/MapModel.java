@@ -7,10 +7,11 @@ import mapEditor.application.repo.types.MapType;
  *
  * Created by razvanolar on 26.02.2016.
  */
-public class MapDetailsModel {
+public class MapModel {
 
   private String name;
-  private String path;
+  private String absolutePath;
+  private String relativePath;
   private int rows;
   private int columns;
   private Color backgroundColor;
@@ -18,10 +19,11 @@ public class MapDetailsModel {
   private Color squareColor;
   private MapType type;
 
-  public MapDetailsModel(String name, String path, int rows, int columns, Color backgroundColor, Color gridColor,
-                         Color squareColor, MapType type) {
+  public MapModel(String name, String absolutePath, String relativePath, int rows, int columns,
+                  Color backgroundColor, Color gridColor, Color squareColor, MapType type) {
     this.name = name;
-    this.path = path;
+    this.absolutePath = absolutePath;
+    this.relativePath = relativePath;
     this.rows = rows;
     this.columns = columns;
     this.backgroundColor = backgroundColor;
@@ -34,8 +36,12 @@ public class MapDetailsModel {
     return name;
   }
 
-  public String getPath() {
-    return path;
+  public String getAbsolutePath() {
+    return absolutePath;
+  }
+
+  public String getRelativePath() {
+    return relativePath;
   }
 
   public int getRows() {
@@ -66,8 +72,12 @@ public class MapDetailsModel {
     this.name = name;
   }
 
-  public void setPath(String path) {
-    this.path = path;
+  public void setAbsolutePath(String absolutePath) {
+    this.absolutePath = absolutePath;
+  }
+
+  public void setRelativePath(String relativePath) {
+    this.relativePath = relativePath;
   }
 
   public void setRows(int rows) {

@@ -1,7 +1,6 @@
 package mapEditor.application.main_part.app_utils.threads;
 
 import javafx.application.Platform;
-import javafx.scene.control.Button;
 import mapEditor.application.main_part.app_utils.models.ImageModel;
 import mapEditor.application.main_part.app_utils.models.MessageType;
 import mapEditor.application.main_part.app_utils.views.dialogs.Dialog;
@@ -47,6 +46,6 @@ public class MessageHandler {
   }
 
   private void showWarningDialog(String title, String message) {
-    Platform.runLater(() -> Dialog.showAlertDialog(title, message));
+    Platform.runLater(() -> Dialog.showWarningDialog(title, message));
   }
 }

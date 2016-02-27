@@ -5,7 +5,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import mapEditor.application.main_part.app_utils.AppParameters;
-import mapEditor.application.main_part.app_utils.models.MapDetailsModel;
+import mapEditor.application.main_part.app_utils.models.MapModel;
 import mapEditor.application.main_part.manage_maps.layers.LayersController;
 import mapEditor.application.main_part.manage_maps.manage_tiles.ManageTilesController;
 import mapEditor.application.main_part.manage_maps.primary_map.PrimaryMapController;
@@ -30,7 +30,7 @@ public class ManageMapsController implements Controller {
   private IMangeMapsView view;
   private LayersController layersController;
   private ManageTilesController manageTilesController;
-  private MapDetailsModel defaultModel;
+  private MapModel defaultModel;
 
   public ManageMapsController(IMangeMapsView view) {
     this.view = view;
@@ -38,7 +38,7 @@ public class ManageMapsController implements Controller {
 
   @Override
   public void bind() {
-    defaultModel = new MapDetailsModel(SystemParameters.UNTITLED_MAP_TAB, "", SystemParameters.MAP_DEFAULT_SIZE_NUMBER,
+    defaultModel = new MapModel(SystemParameters.UNTITLED_MAP_TAB, "", "", SystemParameters.MAP_DEFAULT_SIZE_NUMBER,
             SystemParameters.MAP_DEFAULT_SIZE_NUMBER, SystemParameters.MAP_DEFAULT_BG_COLOR,
             SystemParameters.MAP_DEFAULT_GRID_COLOR, SystemParameters.MAP_DEFAULT_SQUARE_COLOR,
             AppParameters.CURRENT_PROJECT.getMapType());
@@ -83,7 +83,7 @@ public class ManageMapsController implements Controller {
     manageTilesController.bind();
   }
 
-  private void createMap(MapDetailsModel mapModel, boolean removeUntitled) {
+  private void createMap(MapModel mapModel, boolean removeUntitled) {
     PrimaryMapView primaryMapView = new PrimaryMapView(mapModel);
     ScrollPane scrollPane = view.addMap(mapModel.getName(), primaryMapView);
     PrimaryMapController controller = new PrimaryMapController(primaryMapView, scrollPane);
@@ -95,6 +95,9 @@ public class ManageMapsController implements Controller {
     scrollPane.heightProperty().addListener(sizeChangeListener);
 
     controller.bind();
+
+    if (mapModel != defaultModel)
+      AppParameters.CURRENT_PROJECT.addMapModel(mapModel);
 
     if (removeUntitled)
       removeUntitledTab();
@@ -115,7 +118,7 @@ public class ManageMapsController implements Controller {
       view.getMapsTabPane().getTabs().remove(untitledTab);
   }
 
-  public void addNewMap(MapDetailsModel mapModel) {
+  public void addNewMap(MapModel mapModel) {
     createMap(mapModel, true);
   }
 

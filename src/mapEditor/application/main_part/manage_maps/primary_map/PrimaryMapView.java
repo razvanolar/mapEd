@@ -5,7 +5,7 @@ import javafx.scene.Cursor;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import mapEditor.MapEditorController;
-import mapEditor.application.main_part.app_utils.models.MapDetailsModel;
+import mapEditor.application.main_part.app_utils.models.MapModel;
 import mapEditor.application.main_part.manage_maps.MapCanvas;
 
 /**
@@ -14,7 +14,7 @@ import mapEditor.application.main_part.manage_maps.MapCanvas;
  */
 public class PrimaryMapView extends MapCanvas {
 
-  public PrimaryMapView(MapDetailsModel mapModel) {
+  public PrimaryMapView(MapModel mapModel) {
     super(mapModel.getRows(), mapModel.getColumns());
     this.setWidth(100);
     this.setHeight(100);
@@ -23,7 +23,7 @@ public class PrimaryMapView extends MapCanvas {
     initializeComponents(mapModel);
   }
 
-  private void initializeComponents(MapDetailsModel mapModel) {
+  private void initializeComponents(MapModel mapModel) {
     fillColor = mapModel.getBackgroundColor();
     gridColor = mapModel.getGridColor();
     squareColor = mapModel.getSquareColor();

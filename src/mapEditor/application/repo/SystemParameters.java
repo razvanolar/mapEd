@@ -13,6 +13,7 @@ import java.util.List;
  */
 public class SystemParameters {
 
+  public static String XML_HEADER = "<?xml version=\"1.0\" encoding=\"utf-8\"?>";
   public static final String CONFIG_FILE_PATH = "med_config\\";
   public static final String KNOWN_PROJECTS_FILE_PATH = CONFIG_FILE_PATH + "projects\\";
   public static final String PROJECT_FILE_EXT = ".med";

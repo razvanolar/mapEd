@@ -1,6 +1,6 @@
-package mapEditor.application.repo.sax_handlers.config.projects;
+package mapEditor.application.repo.sax_handlers.config.known_projects;
 
-import mapEditor.application.main_part.app_utils.AppParameters;
+import mapEditor.application.repo.SystemParameters;
 import mapEditor.application.repo.models.LWProjectModel;
 
 import java.util.List;
@@ -17,7 +17,7 @@ public class KnownProjectsXMLConverter {
 
     StringBuilder builder = new StringBuilder();
 
-    builder.append(AppParameters.XML_HEADER);
+    builder.append(SystemParameters.XML_HEADER);
     builder.append("\n\n<projects>\n");
 
     for (LWProjectModel project : projects) {

@@ -100,17 +100,17 @@ public class CreateProjectController implements Controller {
     CreateProjectStatus status = RepoController.getInstance().checkIfProjectFieldsAreValid(confFile, path);
 
     if (status == CreateProjectStatus.NOT_DIRECTORY) {
-      Dialog.showAlertDialog(null, "You can't use the selected path because it's not a directory.");
+      Dialog.showWarningDialog(null, "You can't use the selected path because it's not a directory.");
       return;
     }
 
     if (status == CreateProjectStatus.ANOTHER_CREATED) {
-      Dialog.showAlertDialog(null, "There is another .med project created. Please choose another file");
+      Dialog.showWarningDialog(null, "There is another .med project created. Please choose another file");
       return;
     }
 
     if (status == CreateProjectStatus.NAME_EXISTS) {
-      Dialog.showAlertDialog(null, "There is another file with the same name. Please rename the project.");
+      Dialog.showWarningDialog(null, "There is another file with the same name. Please rename the project.");
       return;
     }
 
@@ -130,7 +130,7 @@ public class CreateProjectController implements Controller {
   private void createProjectFiles(String name, String path) {
     ProjectModel project = RepoController.getInstance().createProject(name, path);
     if (project == null) {
-      Dialog.showAlertDialog(null, "Failed to create project files.");
+      Dialog.showWarningDialog(null, "Failed to create project files.");
       return;
     }
     MapEditorController.getInstance().loadProject(project, true);

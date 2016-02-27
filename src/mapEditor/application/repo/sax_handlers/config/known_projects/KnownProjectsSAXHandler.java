@@ -1,4 +1,4 @@
-package mapEditor.application.repo.sax_handlers.config.projects;
+package mapEditor.application.repo.sax_handlers.config.known_projects;
 
 import mapEditor.application.repo.models.LWProjectModel;
 import mapEditor.application.repo.types.ProjectStatus;

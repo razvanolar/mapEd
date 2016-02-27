@@ -9,7 +9,6 @@ import javafx.stage.Modality;
 import javafx.stage.StageStyle;
 import mapEditor.MapEditorController;
 import mapEditor.application.main_part.app_utils.AppParameters;
-import mapEditor.application.main_part.app_utils.inputs.FileExtensionUtil;
 import mapEditor.application.main_part.app_utils.inputs.ImagesLoader;
 import mapEditor.application.main_part.app_utils.inputs.StringValidator;
 import mapEditor.application.main_part.app_utils.models.ImageModel;
@@ -438,7 +437,7 @@ public class ManageImagesController implements Controller, ManageImagesListener 
     if (!checkIfTabNameExists(title))
       addImageTab(title, image);
     else
-      Dialog.showAlertDialog(null, "A tab named '" + title + "' already exists.");
+      Dialog.showWarningDialog(null, "A tab named '" + title + "' already exists.");
   }
 
   public View getView() {

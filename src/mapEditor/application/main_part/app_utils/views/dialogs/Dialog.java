@@ -14,7 +14,7 @@ public class Dialog {
     YES, NO
   }
 
-  public static void showAlertDialog(String title, String message) {
+  public static void showWarningDialog(String title, String message) {
     title = StringValidator.isNullOrEmpty(title) ? "Warning" : title;
     Alert alert = createAlertDialog(Alert.AlertType.WARNING, title, message);
     alert.showAndWait();
@@ -30,6 +30,12 @@ public class Dialog {
   public static void showInformDialog(String title, String message) {
     title = StringValidator.isNullOrEmpty(title) ? "Info" : title;
     Alert alert = createAlertDialog(Alert.AlertType.INFORMATION, title, message);
+    alert.showAndWait();
+  }
+
+  public static void showErrorDialog(String title, String message) {
+    title = StringValidator.isNullOrEmpty(title) ? "Error" : title;
+    Alert alert = createAlertDialog(Alert.AlertType.ERROR, title, message);
     alert.showAndWait();
   }
 

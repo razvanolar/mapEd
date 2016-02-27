@@ -11,7 +11,7 @@ import mapEditor.application.main_part.app_utils.AppParameters;
 import mapEditor.application.main_part.app_utils.inputs.FileExtensionUtil;
 import mapEditor.application.main_part.app_utils.inputs.StringValidator;
 import mapEditor.application.main_part.app_utils.models.KnownFileExtensions;
-import mapEditor.application.main_part.app_utils.models.MapDetailsModel;
+import mapEditor.application.main_part.app_utils.models.MapModel;
 import mapEditor.application.main_part.app_utils.views.dialogs.OkCancelDialog;
 import mapEditor.application.main_part.app_utils.views.others.SystemFilesView;
 import mapEditor.application.main_part.types.Controller;
@@ -95,12 +95,17 @@ public class CreateMapController implements Controller {
     return !StringValidator.isNullOrEmpty(path) && path.contains(rootFile.getAbsolutePath());
   }
 
-  public MapDetailsModel getMapDetailsModel() {
+  public MapModel getMapDetailsModel() {
     String name = view.getNameTextField().getText();
     if (!name.endsWith(SystemParameters.MAP_FILE_EXT))
       name += SystemParameters.MAP_FILE_EXT;
-    return new MapDetailsModel(name,
-            view.getPathTextField().getText(),
+    String absolutePath = view.getPathTextField().getText();
+    String relativePath = absolutePath.replace(rootFile.getAbsolutePath(), "");
+    if (!relativePath.startsWith("\\"))
+      relativePath = "\\" + relativePath;
+    return new MapModel(name,
+            absolutePath,
+            relativePath,
             view.getRowSpinner().getValue(),
             view.getColumnSpinner().getValue(),
             view.getBackgroundColorPicker().getValue(),
