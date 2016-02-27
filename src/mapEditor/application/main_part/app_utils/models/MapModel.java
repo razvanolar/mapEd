@@ -12,12 +12,17 @@ public class MapModel {
   private String name;
   private String absolutePath;
   private String relativePath;
+  private int x;
+  private int y;
   private int rows;
   private int columns;
+  private int zoomStatus;
   private Color backgroundColor;
   private Color gridColor;
   private Color squareColor;
   private MapType type;
+
+  public MapModel() {}
 
   public MapModel(String name, String absolutePath, String relativePath, int rows, int columns,
                   Color backgroundColor, Color gridColor, Color squareColor, MapType type) {
@@ -44,12 +49,24 @@ public class MapModel {
     return relativePath;
   }
 
+  public int getX() {
+    return x;
+  }
+
+  public int getY() {
+    return y;
+  }
+
   public int getRows() {
     return rows;
   }
 
   public int getColumns() {
     return columns;
+  }
+
+  public int getZoomStatus() {
+    return zoomStatus;
   }
 
   public Color getBackgroundColor() {
@@ -80,12 +97,24 @@ public class MapModel {
     this.relativePath = relativePath;
   }
 
+  public void setX(int x) {
+    this.x = x;
+  }
+
+  public void setY(int y) {
+    this.y = y;
+  }
+
   public void setRows(int rows) {
     this.rows = rows;
   }
 
   public void setColumns(int columns) {
     this.columns = columns;
+  }
+
+  public void setZoomStatus(int zoomStatus) {
+    this.zoomStatus = zoomStatus;
   }
 
   public void setBackgroundColor(Color backgroundColor) {

@@ -1,6 +1,7 @@
 package mapEditor.application.main_part.manage_maps;
 
 import javafx.beans.value.ChangeListener;
+import javafx.collections.ListChangeListener;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
@@ -13,6 +14,8 @@ import mapEditor.application.main_part.manage_maps.primary_map.PrimaryMapView;
 import mapEditor.application.main_part.types.Controller;
 import mapEditor.application.main_part.types.View;
 import mapEditor.application.repo.SystemParameters;
+
+import java.util.List;
 
 /**
  *
@@ -44,7 +47,12 @@ public class ManageMapsController implements Controller {
             AppParameters.CURRENT_PROJECT.getMapType());
     addListeners();
     initControllers();
-    createMap(defaultModel, false);
+    List<MapModel> mapModels = AppParameters.CURRENT_PROJECT.getMapModels();
+    if (mapModels != null && !mapModels.isEmpty()) {
+      for (MapModel mapModel : mapModels)
+        createMap(mapModel, false);
+    } else
+      createMap(defaultModel, false);
   }
 
   private void addListeners() {
@@ -71,6 +79,17 @@ public class ManageMapsController implements Controller {
         scrollPane.widthProperty().removeListener(listener);
         scrollPane.widthProperty().removeListener(listener);
         mapView.widthProperty().unbind();
+      }
+    });
+
+    view.getMapsTabPane().getTabs().addListener((ListChangeListener<Tab>) c -> {
+      while (c.next()) {
+        if (c.getRemovedSize() > 0) {
+          for (Tab tab : c.getRemoved()) {
+            PrimaryMapView mapView = (PrimaryMapView) tab.getUserData();
+            AppParameters.CURRENT_PROJECT.removeMapModel(mapView.getMapModel());
+          }
+        }
       }
     });
   }

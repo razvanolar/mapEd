@@ -20,7 +20,10 @@ public class MapXMLConverter {
     builder.append("<map name=\"").append(map.getName()).
             append("\" path=\"").append(map.getRelativePath()).
             append("\" rows=\"").append(map.getRows()).
-            append("\" columns=\"").append(map.getColumns()).append("\">");
+            append("\" columns=\"").append(map.getColumns()).
+            append("\" x=\"").append(map.getX()).
+            append("\" y=\"").append(map.getY()).
+            append("\" zoom=\"").append(map.getZoomStatus()).append("\">\n");
 
     builder.append("\t").append(convertColorToXml("bg_color", map.getBackgroundColor())).append("\n");
     builder.append("\t").append(convertColorToXml("grid_color", map.getGridColor())).append("\n");

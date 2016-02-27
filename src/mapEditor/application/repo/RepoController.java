@@ -13,6 +13,7 @@ import mapEditor.application.repo.results.SaveImagesResult;
 import mapEditor.application.repo.sax_handlers.config.known_projects.KnownProjectsXMLConverter;
 import mapEditor.application.repo.sax_handlers.config.known_projects.KnownProjectsXMLHandler;
 import mapEditor.application.repo.sax_handlers.maps.MapXMLConverter;
+import mapEditor.application.repo.sax_handlers.maps.MapXMLHandler;
 import mapEditor.application.repo.sax_handlers.project_init_file.ProjectXMLConverter;
 import mapEditor.application.repo.sax_handlers.project_init_file.ProjectXMLHandler;
 import mapEditor.application.repo.statuses.SaveImagesStatus;
@@ -156,18 +157,26 @@ public class RepoController {
     return projectModel;
   }
 
-  public void loadProjectMapModels(ProjectModel project) {
+  public void loadProjectMapModels(ProjectModel project) throws Exception {
     if (project == null)
       return;
     List<LWMapModel> lwMapModels = project.getLwMapModels();
     if (lwMapModels == null || lwMapModels.isEmpty())
       return;
 
-    for (LWMapModel model : lwMapModels) {
+    MapXMLHandler handler = new MapXMLHandler();
+    String projectMapsPath = project.getMapsFile().getAbsolutePath();
+    for (LWMapModel lwModel : lwMapModels) {
       try {
-
+        String mapAbsolutePath = projectMapsPath + lwModel.getRelativePath();
+        String content = readContentFromFile(mapAbsolutePath + lwModel.getName());
+        handler.parse(content);
+        MapModel mapModel = handler.getMapModel();
+        mapModel.setAbsolutePath(mapAbsolutePath);
+        project.addMapModel(mapModel);
       } catch (Exception ex) {
-
+        System.out.println("*** RepoController - loadProjectMapModels - Unable to load map model for map name: " +
+        lwModel.getName() + " and project maps path: " + projectMapsPath + " Error message: " + ex.getMessage());
       }
     }
   }
@@ -215,6 +224,7 @@ public class RepoController {
       ProjectModel projectModel = loadProjectSettings(model);
       loadProjectFiles(projectModel);
       loadProjectMapModels(projectModel);
+      projectModel.setLwMapModels(null);
       return projectModel;
     } catch (Exception ex) {
       System.out.println("RepoController - loadProject - Unable to load project. Error message: " + ex.getMessage());

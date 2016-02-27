@@ -14,24 +14,31 @@ import mapEditor.application.main_part.manage_maps.MapCanvas;
  */
 public class PrimaryMapView extends MapCanvas {
 
+  private MapModel mapModel;
+
   public PrimaryMapView(MapModel mapModel) {
     super(mapModel.getRows(), mapModel.getColumns());
+    this.mapModel = mapModel;
     this.setWidth(100);
     this.setHeight(100);
     this.prefHeight(100);
     this.prefWidth(100);
-    initializeComponents(mapModel);
+    initializeComponents();
   }
 
-  private void initializeComponents(MapModel mapModel) {
+  private void initializeComponents() {
     fillColor = mapModel.getBackgroundColor();
     gridColor = mapModel.getGridColor();
     squareColor = mapModel.getSquareColor();
     this.setCache(true);
     this.setCacheHint(CacheHint.SPEED);
 
-    canvasX = 0;
-    canvasY = 0;
+    canvasX = mapModel.getX();
+    canvasY = mapModel.getY();
+    zoomStatus = mapModel.getZoomStatus();
+
+    CELL_WIDTH = DEFAULT_CELL_WIDTH + zoomStatus;
+    CELL_HEIGHT = DEFAULT_CELL_HEIGHT + zoomStatus;
   }
 
   public void onMousePressedEvent(MouseEvent event) {
@@ -223,5 +230,12 @@ public class PrimaryMapView extends MapCanvas {
     drawGridLines(hoveredCellX - canvasX, hoveredCellY - canvasY);
 
 //    controller.handleChangePosition(MapNotificationTypes.PRIMARY_MAP);
+  }
+
+  public MapModel getMapModel() {
+    mapModel.setX(canvasX);
+    mapModel.setY(canvasY);
+    mapModel.setZoomStatus(zoomStatus);
+    return mapModel;
   }
 }

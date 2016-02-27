@@ -158,7 +158,7 @@ public class ProjectModel {
   }
 
   public void addMapModel(MapModel mapModel) {
-    if (!mapModels.contains(mapModel))
+    if (mapModel != null && !mapModels.contains(mapModel))
       mapModels.add(mapModel);
   }
 
