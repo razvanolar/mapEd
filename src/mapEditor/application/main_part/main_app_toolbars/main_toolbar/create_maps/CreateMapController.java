@@ -34,6 +34,7 @@ public class CreateMapController implements Controller {
     Spinner<Integer> getColumnSpinner();
     ColorPicker getBackgroundColorPicker();
     ColorPicker getGridColorPicker();
+    ColorPicker getSquareColorPicker();
   }
 
   private ICreateMapView view;
@@ -104,6 +105,7 @@ public class CreateMapController implements Controller {
             view.getColumnSpinner().getValue(),
             view.getBackgroundColorPicker().getValue(),
             view.getGridColorPicker().getValue(),
+            view.getSquareColorPicker().getValue(),
             AppParameters.CURRENT_PROJECT.getMapType());
   }
 }

@@ -15,15 +15,18 @@ public class MapDetailsModel {
   private int columns;
   private Color backgroundColor;
   private Color gridColor;
+  private Color squareColor;
   private MapType type;
 
-  public MapDetailsModel(String name, String path, int rows, int columns, Color backgroundColor, Color gridColor, MapType type) {
+  public MapDetailsModel(String name, String path, int rows, int columns, Color backgroundColor, Color gridColor,
+                         Color squareColor, MapType type) {
     this.name = name;
     this.path = path;
     this.rows = rows;
     this.columns = columns;
     this.backgroundColor = backgroundColor;
     this.gridColor = gridColor;
+    this.squareColor = squareColor;
     this.type = type;
   }
 
@@ -49,6 +52,10 @@ public class MapDetailsModel {
 
   public Color getGridColor() {
     return gridColor;
+  }
+
+  public Color getSquareColor() {
+    return squareColor;
   }
 
   public MapType getType() {
@@ -77,6 +84,10 @@ public class MapDetailsModel {
 
   public void setGridColor(Color gridColor) {
     this.gridColor = gridColor;
+  }
+
+  public void setSquareColor(Color squareColor) {
+    this.squareColor = squareColor;
   }
 
   public void setType(MapType type) {

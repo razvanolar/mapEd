@@ -4,8 +4,8 @@ import javafx.scene.CacheHint;
 import javafx.scene.Cursor;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
-import javafx.scene.paint.Color;
 import mapEditor.MapEditorController;
+import mapEditor.application.main_part.app_utils.models.MapDetailsModel;
 import mapEditor.application.main_part.manage_maps.MapCanvas;
 
 /**
@@ -14,19 +14,19 @@ import mapEditor.application.main_part.manage_maps.MapCanvas;
  */
 public class PrimaryMapView extends MapCanvas {
 
-  public PrimaryMapView() {
-    super();
+  public PrimaryMapView(MapDetailsModel mapModel) {
+    super(mapModel.getRows(), mapModel.getColumns());
     this.setWidth(100);
     this.setHeight(100);
     this.prefHeight(100);
     this.prefWidth(100);
-    initializeComponents();
+    initializeComponents(mapModel);
   }
 
-  private void initializeComponents() {
-    fillColor = new Color(0.5, 0.5, 0.5, 0.5);
-    gridColor = Color.DARKCYAN;
-    squareColor = Color.YELLOW;
+  private void initializeComponents(MapDetailsModel mapModel) {
+    fillColor = mapModel.getBackgroundColor();
+    gridColor = mapModel.getGridColor();
+    squareColor = mapModel.getSquareColor();
     this.setCache(true);
     this.setCacheHint(CacheHint.SPEED);
 

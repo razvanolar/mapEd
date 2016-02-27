@@ -7,6 +7,8 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import mapEditor.MapEditorController;
+import mapEditor.application.main_part.app_utils.AppParameters;
+import mapEditor.application.repo.SystemParameters;
 
 /**
  *
@@ -29,8 +31,8 @@ public class MapCanvas extends Canvas {
   protected int CELL_WIDTH;
   protected int CELL_HEIGHT;
 
-  protected int ROWS = 40;
-  protected int COLUMNS = 40;
+  protected int ROWS;
+  protected int COLUMNS;
 
   protected Color fillColor, gridColor, squareColor;
 
@@ -69,17 +71,19 @@ public class MapCanvas extends Canvas {
   // TODO: used only for debug
   private boolean isMinimap;
 
-  public MapCanvas() {
-    this(32, 32);
+  public MapCanvas(int rows, int cols) {
+    this(AppParameters.CURRENT_PROJECT.getCellSize(), AppParameters.CURRENT_PROJECT.getCellSize(), rows, cols);
     isMinimap = false;
   }
 
-  public MapCanvas(int cellWidth, int cellHeight) {
+  public MapCanvas(int cellWidth, int cellHeight, int rows, int cols) {
     super();
     DEFAULT_CELL_WIDTH = cellWidth;
     DEFAULT_CELL_HEIGHT = cellHeight;
     CELL_WIDTH = DEFAULT_CELL_WIDTH;
     CELL_HEIGHT = DEFAULT_CELL_HEIGHT;
+    ROWS = rows;
+    COLUMNS = cols;
     isMinimap = true;
 //    paintMap();
   }

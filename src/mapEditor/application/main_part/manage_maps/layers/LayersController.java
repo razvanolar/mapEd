@@ -1,14 +1,12 @@
 package mapEditor.application.main_part.manage_maps.layers;
 
 import javafx.collections.ObservableList;
-import javafx.geometry.Side;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.layout.Region;
 import javafx.stage.Modality;
 import javafx.stage.StageStyle;
 import mapEditor.application.main_part.app_utils.models.LayerModel;
-import mapEditor.application.main_part.app_utils.models.LayerType;
 import mapEditor.application.main_part.app_utils.views.dialogs.OkCancelDialog;
 import mapEditor.application.main_part.manage_maps.layers.create_edit_layers.CreateEditLayersContextMenuController;
 import mapEditor.application.main_part.manage_maps.layers.create_edit_layers.CreateEditLayersContextMenuView;
@@ -53,7 +51,6 @@ public class LayersController implements Controller, SelectableLayerListener {
 
   @Override
   public void bind() {
-    addTestLayers();
     addListeners();
   }
 
@@ -174,12 +171,5 @@ public class LayersController implements Controller, SelectableLayerListener {
         layers.add(selectableLayer.getLayerModel());
     });
     return layers;
-  }
-
-  // TODO: delete
-  private void addTestLayers() {
-    view.addLayer(new SelectableLayerView(new LayerModel("background", LayerType.BACKGROUND), this));
-    view.addLayer(new SelectableLayerView(new LayerModel("objects", LayerType.OBJECT), this));
-    view.addLayer(new SelectableLayerView(new LayerModel("foreground", LayerType.FOREGROUND), this));
   }
 }

@@ -4,6 +4,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import mapEditor.application.main_part.app_utils.AppParameters;
 import mapEditor.application.main_part.app_utils.models.MapDetailsModel;
 import mapEditor.application.main_part.manage_maps.layers.LayersController;
 import mapEditor.application.main_part.manage_maps.manage_tiles.ManageTilesController;
@@ -29,6 +30,7 @@ public class ManageMapsController implements Controller {
   private IMangeMapsView view;
   private LayersController layersController;
   private ManageTilesController manageTilesController;
+  private MapDetailsModel defaultModel;
 
   public ManageMapsController(IMangeMapsView view) {
     this.view = view;
@@ -36,9 +38,13 @@ public class ManageMapsController implements Controller {
 
   @Override
   public void bind() {
+    defaultModel = new MapDetailsModel(SystemParameters.UNTITLED_MAP_TAB, "", SystemParameters.MAP_DEFAULT_SIZE_NUMBER,
+            SystemParameters.MAP_DEFAULT_SIZE_NUMBER, SystemParameters.MAP_DEFAULT_BG_COLOR,
+            SystemParameters.MAP_DEFAULT_GRID_COLOR, SystemParameters.MAP_DEFAULT_SQUARE_COLOR,
+            AppParameters.CURRENT_PROJECT.getMapType());
     addListeners();
     initControllers();
-    createMap(SystemParameters.UNTITLED_MAP_TAB, false);
+    createMap(defaultModel, false);
   }
 
   private void addListeners() {
@@ -55,7 +61,7 @@ public class ManageMapsController implements Controller {
         }
         mapView.paint();
       } else {
-        createMap(SystemParameters.UNTITLED_MAP_TAB, false);
+        createMap(defaultModel, false);
       }
 
       if (oldItem != null) {
@@ -77,14 +83,12 @@ public class ManageMapsController implements Controller {
     manageTilesController.bind();
   }
 
-  private void createMap(String name, boolean removeUntitled) {
-    PrimaryMapView primaryMapView = new PrimaryMapView();
-    ScrollPane scrollPane = view.addMap(name, primaryMapView);
+  private void createMap(MapDetailsModel mapModel, boolean removeUntitled) {
+    PrimaryMapView primaryMapView = new PrimaryMapView(mapModel);
+    ScrollPane scrollPane = view.addMap(mapModel.getName(), primaryMapView);
     PrimaryMapController controller = new PrimaryMapController(primaryMapView, scrollPane);
 
-    ChangeListener<Number> sizeChangeListener = (observable, oldValue, newValue) -> {
-      primaryMapView.paint();
-    };
+    ChangeListener<Number> sizeChangeListener = (observable, oldValue, newValue) -> primaryMapView.paint();
 
     scrollPane.setUserData(sizeChangeListener);
     scrollPane.widthProperty().addListener(sizeChangeListener);
@@ -112,7 +116,7 @@ public class ManageMapsController implements Controller {
   }
 
   public void addNewMap(MapDetailsModel mapModel) {
-    createMap(mapModel.getName(), true);
+    createMap(mapModel, true);
   }
 
   public View getView() {

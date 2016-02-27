@@ -5,7 +5,6 @@ import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import mapEditor.application.main_part.app_utils.AppParameters;
 import mapEditor.application.repo.SystemParameters;
@@ -25,6 +24,7 @@ public class CreateMapView implements CreateMapController.ICreateMapView {
   private Spinner<Integer> columnSpinner;
   private ColorPicker backgroundColorPicker;
   private ColorPicker gridColorPicker;
+  private ColorPicker squareColorPicker;
 
   public CreateMapView() {
     initGUI();
@@ -37,13 +37,15 @@ public class CreateMapView implements CreateMapController.ICreateMapView {
     infoButton = new Button("?");
     rowSpinner = new Spinner<>(SystemParameters.MAP_MIN_SIZE_NUMBER, SystemParameters.MAP_MAX_SIZE_NUMBER, SystemParameters.MAP_DEFAULT_SIZE_NUMBER, 1);
     columnSpinner = new Spinner<>(SystemParameters.MAP_MIN_SIZE_NUMBER, SystemParameters.MAP_MAX_SIZE_NUMBER, SystemParameters.MAP_DEFAULT_SIZE_NUMBER, 1);
-    backgroundColorPicker = new ColorPicker();
-    gridColorPicker = new ColorPicker(Color.BLACK);
+    backgroundColorPicker = new ColorPicker(SystemParameters.MAP_DEFAULT_BG_COLOR);
+    gridColorPicker = new ColorPicker(SystemParameters.MAP_DEFAULT_GRID_COLOR);
+    squareColorPicker = new ColorPicker(SystemParameters.MAP_DEFAULT_SQUARE_COLOR);
     mainContainer = new GridPane();
 
     pathTextField.setMinWidth(300);
     backgroundColorPicker.setMinWidth(150);
     gridColorPicker.setMinWidth(150);
+    squareColorPicker.setMinWidth(150);
 
     mainContainer.setAlignment(Pos.CENTER);
     mainContainer.setHgap(5);
@@ -62,8 +64,10 @@ public class CreateMapView implements CreateMapController.ICreateMapView {
     mainContainer.add(backgroundColorPicker, 1, 3);
     mainContainer.add(new Text("Grid Color : "), 2, 3);
     mainContainer.add(gridColorPicker, 3, 3);
-    mainContainer.add(new Text("Type : "), 0, 4);
-    mainContainer.add(new Text(AppParameters.CURRENT_PROJECT.getMapType().name()), 1, 4);
+    mainContainer.add(new Text("Square Color : "), 0, 4);
+    mainContainer.add(squareColorPicker, 1, 4);
+    mainContainer.add(new Text("Type : "), 0, 5);
+    mainContainer.add(new Text(AppParameters.CURRENT_PROJECT.getMapType().name()), 1, 5);
     mainContainer.add(infoButton, 4, 5);
   }
 
@@ -93,6 +97,10 @@ public class CreateMapView implements CreateMapController.ICreateMapView {
 
   public ColorPicker getGridColorPicker() {
     return gridColorPicker;
+  }
+
+  public ColorPicker getSquareColorPicker() {
+    return squareColorPicker;
   }
 
   @Override

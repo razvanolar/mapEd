@@ -1,5 +1,6 @@
 package mapEditor.application.repo;
 
+import javafx.scene.paint.Color;
 import mapEditor.application.main_part.app_utils.models.MessageKey;
 import mapEditor.application.repo.models.LWProjectModel;
 
@@ -27,6 +28,10 @@ public class SystemParameters {
   public static final int MAP_MIN_SIZE_NUMBER = 1;
   public static final int MAP_MAX_SIZE_NUMBER = 9999;
   public static final int MAP_DEFAULT_SIZE_NUMBER = 40;
+
+  public static final Color MAP_DEFAULT_BG_COLOR = new Color(.5, .5, .5, .5);
+  public static final Color MAP_DEFAULT_GRID_COLOR = Color.DARKCYAN;
+  public static final Color MAP_DEFAULT_SQUARE_COLOR = Color.YELLOW;
 
   public static List<LWProjectModel> PROJECTS;
 
