@@ -169,16 +169,32 @@ public class RepoController {
     for (LWMapModel lwModel : lwMapModels) {
       try {
         String mapAbsolutePath = projectMapsPath + lwModel.getRelativePath();
-        String content = readContentFromFile(mapAbsolutePath + lwModel.getName());
-        handler.parse(content);
-        MapModel mapModel = handler.getMapModel();
-        mapModel.setAbsolutePath(mapAbsolutePath);
-        project.addMapModel(mapModel);
+        project.addMapModel(createMapModelFromFile(new File(mapAbsolutePath + lwModel.getName()), handler));
       } catch (Exception ex) {
         System.out.println("*** RepoController - loadProjectMapModels - Unable to load map model for map name: " +
         lwModel.getName() + " and project maps path: " + projectMapsPath + " Error message: " + ex.getMessage());
       }
     }
+  }
+
+  /**
+   * Create the map model for the specified file.
+   * @param mapFile
+   * XML map file (make sure you provide the full path of the file, not just the parent directory)
+   * @param handler
+   * MapXMLHandler, if it's null a new one will be created.
+   * @return the corresponding map model of the file; null otherwise.
+   */
+  public MapModel createMapModelFromFile(File mapFile, MapXMLHandler handler) throws Exception {
+    if (mapFile == null)
+      return null;
+    if (handler == null)
+      handler = new MapXMLHandler();
+    String content = readContentFromFile(mapFile);
+    handler.parse(content);
+    MapModel mapModel = handler.getMapModel();
+    mapModel.setAbsolutePath(mapFile.getParentFile().getAbsolutePath());
+    return mapModel;
   }
 
   /**
@@ -302,7 +318,11 @@ public class RepoController {
   }
 
   public String readContentFromFile(String filePath) throws Exception {
-    BufferedReader reader = new BufferedReader(new FileReader(new File(filePath)));
+    return readContentFromFile(new File(filePath));
+  }
+
+  public String readContentFromFile(File file) throws Exception {
+    BufferedReader reader = new BufferedReader(new FileReader(file));
     StringBuilder builder = new StringBuilder();
     String line;
     while ((line = reader.readLine()) != null)

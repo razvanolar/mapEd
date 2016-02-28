@@ -6,5 +6,6 @@ package mapEditor.application.main_part.project_tree.utils;
  */
 public interface ProjectTreeContextMenuListener {
 
+  void openMap();
   void openInImageEditor();
 }

@@ -521,7 +521,7 @@ public class ManageImagesController implements Controller, ManageImagesListener 
           SystemParameters.MESSAGE_KEY.setName(image.getImageName());
           SystemParameters.MESSAGE_KEY.setPath(image.getImagePath());
           SystemParameters.MESSAGE_KEY.setImageModel(new ImageModel(param, image.getImagePath(), image.getImageName()));
-          SystemParameters.MESSAGE_KEY.setMessageType(MessageType.OVERWRITE_TILE_SETIMAGE);
+          SystemParameters.MESSAGE_KEY.setMessageType(MessageType.OVERWRITE_TILE_SET_IMAGE);
           SystemParameters.MESSAGE_KEY.notify();
           saveTilesetDialog.close();
         }

@@ -132,4 +132,9 @@ public class MapModel {
   public void setType(MapType type) {
     this.type = type;
   }
+
+  @Override
+  public String toString() {
+    return name + " - " + absolutePath;
+  }
 }

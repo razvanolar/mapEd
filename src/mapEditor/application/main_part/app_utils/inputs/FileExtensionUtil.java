@@ -1,6 +1,7 @@
 package mapEditor.application.main_part.app_utils.inputs;
 
 import mapEditor.application.main_part.app_utils.models.KnownFileExtensions;
+import mapEditor.application.main_part.app_utils.models.TreeItemType;
 
 import java.util.List;
 
@@ -42,8 +43,20 @@ public class FileExtensionUtil {
     return !(name == null || getFileExtension(name) != KnownFileExtensions.PNG);
   }
 
+  public static boolean isMapFile(String name) {
+    return !StringValidator.isNullOrEmpty(name) && getFileExtension(name) == KnownFileExtensions.MAP;
+  }
+
   public static boolean hasExtension(String name) {
     return !StringValidator.isNullOrEmpty(name) && !StringValidator.isNullOrEmpty(getStringExtension(name));
+  }
+
+  public static TreeItemType getTreeItemTypeForName(String name) {
+    if (isImageFile(name))
+      return TreeItemType.IMAGE;
+    if (isMapFile(name))
+      return TreeItemType.MAP;
+    return TreeItemType.NORMAL;
   }
 
   private static String getStringExtension(String name) {

@@ -5,8 +5,10 @@ import javafx.collections.ListChangeListener;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import mapEditor.MapEditorController;
 import mapEditor.application.main_part.app_utils.AppParameters;
 import mapEditor.application.main_part.app_utils.models.MapModel;
+import mapEditor.application.main_part.app_utils.views.dialogs.Dialog;
 import mapEditor.application.main_part.manage_maps.layers.LayersController;
 import mapEditor.application.main_part.manage_maps.manage_tiles.ManageTilesController;
 import mapEditor.application.main_part.manage_maps.primary_map.PrimaryMapController;
@@ -15,6 +17,7 @@ import mapEditor.application.main_part.types.Controller;
 import mapEditor.application.main_part.types.View;
 import mapEditor.application.repo.SystemParameters;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -137,6 +140,52 @@ public class ManageMapsController implements Controller {
       view.getMapsTabPane().getTabs().remove(untitledTab);
   }
 
+  /**
+   * Open the existing map file into edit mode. Usually called from the project tree controller.
+   * First, check to see if the specified map is already opened. If it is, set as selected, otherwise,
+   * open it from the disk.
+   * @param file
+   * Selected map file.
+   */
+  public void openMap(File file) {
+    if (file == null)
+      return;
+    String filePath = file.getParentFile().getAbsolutePath();
+    String fileName = file.getName();
+    filePath = filePath.endsWith("\\") ? filePath : filePath + "\\";
+
+    // if the map is already opened, select it
+    for (Tab tab : view.getMapsTabPane().getTabs()) {
+      PrimaryMapView mapView = (PrimaryMapView) tab.getUserData();
+      MapModel mapModel = mapView.getMapModel();
+      String mapPath = mapModel.getAbsolutePath();
+      mapPath = mapPath.endsWith("\\") ? mapPath : mapPath + "\\";
+      if (mapPath.equals(filePath) && mapModel.getName().equals(fileName)) {
+        view.getMapsTabPane().getSelectionModel().select(tab);
+        return;
+      }
+    }
+
+    // otherwise, load the map from disk
+    try {
+      MapEditorController.getInstance().maskView();
+      MapModel mapModel = MapEditorController.getInstance().getRepoController().createMapModelFromFile(file, null);
+      MapEditorController.getInstance().unmaskView();
+      if (mapModel != null)
+        createMap(mapModel, true);
+      else
+        Dialog.showWarningDialog("ManageMapsController - Warning", "Map instance is null.");
+    } catch (Exception ex) {
+      MapEditorController.getInstance().unmaskView();
+      Dialog.showErrorDialog("ManageMapsController - Error", "Error occurred while loading the map. Message: " + ex.getMessage());
+    }
+  }
+
+  /**
+   * Add a new map in the tab pane. Called when creating a new map.
+   * @param mapModel
+   * MapModel
+   */
   public void addNewMap(MapModel mapModel) {
     createMap(mapModel, true);
   }

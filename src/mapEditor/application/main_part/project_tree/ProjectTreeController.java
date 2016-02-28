@@ -102,7 +102,7 @@ public class ProjectTreeController implements Controller, ProjectTreeContextMenu
       return;
     for (File file : files) {
       LazyTreeItem node = new LazyTreeItem(file, file.isDirectory(),
-              file.isDirectory() ? TreeItemType.FOLDER : (FileExtensionUtil.isImageFile(file.getName()) ? TreeItemType.IMAGE : TreeItemType.NORMAL));
+              file.isDirectory() ? TreeItemType.FOLDER : FileExtensionUtil.getTreeItemTypeForName(file.getName()));
       node.expandedProperty().addListener(treeItemListener);
       parent.getChildren().add(node);
     }
@@ -147,6 +147,16 @@ public class ProjectTreeController implements Controller, ProjectTreeContextMenu
 
   public void setManageImagesController(ManageImagesController manageImagesController) {
     this.manageImagesController = manageImagesController;
+  }
+
+  @Override
+  public void openMap() {
+    TreeItem<File> item = view.getTree().getSelectionModel().getSelectedItem();
+    if (item == null || item.getValue() == null || !FileExtensionUtil.isMapFile(item.getValue().getName()))
+      return;
+    if (!MapEditorController.getInstance().isMapView())
+      MapEditorController.getInstance().changeToMapView();
+    manageMapsController.openMap(item.getValue());
   }
 
   @Override

@@ -6,5 +6,5 @@ package mapEditor.application.main_part.app_utils.models;
  */
 public enum MessageType {
 
-  EXIT, SAVE_TILE_SET_IMAGE, OVERWRITE_TILE_SETIMAGE
+  EXIT, SAVE_TILE_SET_IMAGE, OVERWRITE_TILE_SET_IMAGE, LOAD_MAP
 }

@@ -20,7 +20,7 @@ public class MessageHandler {
       case SAVE_TILE_SET_IMAGE:
         new Thread(saveTileSetImage(false)).start();
         break;
-      case OVERWRITE_TILE_SETIMAGE:
+      case OVERWRITE_TILE_SET_IMAGE:
         new Thread(saveTileSetImage(true)).start();
         break;
     }

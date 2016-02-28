@@ -1,5 +1,6 @@
 package mapEditor;
 
+import javafx.application.Platform;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.SplitPane;
@@ -202,6 +203,10 @@ public class MapEditorController {
     }
   }
 
+  public void changeToMapView() {
+    toolbarController.changeToMapView();
+  }
+
   public void changeToImageEditorView() {
     toolbarController.changeToImageEditorView();
   }
@@ -254,5 +259,17 @@ public class MapEditorController {
 
   public boolean isMapView() {
     return toolbarController.isMapViewSelected();
+  }
+
+
+  /**
+   * Controller thread
+   */
+  private void runMapEditorListener() {
+    Platform.runLater(() -> {
+      while (true) {
+
+      }
+    });
   }
 }

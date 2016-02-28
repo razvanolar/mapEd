@@ -66,6 +66,10 @@ public class MapEditorToolbarController implements Controller {
     dialog.show();
   }
 
+  public void changeToMapView() {
+    view.getMapEditorViewButton().setSelected(true);
+  }
+
   public void changeToImageEditorView() {
     view.getImageEditorViewButton().setSelected(true);
   }

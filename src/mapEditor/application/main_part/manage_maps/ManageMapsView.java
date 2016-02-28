@@ -5,7 +5,6 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
 import mapEditor.MapEditorController;
 import mapEditor.application.main_part.app_utils.constants.CssConstants;
@@ -66,6 +65,7 @@ public class ManageMapsView implements ManageMapsController.IMangeMapsView {
     Tab tab = new Tab(title, scrollPane);
     tab.setUserData(mapView);
     mapsTabPane.getTabs().add(tab);
+    mapsTabPane.getSelectionModel().select(tab);
     return scrollPane;
   }
 

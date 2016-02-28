@@ -79,7 +79,7 @@ public class WatchDir {
           boolean isDirectory = Files.isDirectory(child, LinkOption.NOFOLLOW_LINKS);
           if (item != null && item.wasExpanded()) {
             LazyTreeItem newItem = new LazyTreeItem(new File(child.toAbsolutePath().toString()), isDirectory,
-                    isDirectory ? TreeItemType.FOLDER : (FileExtensionUtil.isImageFile(child.toAbsolutePath().toString()) ? TreeItemType.IMAGE : TreeItemType.NORMAL));
+                    isDirectory ? TreeItemType.FOLDER : FileExtensionUtil.getTreeItemTypeForName(child.toAbsolutePath().toString()));
             newItem.expandedProperty().addListener(listener);
             item.getChildren().add(newItem);
             item.getChildren().sort((o1, o2) -> o1.getValue().getName().compareTo(o2.getValue().getName()));
