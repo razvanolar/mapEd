@@ -39,8 +39,7 @@ public class ProjectSAXHandler extends DefaultHandler {
           lwMapModels = new ArrayList<>();
         lwMapModels.add(new LWMapModel(attributes.getValue("name"),
                 attributes.getValue("path"),
-                Integer.parseInt(attributes.getValue("rows")),
-                Integer.parseInt(attributes.getValue("columns"))));
+                Boolean.parseBoolean(attributes.getValue("isSelected"))));
         break;
     }
   }

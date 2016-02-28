@@ -192,7 +192,7 @@ public class MapEditorController {
     try {
       maskView();
 
-      String name = repoController.saveMap(mapModel);
+      String name = repoController.saveMap(mapModel, false);
       mapModel.setName(name);
       manageMapsController.addNewMap(mapModel);
 
@@ -201,6 +201,11 @@ public class MapEditorController {
       unmaskView();
       Dialog.showErrorDialog(null, "MapEditorController: Unexpected error while creating the map.");
     }
+  }
+
+  public void saveCurrentProjectState() {
+    manageMapsController.updateMapModelsForExistingTabs();
+    repoController.saveProject(AppParameters.CURRENT_PROJECT);
   }
 
   public void changeToMapView() {

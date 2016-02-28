@@ -21,6 +21,7 @@ public class MapModel {
   private Color gridColor;
   private Color squareColor;
   private MapType type;
+  private boolean selected;
 
   public MapModel() {}
 
@@ -85,6 +86,12 @@ public class MapModel {
     return type;
   }
 
+  public boolean isSelected() {
+    return selected;
+  }
+
+
+
   public void setName(String name) {
     this.name = name;
   }
@@ -131,6 +138,10 @@ public class MapModel {
 
   public void setType(MapType type) {
     this.type = type;
+  }
+
+  public void setSelected(boolean selected) {
+    this.selected = selected;
   }
 
   @Override

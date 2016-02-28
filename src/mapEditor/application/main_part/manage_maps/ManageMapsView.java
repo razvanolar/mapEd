@@ -51,7 +51,7 @@ public class ManageMapsView implements ManageMapsController.IMangeMapsView {
   }
 
   @Override
-  public ScrollPane addMap(String title, PrimaryMapView mapView) {
+  public ScrollPane addMap(String title, PrimaryMapView mapView, boolean selectTab) {
     ScrollPane scrollPane = new ScrollPane(mapView);
 //    BorderPane borderPane = new BorderPane(scrollPane);
 
@@ -65,7 +65,8 @@ public class ManageMapsView implements ManageMapsController.IMangeMapsView {
     Tab tab = new Tab(title, scrollPane);
     tab.setUserData(mapView);
     mapsTabPane.getTabs().add(tab);
-    mapsTabPane.getSelectionModel().select(tab);
+    if (selectTab)
+      mapsTabPane.getSelectionModel().select(tab);
     return scrollPane;
   }
 

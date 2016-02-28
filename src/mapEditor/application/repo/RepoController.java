@@ -169,7 +169,9 @@ public class RepoController {
     for (LWMapModel lwModel : lwMapModels) {
       try {
         String mapAbsolutePath = projectMapsPath + lwModel.getRelativePath();
-        project.addMapModel(createMapModelFromFile(new File(mapAbsolutePath + lwModel.getName()), handler));
+        MapModel mapModel = createMapModelFromFile(new File(mapAbsolutePath + lwModel.getName()), handler);
+        mapModel.setSelected(lwModel.isSelected());
+        project.addMapModel(mapModel);
       } catch (Exception ex) {
         System.out.println("*** RepoController - loadProjectMapModels - Unable to load map model for map name: " +
         lwModel.getName() + " and project maps path: " + projectMapsPath + " Error message: " + ex.getMessage());
@@ -243,7 +245,7 @@ public class RepoController {
       projectModel.setLwMapModels(null);
       return projectModel;
     } catch (Exception ex) {
-      System.out.println("RepoController - loadProject - Unable to load project. Error message: " + ex.getMessage());
+      System.out.println("*** RepoController - loadProject - Unable to load project. Error message: " + ex.getMessage());
       if (throwException)
         throw ex;
     }
@@ -260,6 +262,8 @@ public class RepoController {
       ProjectXMLConverter xmlConverter = new ProjectXMLConverter();
       String result = xmlConverter.convertProjectToXML(project);
       writeContentToFile(result, project.getConfigFilePath());
+      for (MapModel mapModel : project.getMapModels())
+        saveMap(mapModel, true);
       return true;
     } catch (Exception ex) {
       System.out.println("RepoController - saveProject - Unable to save project. Error message: " + ex.getMessage());
@@ -268,22 +272,28 @@ public class RepoController {
   }
 
   /**
-   * Saves the map on the disk, into XML format
+   * Saves the map on the disk, into XML format. Based on the provided boolean flag, you can choose to overwrite the map
+   * if already exist, or to create a new one. When creating a new one, the map name will be computed to establish if an
+   * order number is required.
    * @param mapModel
    * MapModel
+   * @param overwrite
+   * TRUE if you want to overwrite the map if already exist.
    * @return The name of the map that was saved on the disk (if a map with the same name already exist into that
    *         directory, a new name will be computed with a higher order number)
    * @throws Exception
    */
-  public String saveMap(MapModel mapModel) throws Exception {
+  public String saveMap(MapModel mapModel, boolean overwrite) throws Exception {
     String mapAbsolutePath = mapModel.getAbsolutePath();
     String mapName = mapModel.getName();
     if (mapAbsolutePath == null || mapName == null)
       return null;
     mapAbsolutePath = mapAbsolutePath.endsWith("\\") ? mapAbsolutePath : mapAbsolutePath + "\\";
-    mapName = getFileAlternativeNameIfExists(mapAbsolutePath, mapName);
-    if (mapName == null)
-      return null;
+    if (!overwrite) {
+      mapName = getFileAlternativeNameIfExists(mapAbsolutePath, mapName);
+      if (mapName == null)
+        return null;
+    }
 
     MapXMLConverter converter = new MapXMLConverter();
     try {

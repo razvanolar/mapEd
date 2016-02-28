@@ -32,8 +32,7 @@ public class ProjectXMLConverter {
       for (MapModel map : project.getMapModels()) {
         builder.append("\t\t<map name=\"").append(map.getName()).
                 append("\" path=\"").append(map.getRelativePath()).
-                append("\" rows=\"").append(Integer.toString(map.getRows())).
-                append("\" columns=\"").append(Integer.toString(map.getColumns())).append("\"");
+                append("\" isSelected=\"").append(map.isSelected()).append("\"");
         builder.append(" />\n");
       }
       builder.append("\t</maps>\n");

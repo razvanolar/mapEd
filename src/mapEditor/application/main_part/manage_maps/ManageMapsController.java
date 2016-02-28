@@ -27,7 +27,7 @@ import java.util.List;
 public class ManageMapsController implements Controller {
 
   public interface IMangeMapsView extends View {
-    ScrollPane addMap(String title, PrimaryMapView mapView);
+    ScrollPane addMap(String title, PrimaryMapView mapView, boolean selectTab);
     TabPane getMapsTabPane();
     LayersController.ILayersView getLayersView();
     ManageTilesController.IManageTilesView getManageTilesView();
@@ -53,9 +53,9 @@ public class ManageMapsController implements Controller {
     List<MapModel> mapModels = AppParameters.CURRENT_PROJECT.getMapModels();
     if (mapModels != null && !mapModels.isEmpty()) {
       for (MapModel mapModel : mapModels)
-        createMap(mapModel, false);
+        createMap(mapModel, false, mapModel.isSelected());
     } else
-      createMap(defaultModel, false);
+      createMap(defaultModel, false, false);
   }
 
   private void addListeners() {
@@ -70,9 +70,10 @@ public class ManageMapsController implements Controller {
           mapView.widthProperty().bind(scrollPane.widthProperty());
           mapView.heightProperty().bind(scrollPane.heightProperty());
         }
+        mapView.getMapModel().setSelected(true);
         mapView.paint();
       } else {
-        createMap(defaultModel, false);
+        createMap(defaultModel, false, false);
       }
 
       if (oldItem != null) {
@@ -82,6 +83,7 @@ public class ManageMapsController implements Controller {
         scrollPane.widthProperty().removeListener(listener);
         scrollPane.widthProperty().removeListener(listener);
         mapView.widthProperty().unbind();
+        mapView.getMapModel().setSelected(false);
       }
     });
 
@@ -105,9 +107,9 @@ public class ManageMapsController implements Controller {
     manageTilesController.bind();
   }
 
-  private void createMap(MapModel mapModel, boolean removeUntitled) {
+  private void createMap(MapModel mapModel, boolean removeUntitled, boolean selectTab) {
     PrimaryMapView primaryMapView = new PrimaryMapView(mapModel);
-    ScrollPane scrollPane = view.addMap(mapModel.getName(), primaryMapView);
+    ScrollPane scrollPane = view.addMap(mapModel.getName(), primaryMapView, selectTab);
     PrimaryMapController controller = new PrimaryMapController(primaryMapView, scrollPane);
 
     ChangeListener<Number> sizeChangeListener = (observable, oldValue, newValue) -> primaryMapView.paint();
@@ -172,7 +174,7 @@ public class ManageMapsController implements Controller {
       MapModel mapModel = MapEditorController.getInstance().getRepoController().createMapModelFromFile(file, null);
       MapEditorController.getInstance().unmaskView();
       if (mapModel != null)
-        createMap(mapModel, true);
+        createMap(mapModel, true, true);
       else
         Dialog.showWarningDialog("ManageMapsController - Warning", "Map instance is null.");
     } catch (Exception ex) {
@@ -187,7 +189,14 @@ public class ManageMapsController implements Controller {
    * MapModel
    */
   public void addNewMap(MapModel mapModel) {
-    createMap(mapModel, true);
+    createMap(mapModel, true, true);
+  }
+
+  public void updateMapModelsForExistingTabs() {
+    for (Tab tab : view.getMapsTabPane().getTabs()) {
+      PrimaryMapView mapView = (PrimaryMapView) tab.getUserData();
+      mapView.updateMapModel();
+    }
   }
 
   public View getView() {

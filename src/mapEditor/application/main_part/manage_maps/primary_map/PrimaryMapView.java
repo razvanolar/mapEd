@@ -232,10 +232,14 @@ public class PrimaryMapView extends MapCanvas {
 //    controller.handleChangePosition(MapNotificationTypes.PRIMARY_MAP);
   }
 
-  public MapModel getMapModel() {
+  public void updateMapModel() {
     mapModel.setX(canvasX);
     mapModel.setY(canvasY);
     mapModel.setZoomStatus(zoomStatus);
+  }
+
+  public MapModel getMapModel() {
+    updateMapModel();
     return mapModel;
   }
 }
