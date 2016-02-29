@@ -1,4 +1,4 @@
-package mapEditor.application.main_part.manage_maps.layers;
+package mapEditor.application.main_part.manage_maps.manage_layers;
 
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
@@ -8,10 +8,11 @@ import javafx.stage.Modality;
 import javafx.stage.StageStyle;
 import mapEditor.application.main_part.app_utils.models.LayerModel;
 import mapEditor.application.main_part.app_utils.views.dialogs.OkCancelDialog;
-import mapEditor.application.main_part.manage_maps.layers.create_edit_layers.CreateEditLayersContextMenuController;
-import mapEditor.application.main_part.manage_maps.layers.create_edit_layers.CreateEditLayersContextMenuView;
-import mapEditor.application.main_part.manage_maps.layers.create_edit_layers.CreateEditLayersController;
-import mapEditor.application.main_part.manage_maps.layers.create_edit_layers.CreateEditLayersView;
+import mapEditor.application.main_part.manage_maps.manage_layers.create_edit_layers.CreateEditLayersContextMenuController;
+import mapEditor.application.main_part.manage_maps.manage_layers.create_edit_layers.CreateEditLayersContextMenuView;
+import mapEditor.application.main_part.manage_maps.manage_layers.create_edit_layers.CreateEditLayersController;
+import mapEditor.application.main_part.manage_maps.manage_layers.create_edit_layers.CreateEditLayersView;
+import mapEditor.application.main_part.manage_maps.utils.MapLayersListener;
 import mapEditor.application.main_part.manage_maps.utils.SelectableLayerListener;
 import mapEditor.application.main_part.manage_maps.utils.SelectableLayerView;
 import mapEditor.application.main_part.types.Controller;
@@ -31,6 +32,7 @@ public class LayersController implements Controller, SelectableLayerListener {
     void removeLayer(Region layer);
     void moveLayerUp(Region layer);
     void moveLayerDown(Region layer);
+    void removeAllLayers();
     int getLayerIndex(Region layer);
     int getLayersNumber();
     Button getAddLayerButton();
@@ -44,9 +46,11 @@ public class LayersController implements Controller, SelectableLayerListener {
   private ILayersView view;
   private SelectableLayerView selectedLayer;
   private CreateEditLayersContextMenuController contextMenuController;
+  private MapLayersListener listener;
 
-  public LayersController(ILayersView view) {
+  public LayersController(ILayersView view, MapLayersListener listener) {
     this.view = view;
+    this.listener = listener;
   }
 
   @Override
@@ -69,8 +73,10 @@ public class LayersController implements Controller, SelectableLayerListener {
     OkCancelDialog dialog = createAddEditDialog("Add Layer", null);
     dialog.getOkButton().setOnAction(event -> {
       CreateEditLayersController controller = (CreateEditLayersController) dialog.getController();
-      view.addLayer(new SelectableLayerView(controller.getModel(), LayersController.this));
+      LayerModel layer = controller.getModel();
+      view.addLayer(new SelectableLayerView(layer, LayersController.this));
       dialog.close();
+      listener.addLayer(layer);
     });
     dialog.show();
   }
@@ -96,8 +102,10 @@ public class LayersController implements Controller, SelectableLayerListener {
   public void onDeleteLayerButtonSelection() {
     if (selectedLayer == null)
       return;
+    LayerModel layer = selectedLayer.getLayerModel();
     view.removeLayer(selectedLayer);
     selectedLayer = null;
+    listener.removeLayer(layer);
   }
 
   /**
@@ -111,6 +119,7 @@ public class LayersController implements Controller, SelectableLayerListener {
       return;
 
     view.moveLayerUp(selectedLayer);
+    listener.moveLayerUp(selectedLayer.getLayerModel());
   }
 
   /**
@@ -125,6 +134,7 @@ public class LayersController implements Controller, SelectableLayerListener {
       return;
 
     view.moveLayerDown(selectedLayer);
+    listener.moveLayerDown(selectedLayer.getLayerModel());
   }
 
   private OkCancelDialog createAddEditDialog(String title, LayerModel model) {
@@ -144,6 +154,19 @@ public class LayersController implements Controller, SelectableLayerListener {
       contextMenuController = new CreateEditLayersContextMenuController(new CreateEditLayersContextMenuView(), this);
       contextMenuController.bind();
     }
+  }
+
+  /**
+   * When the selected map is changed, make sure that it's layers are rendered.
+   * @param layers
+   * LayerModel list.
+   */
+  public void loadLayers(List<LayerModel> layers) {
+    view.removeAllLayers();
+    if (layers == null || layers.isEmpty())
+      return;
+    for (LayerModel layer : layers)
+      view.addLayer(new SelectableLayerView(layer, this));
   }
 
   @Override

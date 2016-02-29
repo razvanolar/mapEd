@@ -1,4 +1,4 @@
-package mapEditor.application.main_part.manage_maps.layers.create_edit_layers;
+package mapEditor.application.main_part.manage_maps.manage_layers.create_edit_layers;
 
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;

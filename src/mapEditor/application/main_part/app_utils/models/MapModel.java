@@ -3,6 +3,9 @@ package mapEditor.application.main_part.app_utils.models;
 import javafx.scene.paint.Color;
 import mapEditor.application.repo.types.MapType;
 
+import java.util.LinkedList;
+import java.util.List;
+
 /**
  *
  * Created by razvanolar on 26.02.2016.
@@ -21,6 +24,7 @@ public class MapModel {
   private Color gridColor;
   private Color squareColor;
   private MapType type;
+  private List<LayerModel> layers;
   private boolean selected;
 
   public MapModel() {}
@@ -90,6 +94,10 @@ public class MapModel {
     return selected;
   }
 
+  public List<LayerModel> getLayers() {
+    return layers;
+  }
+
 
 
   public void setName(String name) {
@@ -142,6 +150,21 @@ public class MapModel {
 
   public void setSelected(boolean selected) {
     this.selected = selected;
+  }
+
+
+  public void addLayer(LayerModel layer) {
+    if (layer == null)
+      return;
+    if (layers == null)
+      layers = new LinkedList<>();
+    if (!layers.contains(layer))
+      layers.add(layer);
+  }
+
+  public void removeLayer(LayerModel layer) {
+    if (layer != null && layers != null && layers.contains(layer))
+      layers.remove(layer);
   }
 
   @Override

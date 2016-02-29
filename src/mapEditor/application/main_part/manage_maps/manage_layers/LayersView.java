@@ -1,4 +1,4 @@
-package mapEditor.application.main_part.manage_maps.layers;
+package mapEditor.application.main_part.manage_maps.manage_layers;
 
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
@@ -57,7 +57,7 @@ public class LayersView implements LayersController.ILayersView {
   @Override
   public void moveLayerUp(Region layer) {
     int index = getLayerIndex(layer);
-    if (index == -1 || index == 0)
+    if (index <= 0)
       return;
     layersContainer.getChildren().remove(index);
     layersContainer.getChildren().add(index - 1, layer);
@@ -73,6 +73,11 @@ public class LayersView implements LayersController.ILayersView {
       return;
     layersContainer.getChildren().remove(index);
     layersContainer.getChildren().add(index + 1, layer);
+  }
+
+  @Override
+  public void removeAllLayers() {
+    layersContainer.getChildren().clear();
   }
 
   @Override

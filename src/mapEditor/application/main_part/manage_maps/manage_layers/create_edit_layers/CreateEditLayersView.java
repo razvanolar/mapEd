@@ -1,4 +1,4 @@
-package mapEditor.application.main_part.manage_maps.layers.create_edit_layers;
+package mapEditor.application.main_part.manage_maps.manage_layers.create_edit_layers;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -8,7 +8,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
 import javafx.scene.text.Text;
 import mapEditor.application.main_part.app_utils.models.LayerType;
-import mapEditor.application.main_part.manage_maps.layers.create_edit_layers.CreateEditLayersController;
 
 /**
  *

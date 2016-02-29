@@ -29,4 +29,9 @@ public class LayerModel {
   public void setType(LayerType type) {
     this.type = type;
   }
+
+  @Override
+  public String toString() {
+    return name + " - " + type;
+  }
 }

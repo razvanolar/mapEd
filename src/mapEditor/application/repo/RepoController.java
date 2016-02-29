@@ -169,6 +169,7 @@ public class RepoController {
     for (LWMapModel lwModel : lwMapModels) {
       try {
         String mapAbsolutePath = projectMapsPath + lwModel.getRelativePath();
+        mapAbsolutePath = mapAbsolutePath.endsWith("\\") ? mapAbsolutePath : mapAbsolutePath + "\\";
         MapModel mapModel = createMapModelFromFile(new File(mapAbsolutePath + lwModel.getName()), handler);
         mapModel.setSelected(lwModel.isSelected());
         project.addMapModel(mapModel);
