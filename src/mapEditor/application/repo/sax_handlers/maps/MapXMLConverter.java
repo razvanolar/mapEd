@@ -1,8 +1,11 @@
 package mapEditor.application.repo.sax_handlers.maps;
 
 import javafx.scene.paint.Color;
+import mapEditor.application.main_part.app_utils.models.LayerModel;
 import mapEditor.application.main_part.app_utils.models.MapModel;
 import mapEditor.application.repo.SystemParameters;
+
+import java.util.List;
 
 /**
  *
@@ -28,6 +31,17 @@ public class MapXMLConverter {
     builder.append("\t").append(convertColorToXml("bg_color", map.getBackgroundColor())).append("\n");
     builder.append("\t").append(convertColorToXml("grid_color", map.getGridColor())).append("\n");
     builder.append("\t").append(convertColorToXml("square_color", map.getSquareColor())).append("\n");
+
+    List<LayerModel> layers = map.getLayers();
+    if (layers != null && !layers.isEmpty()) {
+      builder.append("\n\t<layers>\n");
+      for (LayerModel layer : layers) {
+        builder.append("\t\t").append("<layer name=\"").append(layer.getName()).
+                append("\" type=\"").append(layer.getType().name()).
+                append("\" />\n");
+      }
+      builder.append("\t</layers>\n");
+    }
 
     return builder.append("</map>").toString();
   }

@@ -1,6 +1,8 @@
 package mapEditor.application.repo.sax_handlers.maps;
 
 import javafx.scene.paint.Color;
+import mapEditor.application.main_part.app_utils.models.LayerModel;
+import mapEditor.application.main_part.app_utils.models.LayerType;
 import mapEditor.application.main_part.app_utils.models.MapModel;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -35,6 +37,9 @@ public class MapSAXHandler extends DefaultHandler {
         break;
       case "square_color":
         mapModel.setSquareColor(createColorFromAttributes(attributes));
+        break;
+      case "layer":
+        mapModel.addLayer(new LayerModel(attributes.getValue("name"), LayerType.valueOf(attributes.getValue("type"))));
         break;
     }
   }
