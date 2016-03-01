@@ -10,6 +10,7 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import mapEditor.application.create_project_part.CreateProjectController;
 import mapEditor.application.main_part.app_utils.AppParameters;
+import mapEditor.application.main_part.app_utils.inputs.StringValidator;
 import mapEditor.application.main_part.app_utils.models.MapModel;
 import mapEditor.application.main_part.app_utils.views.dialogs.Dialog;
 import mapEditor.application.main_part.main_app_toolbars.project_tree_toolbar.ProjectVerticalToolbarController;
@@ -20,6 +21,7 @@ import mapEditor.application.main_part.manage_maps.ManageMapsController;
 import mapEditor.application.main_part.manage_maps.ManageMapsView;
 import mapEditor.application.main_part.main_app_toolbars.main_toolbar.MapEditorToolbarController;
 import mapEditor.application.main_part.main_app_toolbars.main_toolbar.MapEditorToolbarView;
+import mapEditor.application.main_part.manage_maps.manage_tiles.ManageTilesController;
 import mapEditor.application.main_part.menu_bar.MapEditorMenuBarController;
 import mapEditor.application.main_part.menu_bar.MapEditorMenuBarView;
 import mapEditor.application.main_part.project_tree.ProjectTreeController;
@@ -28,6 +30,9 @@ import mapEditor.application.main_part.status_bar.StatusBarController;
 import mapEditor.application.main_part.status_bar.StatusBarView;
 import mapEditor.application.repo.RepoController;
 import mapEditor.application.repo.models.ProjectModel;
+
+import java.io.File;
+import java.util.List;
 
 /**
  *
@@ -266,6 +271,9 @@ public class MapEditorController {
     return toolbarController.isMapViewSelected();
   }
 
+  public ManageTilesController getManageTilesController() {
+    return manageMapsController != null ? manageMapsController.getManageTilesController() : null;
+  }
 
   /**
    * Controller thread

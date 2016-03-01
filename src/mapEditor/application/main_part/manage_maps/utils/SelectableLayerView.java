@@ -21,7 +21,6 @@ import mapEditor.application.main_part.app_utils.models.LayerModel;
  */
 public class SelectableLayerView extends StackPane {
 
-  private static final Background TRANSPARENT_BG = new Background(new BackgroundFill(Color.TRANSPARENT, null, null));
   private static EventHandler<MouseEvent> onMouseEnteredListener;
   private static EventHandler<MouseEvent> onMouseExitedListener;
   private static EventHandler<MouseEvent> onMouseClickedListener;
@@ -67,7 +66,7 @@ public class SelectableLayerView extends StackPane {
 
   public void unselect() {
     isSelected = false;
-    container.setBackground(TRANSPARENT_BG);
+    container.setBackground(AppParameters.TRANSPARENT_BG);
   }
 
   private void onMouseEntered() {
@@ -77,7 +76,7 @@ public class SelectableLayerView extends StackPane {
 
   private void onMouseExited() {
     if (!isSelected)
-      container.setBackground(TRANSPARENT_BG);
+      container.setBackground(AppParameters.TRANSPARENT_BG);
   }
 
   private static EventHandler<MouseEvent> getOnMouseEnteredListener() {

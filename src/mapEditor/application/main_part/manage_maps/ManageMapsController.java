@@ -248,5 +248,9 @@ public class ManageMapsController implements Controller, MapLayersListener {
   public View getView() {
     return view;
   }
+
+  public ManageTilesController getManageTilesController() {
+    return manageTilesController;
+  }
 }
 

@@ -24,7 +24,7 @@ public class ManageTilesView implements ManageTilesController.IManageTilesView {
 
   private void initGUI() {
     tabPane = new TabPane();
-    addTilesButton = new Button("Add Tiles");
+    addTilesButton = new Button("Load");
     newTabButton = new Button("New Tab");
     mainContainer = new BorderPane();
 

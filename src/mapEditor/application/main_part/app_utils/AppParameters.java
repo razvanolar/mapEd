@@ -15,8 +15,13 @@ public class AppParameters {
 
   public static Color HOVERED_LAYER_COLOR = Color.LAVENDER;
   public static Color SELECTED_LAYER_COLOR = Color.CORNFLOWERBLUE;
+  public static Color HOVERED_DETAILED_TILE_COLOR = Color.LAVENDER;
+  public static Color SELECTED_DETAILED_TILE_COLOR = Color.CORNFLOWERBLUE;
   public static Background HOVERED_LAYER_BG = new Background(new BackgroundFill(HOVERED_LAYER_COLOR, null, null));
   public static Background SELECTED_LAYER_BG = new Background(new BackgroundFill(SELECTED_LAYER_COLOR, null, null));
+  public static Background HOVERED_DETAILED_TILE_BG = new Background(new BackgroundFill(HOVERED_DETAILED_TILE_COLOR, null, null));
+  public static Background SELECTED_DETAILED_TILE_BG = new Background(new BackgroundFill(SELECTED_DETAILED_TILE_COLOR, null, null));
+  public static final Background TRANSPARENT_BG = new Background(new BackgroundFill(Color.TRANSPARENT, null, null));
 
   public static String DEFAULT_PROJECT_NAME = "Unnamed";
   public static String SYSTEM_FILES_VIEW_PATH = "C:\\Users\\razvanolar\\Desktop\\MapEditor_Util\\projects";

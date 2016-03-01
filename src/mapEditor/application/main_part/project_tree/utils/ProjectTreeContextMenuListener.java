@@ -8,4 +8,5 @@ public interface ProjectTreeContextMenuListener {
 
   void openMap();
   void openInImageEditor();
+  void openTilesInNewTab();
 }

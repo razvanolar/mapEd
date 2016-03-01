@@ -5,6 +5,8 @@ import javafx.beans.value.ChangeListener;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.image.Image;
+import javafx.stage.Modality;
+import javafx.stage.StageStyle;
 import mapEditor.MapEditorController;
 import mapEditor.application.main_part.app_utils.AppParameters;
 import mapEditor.application.main_part.app_utils.inputs.FileExtensionUtil;
@@ -12,10 +14,15 @@ import mapEditor.application.main_part.app_utils.inputs.ImageProvider;
 import mapEditor.application.main_part.app_utils.models.ImageModel;
 import mapEditor.application.main_part.app_utils.models.LazyTreeItem;
 import mapEditor.application.main_part.app_utils.models.TreeItemType;
+import mapEditor.application.main_part.app_utils.views.dialogs.Dialog;
+import mapEditor.application.main_part.app_utils.views.dialogs.OkCancelDialog;
 import mapEditor.application.main_part.manage_images.ManageImagesController;
 import mapEditor.application.main_part.manage_maps.ManageMapsController;
+import mapEditor.application.main_part.manage_maps.manage_tiles.ManageTilesController;
 import mapEditor.application.main_part.project_tree.context_menu.ProjectTreeContextMenuController;
 import mapEditor.application.main_part.project_tree.context_menu.ProjectTreeContextMenuView;
+import mapEditor.application.main_part.project_tree.open_image_dialogs.NewTilesTabController;
+import mapEditor.application.main_part.project_tree.open_image_dialogs.NewTilesTabView;
 import mapEditor.application.main_part.project_tree.utils.ProjectTreeContextMenuListener;
 import mapEditor.application.main_part.project_tree.utils.WatchDir;
 import mapEditor.application.main_part.types.Controller;
@@ -26,6 +33,8 @@ import mapEditor.application.repo.models.ProjectModel;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -171,5 +180,48 @@ public class ProjectTreeController implements Controller, ProjectTreeContextMenu
     ImageModel imageModel = new ImageModel(image, file.getParentFile().getAbsolutePath(), file.getName());
     if (manageImagesController != null)
       manageImagesController.addNewTab(file.getName(), imageModel);
+  }
+
+  @Override
+  public void openTilesInNewTab() {
+    MapEditorController.getInstance().changeToMapView();
+    ManageTilesController tilesController = MapEditorController.getInstance().getManageTilesController();
+    if (tilesController == null)
+      return;
+
+    LazyTreeItem selectedItem = contextMenuController.getSelectedItem();
+    LazyTreeItem parentItem = contextMenuController.getParentItem();
+    if (selectedItem == null ||
+            (selectedItem.getType() != TreeItemType.PROJECT_TILES_FOLDER &&
+                    parentItem != null && parentItem.getType() != TreeItemType.PROJECT_TILES_FOLDER))
+      return;
+
+    OkCancelDialog dialog = new OkCancelDialog("New Tiles Tab", StageStyle.UTILITY, Modality.APPLICATION_MODAL, false);
+    NewTilesTabController.INewTilesTabView tilesTabView = new NewTilesTabView();
+    NewTilesTabController tilesTabController = new NewTilesTabController(tilesTabView, dialog.getOkButton());
+    tilesTabController.bind();
+
+    dialog.getOkButton().setOnAction(event -> {
+      dialog.close();
+      File[] files = selectedItem.getValue().listFiles();
+      if (files == null || files.length == 0) {
+        Dialog.showInformDialog(null, "There are no tiles under the selected directory");
+        return;
+      }
+
+      List<File> imageFiles = new ArrayList<>();
+      for (File file : files)
+        if (FileExtensionUtil.isImageFile(file.getName()))
+          imageFiles.add(file);
+
+      if (imageFiles.isEmpty()) {
+        Dialog.showInformDialog(null, "There are no tiles under the selected directory");
+        return;
+      }
+
+      tilesController.addTilesTab(tilesTabController.getTabName(), imageFiles);
+    });
+    dialog.setContent(tilesTabView.asNode());
+    dialog.show();
   }
 }
