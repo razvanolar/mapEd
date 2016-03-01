@@ -4,6 +4,7 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ToolBar;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
@@ -35,8 +36,11 @@ public class LayersView implements LayersController.ILayersView {
     moveLayerUpButton = new Button("Up");
     moveLayerDownButton = new Button("Down");
     layersContainer = new VBox();
-    mainContainer = new BorderPane(layersContainer);
+    ScrollPane scrollPane = new ScrollPane(layersContainer);
+    mainContainer = new BorderPane(scrollPane);
     ToolBar toolBar = new ToolBar(addLayerButton, editLayerButton, deleteLayerButton, moveLayerUpButton, moveLayerDownButton);
+
+    scrollPane.setFitToWidth(true);
 
     layersContainer.setAlignment(Pos.TOP_CENTER);
     layersContainer.getStyleClass().add(CssConstants.LAYERS_VIEW);

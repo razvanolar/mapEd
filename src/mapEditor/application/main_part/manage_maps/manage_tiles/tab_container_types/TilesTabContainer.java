@@ -3,7 +3,7 @@ package mapEditor.application.main_part.manage_maps.manage_tiles.tab_container_t
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
-import javafx.scene.layout.BorderPane;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
@@ -18,7 +18,7 @@ import java.util.List;
  */
 public class TilesTabContainer extends AbstractTabContainer {
 
-  private BorderPane mainContainer;
+  private ScrollPane scrollPane;
   private VBox detailedContainer;
   private FlowPane simpleContainer;
 
@@ -32,12 +32,14 @@ public class TilesTabContainer extends AbstractTabContainer {
   }
 
   private void initGUI() {
-    mainContainer = new BorderPane();
-    mainContainer.setPadding(new Insets(5, 5, 5, 8));
+    scrollPane = new ScrollPane();
+    scrollPane.setPadding(new Insets(5, 5, 5, 8));
+    scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+    scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+    scrollPane.setFitToWidth(true);
   }
 
   private void changeView() {
-    mainContainer.getChildren().clear();
     if (detailed) {
       if (detailedContainer == null) {
         detailedContainer = new VBox(5);
@@ -47,7 +49,7 @@ public class TilesTabContainer extends AbstractTabContainer {
 
       if (selectableTileViews != null && !selectableTileViews.isEmpty())
         detailedContainer.getChildren().addAll(selectableTileViews);
-      mainContainer.setCenter(detailedContainer);
+      scrollPane.setContent(detailedContainer);
     } else {
       if (simpleContainer == null) {
         simpleContainer = new FlowPane(Orientation.HORIZONTAL, 3, 3);
@@ -57,7 +59,7 @@ public class TilesTabContainer extends AbstractTabContainer {
 
       if (selectableTileViews != null && !selectableTileViews.isEmpty())
         simpleContainer.getChildren().addAll(selectableTileViews);
-      mainContainer.setCenter(simpleContainer);
+      scrollPane.setContent(simpleContainer);
     }
   }
 
@@ -75,6 +77,6 @@ public class TilesTabContainer extends AbstractTabContainer {
 
   @Override
   public Region asNode() {
-    return mainContainer;
+    return scrollPane;
   }
 }
