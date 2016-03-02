@@ -10,8 +10,7 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import mapEditor.application.create_project_part.CreateProjectController;
 import mapEditor.application.main_part.app_utils.AppParameters;
-import mapEditor.application.main_part.app_utils.inputs.StringValidator;
-import mapEditor.application.main_part.app_utils.models.MapModel;
+import mapEditor.application.main_part.app_utils.models.MapDetail;
 import mapEditor.application.main_part.app_utils.views.dialogs.Dialog;
 import mapEditor.application.main_part.main_app_toolbars.project_tree_toolbar.ProjectVerticalToolbarController;
 import mapEditor.application.main_part.main_app_toolbars.project_tree_toolbar.ProjectVerticalToolbarView;
@@ -30,9 +29,6 @@ import mapEditor.application.main_part.status_bar.StatusBarController;
 import mapEditor.application.main_part.status_bar.StatusBarView;
 import mapEditor.application.repo.RepoController;
 import mapEditor.application.repo.models.ProjectModel;
-
-import java.io.File;
-import java.util.List;
 
 /**
  *
@@ -190,16 +186,16 @@ public class MapEditorController {
   /**
    * Create a new map instance based on the provided model.
    * If the map name already exist, a new one will be provided with a higher order number.
-   * @param mapModel
-   * MapModel
+   * @param mapDetail
+   * MapDetail
    */
-  public void createNewMap(MapModel mapModel) {
+  public void createNewMap(MapDetail mapDetail) {
     try {
       maskView();
 
-      String name = repoController.saveMap(mapModel, false);
-      mapModel.setName(name);
-      manageMapsController.addNewMap(mapModel);
+      String name = repoController.saveMap(mapDetail, false);
+      mapDetail.setName(name);
+      manageMapsController.addNewMap(mapDetail);
 
       unmaskView();
     } catch (Exception ex) {

@@ -3,26 +3,24 @@ package mapEditor.application.main_part.manage_maps.manage_tiles;
 import javafx.scene.control.Button;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Region;
 import mapEditor.application.main_part.app_utils.inputs.FileExtensionUtil;
 import mapEditor.application.main_part.app_utils.inputs.ImageProvider;
 import mapEditor.application.main_part.app_utils.inputs.StringValidator;
 import mapEditor.application.main_part.app_utils.models.ImageModel;
 import mapEditor.application.main_part.app_utils.views.dialogs.OkCancelDialog;
-import mapEditor.application.main_part.app_utils.views.canvas.TilesCanvas;
 import mapEditor.application.main_part.manage_maps.manage_tiles.create_tiles_tab.CreateTilesTabView;
+import mapEditor.application.main_part.manage_maps.manage_tiles.tab_container_types.AbstractTabContainer;
 import mapEditor.application.main_part.manage_maps.manage_tiles.tab_container_types.TilesTabContainer;
 import mapEditor.application.main_part.manage_maps.utils.SelectableTileListener;
 import mapEditor.application.main_part.manage_maps.utils.SelectableTileView;
+import mapEditor.application.main_part.manage_maps.utils.SelectedTileListener;
 import mapEditor.application.main_part.manage_maps.utils.TabType;
 import mapEditor.application.main_part.types.Controller;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  *
@@ -40,9 +38,11 @@ public class ManageTilesController implements Controller, SelectableTileListener
 
   private IManageTilesView view;
   private SelectableTileView selectedTileView;
+  private SelectedTileListener listener;
 
-  public ManageTilesController(IManageTilesView view) {
+  public ManageTilesController(IManageTilesView view, SelectedTileListener listener) {
     this.view = view;
+    this.listener = listener;
   }
 
   public void bind() {
@@ -51,6 +51,10 @@ public class ManageTilesController implements Controller, SelectableTileListener
 
   private void addListeners() {
     view.getNewTabButton().setOnAction(event -> onAddNewTabSelection());
+
+    view.getTabPane().getSelectionModel().selectedItemProperty().addListener((observable, oldItem, newItem) -> {
+      onTabChanged(oldItem, newItem);
+    });
   }
 
   private void onAddNewTabSelection() {
@@ -61,6 +65,21 @@ public class ManageTilesController implements Controller, SelectableTileListener
         window.close();
     });
     window.show();
+  }
+
+  private void onTabChanged(Tab oldTab, Tab newTab) {
+    if (newTab == null) {
+      selectedTileView = null;
+      listener.selectedTileChanged(null);
+      return;
+    }
+
+    AbstractTabContainer tabContainer = (AbstractTabContainer) newTab.getUserData();
+    listener.selectedTileChanged(tabContainer.getSelectedTile());
+    if (tabContainer.getTabType() == TabType.TILES && tabContainer instanceof TilesTabContainer) {
+      TilesTabContainer tilesTabContainer = (TilesTabContainer) tabContainer;
+      selectedTileView = tilesTabContainer.getSelectedTileView();
+    }
   }
 
   /**
@@ -98,5 +117,7 @@ public class ManageTilesController implements Controller, SelectableTileListener
       selectedTileView.unselect();
       selectedTileView = selectedView;
     }
+
+    listener.selectedTileChanged(selectedTileView != null ? selectedTileView.getImage() : null);
   }
 }

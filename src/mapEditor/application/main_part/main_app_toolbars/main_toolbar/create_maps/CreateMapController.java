@@ -11,7 +11,7 @@ import mapEditor.application.main_part.app_utils.AppParameters;
 import mapEditor.application.main_part.app_utils.inputs.FileExtensionUtil;
 import mapEditor.application.main_part.app_utils.inputs.StringValidator;
 import mapEditor.application.main_part.app_utils.models.KnownFileExtensions;
-import mapEditor.application.main_part.app_utils.models.MapModel;
+import mapEditor.application.main_part.app_utils.models.MapDetail;
 import mapEditor.application.main_part.app_utils.views.dialogs.OkCancelDialog;
 import mapEditor.application.main_part.app_utils.views.others.SystemFilesView;
 import mapEditor.application.main_part.types.Controller;
@@ -95,7 +95,7 @@ public class CreateMapController implements Controller {
     return !StringValidator.isNullOrEmpty(path) && path.contains(rootFile.getAbsolutePath());
   }
 
-  public MapModel getMapDetailsModel() {
+  public MapDetail getMapDetailsModel() {
     String name = view.getNameTextField().getText();
     if (!name.endsWith(SystemParameters.MAP_FILE_EXT))
       name += SystemParameters.MAP_FILE_EXT;
@@ -103,7 +103,7 @@ public class CreateMapController implements Controller {
     String relativePath = absolutePath.replace(rootFile.getAbsolutePath(), "");
     if (!relativePath.startsWith("\\"))
       relativePath = "\\" + relativePath;
-    return new MapModel(name,
+    return new MapDetail(name,
             absolutePath,
             relativePath,
             view.getRowSpinner().getValue(),

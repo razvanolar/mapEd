@@ -124,4 +124,12 @@ public class SelectableTileView extends StackPane {
     }
     return onMouseClickedListener;
   }
+
+  public ImageModel getImage() {
+    return image;
+  }
+
+  public boolean isSelected() {
+    return selected;
+  }
 }

@@ -2,7 +2,7 @@ package mapEditor.application.repo.sax_handlers.maps;
 
 import javafx.scene.paint.Color;
 import mapEditor.application.main_part.app_utils.models.LayerModel;
-import mapEditor.application.main_part.app_utils.models.MapModel;
+import mapEditor.application.main_part.app_utils.models.MapDetail;
 import mapEditor.application.repo.SystemParameters;
 
 import java.util.List;
@@ -13,7 +13,7 @@ import java.util.List;
  */
 public class MapXMLConverter {
 
-  public String convertMapToXML(MapModel map) throws Exception {
+  public String convertMapToXML(MapDetail map) throws Exception {
     if (map == null)
       throw new Exception("MapXMLConverter - convertMapToXML - Map instance is NULL");
 

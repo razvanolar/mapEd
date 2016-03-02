@@ -2,11 +2,18 @@ package mapEditor.application.main_part.manage_maps.primary_map;
 
 import javafx.scene.CacheHint;
 import javafx.scene.Cursor;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import mapEditor.MapEditorController;
-import mapEditor.application.main_part.app_utils.models.MapModel;
+import mapEditor.application.main_part.app_utils.models.ImageModel;
+import mapEditor.application.main_part.app_utils.models.LayerModel;
+import mapEditor.application.main_part.app_utils.models.MapDetail;
+import mapEditor.application.main_part.app_utils.models.MapTilesContainer;
+import mapEditor.application.main_part.app_utils.views.dialogs.Dialog;
 import mapEditor.application.main_part.manage_maps.MapCanvas;
+
+import java.util.Map;
 
 /**
  *
@@ -14,11 +21,9 @@ import mapEditor.application.main_part.manage_maps.MapCanvas;
  */
 public class PrimaryMapView extends MapCanvas {
 
-  private MapModel mapModel;
-
-  public PrimaryMapView(MapModel mapModel) {
-    super(mapModel.getRows(), mapModel.getColumns());
-    this.mapModel = mapModel;
+  public PrimaryMapView(MapDetail mapDetail) {
+    super(mapDetail.getRows(), mapDetail.getColumns());
+    this.mapDetail = mapDetail;
     this.setWidth(100);
     this.setHeight(100);
     this.prefHeight(100);
@@ -27,15 +32,15 @@ public class PrimaryMapView extends MapCanvas {
   }
 
   private void initializeComponents() {
-    fillColor = mapModel.getBackgroundColor();
-    gridColor = mapModel.getGridColor();
-    squareColor = mapModel.getSquareColor();
+    fillColor = mapDetail.getBackgroundColor();
+    gridColor = mapDetail.getGridColor();
+    squareColor = mapDetail.getSquareColor();
     this.setCache(true);
     this.setCacheHint(CacheHint.SPEED);
 
-    canvasX = mapModel.getX();
-    canvasY = mapModel.getY();
-    zoomStatus = mapModel.getZoomStatus();
+    canvasX = mapDetail.getX();
+    canvasY = mapDetail.getY();
+    zoomStatus = mapDetail.getZoomStatus();
 
     CELL_WIDTH = DEFAULT_CELL_WIDTH + zoomStatus;
     CELL_HEIGHT = DEFAULT_CELL_HEIGHT + zoomStatus;
@@ -185,12 +190,13 @@ public class PrimaryMapView extends MapCanvas {
   }
 
   private void drawImagesOnMouseActions(MouseEvent event) {
+    if (selectedLayer == null) {
+      Dialog.showWarningDialog(null, "Please select a layer");
+      return;
+    }
     /* the cartesian coordinates of the hovered cell */
-    int x = (int) event.getX() + 1;
-    int y = (int) event.getY() + 1;
-
-//    if(!checkMouseBorders(x, y) || SelectedTilesUtil.primaryTile == null || SelectedTilesUtil.primaryTile.image == null)
-//      return;
+//    int x = (int) event.getX() + 1;
+//    int y = (int) event.getY() + 1;
 
     /** matrix cells coordinates */
     int cellX = (int) ((event.getX() - canvasX) / CELL_WIDTH);
@@ -200,46 +206,45 @@ public class PrimaryMapView extends MapCanvas {
     int hoveredCellX = (int) ((event.getX() - canvasX) / CELL_WIDTH) * CELL_WIDTH + canvasX;
     int hoveredCellY = (int) ((event.getY() - canvasY) / CELL_HEIGHT) * CELL_HEIGHT + canvasY;
 
-    /* we need to draw the selected pattern */
-//    controller.addImage(SelectedTilesUtil.primaryTile.image, cellX, cellY);
-//    GraphicsContext g = getGraphicsContext2D();
-//    LinkedList<DrawAreaPaneRepository.TilesMatrix> layers = controller.getLayers();
-//    for (DrawAreaPaneRepository.TilesMatrix tilesMatrix : layers) {
-//      Image image = tilesMatrix.getMatrix()[cellY][cellX];
-//      if (image != null)
-//        g.drawImage(image, hoveredCellX, hoveredCellY, CELL_WIDTH, CELL_HEIGHT);
-//    }
-//
-//    List<SelectedTilesUtil.TileDetails> list = SelectedTilesUtil.secondaryTyles;
-//    if(list != null && !list.isEmpty()) {
-//      for(SelectedTilesUtil.TileDetails tileDetail : list)
-//        if(tileDetail.image != null) {
-//          controller.addImage(tileDetail.image, cellX + tileDetail.X, cellY + tileDetail.Y);
-//          for (DrawAreaPaneRepository.TilesMatrix tilesMatrix : layers) {
-//            Image image = tilesMatrix.getMatrix()[cellY + tileDetail.Y][cellX + tileDetail.X];
-//            if (image != null)
-//              g.drawImage(image,
-//                      hoveredCellX + (tileDetail.X * CELL_WIDTH),
-//                      hoveredCellY + (tileDetail.Y * CELL_HEIGHT),
-//                      CELL_WIDTH,
-//                      CELL_HEIGHT);
-//          }
-//        }
-//    }
+    GraphicsContext g = getGraphicsContext2D();
+    g.setFill(fillColor);
+    g.clearRect(hoveredCellX+1, hoveredCellY+1, CELL_WIDTH, CELL_HEIGHT);
+    g.fillRect(hoveredCellX+1, hoveredCellY+1, CELL_WIDTH, CELL_HEIGHT);
+    tilesContainer.addTile(selectedTile, selectedLayer, cellY, cellX);
+
+    tilesContainer.addTile(selectedTile, selectedLayer, cellY, cellX);
+    Map<LayerModel, MapTilesContainer.TilesMatrix> map = tilesContainer.getTilesMap();
+    if (map != null) {
+      for (LayerModel layer : mapDetail.getLayers()) {
+        MapTilesContainer.TilesMatrix tilesMatrix = map.get(layer);
+        if (tilesMatrix != null) {
+          ImageModel[][] matrix = tilesMatrix.getTilesMatrix();
+          ImageModel image = matrix[cellY][cellX];
+          if (image != null)
+            g.drawImage(image.getImage(), hoveredCellX, hoveredCellY, CELL_WIDTH, CELL_HEIGHT);
+        }
+      }
+    }
 
     drawGridLines(hoveredCellX - canvasX, hoveredCellY - canvasY);
-
-//    controller.handleChangePosition(MapNotificationTypes.PRIMARY_MAP);
   }
 
   public void updateMapModel() {
-    mapModel.setX(canvasX);
-    mapModel.setY(canvasY);
-    mapModel.setZoomStatus(zoomStatus);
+    mapDetail.setX(canvasX);
+    mapDetail.setY(canvasY);
+    mapDetail.setZoomStatus(zoomStatus);
   }
 
-  public MapModel getMapModel() {
+  public MapDetail getMapDetail() {
     updateMapModel();
-    return mapModel;
+    return mapDetail;
+  }
+
+  public void setDrawingTile(ImageModel image) {
+    selectedTile = image;
+  }
+
+  public void setCurrentLayer(LayerModel layer) {
+    selectedLayer = layer;
   }
 }

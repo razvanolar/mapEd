@@ -7,14 +7,16 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import mapEditor.MapEditorController;
 import mapEditor.application.main_part.app_utils.AppParameters;
+import mapEditor.application.main_part.app_utils.models.ImageModel;
 import mapEditor.application.main_part.app_utils.models.LayerModel;
-import mapEditor.application.main_part.app_utils.models.MapModel;
+import mapEditor.application.main_part.app_utils.models.MapDetail;
 import mapEditor.application.main_part.app_utils.views.dialogs.Dialog;
 import mapEditor.application.main_part.manage_maps.manage_layers.LayersController;
 import mapEditor.application.main_part.manage_maps.manage_tiles.ManageTilesController;
 import mapEditor.application.main_part.manage_maps.primary_map.PrimaryMapController;
 import mapEditor.application.main_part.manage_maps.primary_map.PrimaryMapView;
 import mapEditor.application.main_part.manage_maps.utils.MapLayersListener;
+import mapEditor.application.main_part.manage_maps.utils.SelectedTileListener;
 import mapEditor.application.main_part.types.Controller;
 import mapEditor.application.main_part.types.View;
 import mapEditor.application.repo.SystemParameters;
@@ -26,7 +28,7 @@ import java.util.List;
  *
  * Created by razvanolar on 21.01.2016.
  */
-public class ManageMapsController implements Controller, MapLayersListener {
+public class ManageMapsController implements Controller, MapLayersListener, SelectedTileListener {
 
   public interface IMangeMapsView extends View {
     ScrollPane addMap(String title, PrimaryMapView mapView, boolean selectTab);
@@ -38,7 +40,9 @@ public class ManageMapsController implements Controller, MapLayersListener {
   private IMangeMapsView view;
   private LayersController layersController;
   private ManageTilesController manageTilesController;
-  private MapModel defaultModel;
+  private MapDetail defaultModel;
+
+  private ImageModel selectedTile;
 
   public ManageMapsController(IMangeMapsView view) {
     this.view = view;
@@ -46,16 +50,16 @@ public class ManageMapsController implements Controller, MapLayersListener {
 
   @Override
   public void bind() {
-    defaultModel = new MapModel(SystemParameters.UNTITLED_MAP_TAB, "", "", SystemParameters.MAP_DEFAULT_SIZE_NUMBER,
+    defaultModel = new MapDetail(SystemParameters.UNTITLED_MAP_TAB, "", "", SystemParameters.MAP_DEFAULT_SIZE_NUMBER,
             SystemParameters.MAP_DEFAULT_SIZE_NUMBER, SystemParameters.MAP_DEFAULT_BG_COLOR,
             SystemParameters.MAP_DEFAULT_GRID_COLOR, SystemParameters.MAP_DEFAULT_SQUARE_COLOR,
             AppParameters.CURRENT_PROJECT.getMapType());
     addListeners();
     initControllers();
-    List<MapModel> mapModels = AppParameters.CURRENT_PROJECT.getMapModels();
-    if (mapModels != null && !mapModels.isEmpty()) {
-      for (MapModel mapModel : mapModels)
-        createMap(mapModel, false, mapModel.isSelected());
+    List<MapDetail> mapDetails = AppParameters.CURRENT_PROJECT.getMapDetails();
+    if (mapDetails != null && !mapDetails.isEmpty()) {
+      for (MapDetail mapDetail : mapDetails)
+        createMap(mapDetail, false, mapDetail.isSelected());
     } else
       createMap(defaultModel, false, false);
   }
@@ -72,9 +76,10 @@ public class ManageMapsController implements Controller, MapLayersListener {
           mapView.widthProperty().bind(scrollPane.widthProperty());
           mapView.heightProperty().bind(scrollPane.heightProperty());
         }
-        MapModel mapModel = mapView.getMapModel();
-        mapModel.setSelected(true);
-        layersController.loadLayers(mapModel.getLayers());
+        MapDetail mapDetail = mapView.getMapDetail();
+        mapDetail.setSelected(true);
+        layersController.loadLayers(mapDetail.getLayers());
+        mapView.setDrawingTile(selectedTile);
         mapView.paint();
       } else {
         createMap(defaultModel, false, false);
@@ -87,7 +92,7 @@ public class ManageMapsController implements Controller, MapLayersListener {
         scrollPane.widthProperty().removeListener(listener);
         scrollPane.widthProperty().removeListener(listener);
         mapView.widthProperty().unbind();
-        mapView.getMapModel().setSelected(false);
+        mapView.getMapDetail().setSelected(false);
       }
     });
 
@@ -96,7 +101,7 @@ public class ManageMapsController implements Controller, MapLayersListener {
         if (c.getRemovedSize() > 0) {
           for (Tab tab : c.getRemoved()) {
             PrimaryMapView mapView = (PrimaryMapView) tab.getUserData();
-            AppParameters.CURRENT_PROJECT.removeMapModel(mapView.getMapModel());
+            AppParameters.CURRENT_PROJECT.removeMapModel(mapView.getMapDetail());
           }
         }
       }
@@ -107,13 +112,13 @@ public class ManageMapsController implements Controller, MapLayersListener {
     layersController = new LayersController(view.getLayersView(), this);
     layersController.bind();
 
-    manageTilesController = new ManageTilesController(view.getManageTilesView());
+    manageTilesController = new ManageTilesController(view.getManageTilesView(), this);
     manageTilesController.bind();
   }
 
-  private void createMap(MapModel mapModel, boolean removeUntitled, boolean selectTab) {
-    PrimaryMapView primaryMapView = new PrimaryMapView(mapModel);
-    ScrollPane scrollPane = view.addMap(mapModel.getName(), primaryMapView, selectTab);
+  private void createMap(MapDetail mapDetail, boolean removeUntitled, boolean selectTab) {
+    PrimaryMapView primaryMapView = new PrimaryMapView(mapDetail);
+    ScrollPane scrollPane = view.addMap(mapDetail.getName(), primaryMapView, selectTab);
     PrimaryMapController controller = new PrimaryMapController(primaryMapView, scrollPane);
 
     ChangeListener<Number> sizeChangeListener = (observable, oldValue, newValue) -> primaryMapView.paint();
@@ -124,8 +129,8 @@ public class ManageMapsController implements Controller, MapLayersListener {
 
     controller.bind();
 
-    if (mapModel != defaultModel)
-      AppParameters.CURRENT_PROJECT.addMapModel(mapModel);
+    if (mapDetail != defaultModel)
+      AppParameters.CURRENT_PROJECT.addMapModel(mapDetail);
 
     if (removeUntitled)
       removeUntitledTab();
@@ -163,10 +168,10 @@ public class ManageMapsController implements Controller, MapLayersListener {
     // if the map is already opened, select it
     for (Tab tab : view.getMapsTabPane().getTabs()) {
       PrimaryMapView mapView = (PrimaryMapView) tab.getUserData();
-      MapModel mapModel = mapView.getMapModel();
-      String mapPath = mapModel.getAbsolutePath();
+      MapDetail mapDetail = mapView.getMapDetail();
+      String mapPath = mapDetail.getAbsolutePath();
       mapPath = mapPath.endsWith("\\") ? mapPath : mapPath + "\\";
-      if (mapPath.equals(filePath) && mapModel.getName().equals(fileName)) {
+      if (mapPath.equals(filePath) && mapDetail.getName().equals(fileName)) {
         view.getMapsTabPane().getSelectionModel().select(tab);
         return;
       }
@@ -175,10 +180,10 @@ public class ManageMapsController implements Controller, MapLayersListener {
     // otherwise, load the map from disk
     try {
       MapEditorController.getInstance().maskView();
-      MapModel mapModel = MapEditorController.getInstance().getRepoController().createMapModelFromFile(file, null);
+      MapDetail mapDetail = MapEditorController.getInstance().getRepoController().createMapModelFromFile(file, null);
       MapEditorController.getInstance().unmaskView();
-      if (mapModel != null)
-        createMap(mapModel, true, true);
+      if (mapDetail != null)
+        createMap(mapDetail, true, true);
       else
         Dialog.showWarningDialog("ManageMapsController - Warning", "Map instance is null.");
     } catch (Exception ex) {
@@ -189,11 +194,11 @@ public class ManageMapsController implements Controller, MapLayersListener {
 
   /**
    * Add a new map in the tab pane. Called when creating a new map.
-   * @param mapModel
-   * MapModel
+   * @param mapDetail
+   * MapDetail
    */
-  public void addNewMap(MapModel mapModel) {
-    createMap(mapModel, true, true);
+  public void addNewMap(MapDetail mapDetail) {
+    createMap(mapDetail, true, true);
   }
 
   public void updateMapModelsForExistingTabs() {
@@ -206,19 +211,19 @@ public class ManageMapsController implements Controller, MapLayersListener {
   @Override
   public void addLayer(LayerModel layer) {
     PrimaryMapView mapView = getSelectedMap();
-    mapView.getMapModel().addLayer(layer);
+    mapView.getMapDetail().addLayer(layer);
   }
 
   @Override
   public void removeLayer(LayerModel layer) {
     PrimaryMapView mapView = getSelectedMap();
-    mapView.getMapModel().removeLayer(layer);
+    mapView.getMapDetail().removeLayer(layer);
   }
 
   @Override
   public void moveLayerUp(LayerModel layer) {
     PrimaryMapView mapView = getSelectedMap();
-    List<LayerModel> layers = mapView.getMapModel().getLayers();
+    List<LayerModel> layers = mapView.getMapDetail().getLayers();
     if (layer == null)
       return;
     int index = layers.indexOf(layer);
@@ -231,7 +236,7 @@ public class ManageMapsController implements Controller, MapLayersListener {
   @Override
   public void moveLayerDown(LayerModel layer) {
     PrimaryMapView mapView = getSelectedMap();
-    List<LayerModel> layers = mapView.getMapModel().getLayers();
+    List<LayerModel> layers = mapView.getMapDetail().getLayers();
     if (layers == null)
       return;
     int index = layers.indexOf(layer);
@@ -239,6 +244,21 @@ public class ManageMapsController implements Controller, MapLayersListener {
       return;
     layers.remove(index);
     layers.add(index + 1, layer);
+  }
+
+  @Override
+  public void selectedLayerChanged(LayerModel layer) {
+    PrimaryMapView selectedMap = getSelectedMap();
+    if (selectedMap != null)
+      selectedMap.setCurrentLayer(layer);
+  }
+
+  @Override
+  public void selectedTileChanged(ImageModel selectedTile) {
+    this.selectedTile = selectedTile;
+    PrimaryMapView selectedMap = getSelectedMap();
+    if (selectedMap != null)
+      selectedMap.setDrawingTile(selectedTile);
   }
 
   private PrimaryMapView getSelectedMap() {

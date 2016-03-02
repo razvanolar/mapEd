@@ -10,7 +10,7 @@ import java.util.List;
  *
  * Created by razvanolar on 26.02.2016.
  */
-public class MapModel {
+public class MapDetail {
 
   private String name;
   private String absolutePath;
@@ -27,10 +27,10 @@ public class MapModel {
   private List<LayerModel> layers;
   private boolean selected;
 
-  public MapModel() {}
+  public MapDetail() {}
 
-  public MapModel(String name, String absolutePath, String relativePath, int rows, int columns,
-                  Color backgroundColor, Color gridColor, Color squareColor, MapType type) {
+  public MapDetail(String name, String absolutePath, String relativePath, int rows, int columns,
+                   Color backgroundColor, Color gridColor, Color squareColor, MapType type) {
     this.name = name;
     this.absolutePath = absolutePath;
     this.relativePath = relativePath;

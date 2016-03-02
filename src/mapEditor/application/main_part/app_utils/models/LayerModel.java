@@ -8,6 +8,7 @@ public class LayerModel {
 
   private String name;
   private LayerType type;
+  private boolean selected;
 
   public LayerModel(String name, LayerType type) {
     this.name = name;
@@ -28,6 +29,14 @@ public class LayerModel {
 
   public void setType(LayerType type) {
     this.type = type;
+  }
+
+  public boolean isSelected() {
+    return selected;
+  }
+
+  public void setSelected(boolean isSelected) {
+    this.selected = isSelected;
   }
 
   @Override

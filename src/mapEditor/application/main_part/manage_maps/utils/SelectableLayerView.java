@@ -6,11 +6,8 @@ import javafx.geometry.Pos;
 import javafx.scene.control.CheckBox;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import mapEditor.application.main_part.app_utils.AppParameters;
 import mapEditor.application.main_part.app_utils.models.LayerModel;
@@ -60,12 +57,14 @@ public class SelectableLayerView extends StackPane {
 
   public void select(boolean isRightClick, double x, double y) {
     isSelected = true;
+    layerModel.setSelected(true);
     container.setBackground(AppParameters.SELECTED_LAYER_BG);
     listener.selectedLayerChanged(this, isRightClick, x, y);
   }
 
   public void unselect() {
     isSelected = false;
+    layerModel.setSelected(false);
     container.setBackground(AppParameters.TRANSPARENT_BG);
   }
 

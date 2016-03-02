@@ -7,7 +7,9 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import mapEditor.application.main_part.app_utils.models.ImageModel;
 import mapEditor.application.main_part.manage_maps.utils.SelectableTileView;
+import mapEditor.application.main_part.manage_maps.utils.TabType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +28,7 @@ public class TilesTabContainer extends AbstractTabContainer {
   private List<SelectableTileView> selectableTileViews;
 
   public TilesTabContainer(boolean detailed) {
+    this.tabType = TabType.TILES;
     this.detailed = detailed;
     initGUI();
     changeView();
@@ -73,6 +76,21 @@ public class TilesTabContainer extends AbstractTabContainer {
       detailedContainer.getChildren().add(tileView);
     else
       simpleContainer.getChildren().add(tileView);
+  }
+
+  public SelectableTileView getSelectedTileView() {
+    if (selectableTileViews == null || selectableTileViews.isEmpty())
+      return null;
+    for (SelectableTileView tileView : selectableTileViews)
+      if (tileView.isSelected())
+        return tileView;
+    return null;
+  }
+
+  @Override
+  public ImageModel getSelectedTile() {
+    SelectableTileView tileView = getSelectedTileView();
+    return tileView != null ? tileView.getImage() : null;
   }
 
   @Override

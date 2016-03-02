@@ -3,7 +3,7 @@ package mapEditor.application.repo.sax_handlers.maps;
 import javafx.scene.paint.Color;
 import mapEditor.application.main_part.app_utils.models.LayerModel;
 import mapEditor.application.main_part.app_utils.models.LayerType;
-import mapEditor.application.main_part.app_utils.models.MapModel;
+import mapEditor.application.main_part.app_utils.models.MapDetail;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -14,32 +14,32 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class MapSAXHandler extends DefaultHandler {
 
-  private MapModel mapModel;
+  private MapDetail mapDetail;
 
   @Override
   public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
     switch (qName) {
       case "map":
-        mapModel = new MapModel();
-        mapModel.setName(attributes.getValue("name"));
-        mapModel.setRelativePath(attributes.getValue("path"));
-        mapModel.setX(Integer.parseInt(attributes.getValue("x")));
-        mapModel.setY(Integer.parseInt(attributes.getValue("y")));
-        mapModel.setRows(Integer.parseInt(attributes.getValue("rows")));
-        mapModel.setColumns(Integer.parseInt(attributes.getValue("columns")));
-        mapModel.setZoomStatus(Integer.parseInt(attributes.getValue("zoom")));
+        mapDetail = new MapDetail();
+        mapDetail.setName(attributes.getValue("name"));
+        mapDetail.setRelativePath(attributes.getValue("path"));
+        mapDetail.setX(Integer.parseInt(attributes.getValue("x")));
+        mapDetail.setY(Integer.parseInt(attributes.getValue("y")));
+        mapDetail.setRows(Integer.parseInt(attributes.getValue("rows")));
+        mapDetail.setColumns(Integer.parseInt(attributes.getValue("columns")));
+        mapDetail.setZoomStatus(Integer.parseInt(attributes.getValue("zoom")));
         break;
       case "bg_color":
-        mapModel.setBackgroundColor(createColorFromAttributes(attributes));
+        mapDetail.setBackgroundColor(createColorFromAttributes(attributes));
         break;
       case "grid_color":
-        mapModel.setGridColor(createColorFromAttributes(attributes));
+        mapDetail.setGridColor(createColorFromAttributes(attributes));
         break;
       case "square_color":
-        mapModel.setSquareColor(createColorFromAttributes(attributes));
+        mapDetail.setSquareColor(createColorFromAttributes(attributes));
         break;
       case "layer":
-        mapModel.addLayer(new LayerModel(attributes.getValue("name"), LayerType.valueOf(attributes.getValue("type"))));
+        mapDetail.addLayer(new LayerModel(attributes.getValue("name"), LayerType.valueOf(attributes.getValue("type"))));
         break;
     }
   }
@@ -51,7 +51,7 @@ public class MapSAXHandler extends DefaultHandler {
             Double.parseDouble(attributes.getValue("opacity")));
   }
 
-  public MapModel getMapModel() {
-    return mapModel;
+  public MapDetail getMapDetail() {
+    return mapDetail;
   }
 }

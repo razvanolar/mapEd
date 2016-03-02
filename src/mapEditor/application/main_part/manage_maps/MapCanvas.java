@@ -8,21 +8,18 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import mapEditor.MapEditorController;
 import mapEditor.application.main_part.app_utils.AppParameters;
-import mapEditor.application.repo.SystemParameters;
+import mapEditor.application.main_part.app_utils.models.ImageModel;
+import mapEditor.application.main_part.app_utils.models.LayerModel;
+import mapEditor.application.main_part.app_utils.models.MapDetail;
+import mapEditor.application.main_part.app_utils.models.MapTilesContainer;
+
+import java.util.Map;
 
 /**
  *
  * Created by razvanolar on 21.01.2016.
  */
 public class MapCanvas extends Canvas {
-
-//  protected Color fillColor, gridColor, squareColor;
-//  protected int canvasX, canvasY;
-//
-//
-//  public void paint() {
-//    System.out.println("paint : ");
-//  }
 
   protected static int ZOOM_RATIO = 1;
   protected static int DEFAULT_CELL_WIDTH;
@@ -68,12 +65,13 @@ public class MapCanvas extends Canvas {
   protected int FORCE_UPDATE = 10;
   protected int[] mapInfo = new int[MAP_INFO_NB];
 
-  // TODO: used only for debug
-  private boolean isMinimap;
+  protected ImageModel selectedTile;
+  protected LayerModel selectedLayer;
+  protected MapDetail mapDetail;
+  protected MapTilesContainer tilesContainer;
 
   public MapCanvas(int rows, int cols) {
     this(AppParameters.CURRENT_PROJECT.getCellSize(), AppParameters.CURRENT_PROJECT.getCellSize(), rows, cols);
-    isMinimap = false;
   }
 
   public MapCanvas(int cellWidth, int cellHeight, int rows, int cols) {
@@ -84,8 +82,7 @@ public class MapCanvas extends Canvas {
     CELL_HEIGHT = DEFAULT_CELL_HEIGHT;
     ROWS = rows;
     COLUMNS = cols;
-    isMinimap = true;
-//    paintMap();
+    tilesContainer = new MapTilesContainer(ROWS, COLUMNS);
   }
 
   protected void addListeners() {
@@ -93,21 +90,11 @@ public class MapCanvas extends Canvas {
   }
 
   protected void addMouseDraggedListener() {
-    this.addEventHandler(MouseEvent.MOUSE_DRAGGED, new EventHandler<MouseEvent>() {
-      @Override
-      public void handle(MouseEvent event) {
-        handleMouseDragEvent(event);
-      }
-    });
+    this.addEventHandler(MouseEvent.MOUSE_DRAGGED, this::handleMouseDragEvent);
   }
 
   protected void addMouseReleasedListener() {
-    this.addEventHandler(MouseEvent.MOUSE_RELEASED, new EventHandler<MouseEvent>() {
-      @Override
-      public void handle(MouseEvent event) {
-        handleMouseReleaseEvent(event, true);
-      }
-    });
+    this.addEventHandler(MouseEvent.MOUSE_RELEASED, event -> handleMouseReleaseEvent(event, true));
   }
 
   protected void handleMouseReleaseEvent(MouseEvent event, boolean paintMap) {
@@ -236,8 +223,7 @@ public class MapCanvas extends Canvas {
       }
     }
 
-    paintContent(/*controller.getLayers(), */info[STOP_INDEX_Y], info[STOP_INDEX_X], info[START_INDEX_X],
-            info[START_INDEX_Y], info[START_X], info[START_Y], info[STOP_X], info[STOP_Y]);
+    paintContent(info[STOP_INDEX_Y], info[STOP_INDEX_X], info[START_INDEX_X], info[START_INDEX_Y], info[START_X], info[START_Y], info[STOP_X], info[STOP_Y]);
   }
 
   /**
@@ -252,11 +238,7 @@ public class MapCanvas extends Canvas {
    * @param startY - the Y coordinate from which the drawing will start
    *
    */
-  protected void paintContent(/*LinkedList<DrawAreaPaneRepository.TilesMatrix> mapLayers, */int stopIndexY, int stopIndexX,
-                              int startIndexX, int startIndexY, int startX, int startY, int stopX, int stopY) {
-//    if(mapLayers == null)
-//      return;
-
+  protected void paintContent(int stopIndexY, int stopIndexX, int startIndexX, int startIndexY, int startX, int startY, int stopX, int stopY) {
     double canvasWidth = getWidth();
     double canvasHeight = getHeight();
 
@@ -265,33 +247,32 @@ public class MapCanvas extends Canvas {
     g.clearRect(0, 0, canvasWidth, canvasHeight);
     g.fillRect(startX, startY, stopX, stopY);
 
-//    if (!isMinimap)
-//      System.out.println("---- startIndexX: " + startIndexX + " | stopIndexX: " + stopIndexX + " | startIndexY: " +
-//              startIndexY + " | stopIndexY: " + stopIndexY);
+    Map<LayerModel, MapTilesContainer.TilesMatrix> map = tilesContainer.getTilesMap();
+    if (map != null) {
+      int x;
+      for (LayerModel layer : mapDetail.getLayers()) {
+        int y = startY;
+        MapTilesContainer.TilesMatrix tilesMatrix = map.get(layer);
+        if (tilesMatrix != null) {
+          ImageModel[][] images = tilesMatrix.getTilesMatrix();
+          for (int i=startIndexY; i<=stopIndexY; i++) {
+            x = startX;
+            for (int j=startIndexX; j<=stopIndexX; j++) {
+              ImageModel image = images[i][j];
+              if (image != null)
+                g.drawImage(image.getImage(), x, y, CELL_WIDTH, CELL_HEIGHT);
 
-    //TODO : draw the tiles on the map
-//    int x;
-//    for (DrawAreaPaneRepository.TilesMatrix tilesMatrix : mapLayers) {
-//      int y = startY;
-//      Image[][] matrix = tilesMatrix.getMatrix();
-//      for (int i = startIndexY; i <= stopIndexY; i++) {
-//        x = startX;
-//        for (int j = startIndexX; j <= stopIndexX; j++) {
-////          g.setFill(matrix[i][j]);
-////          g.fillRect(x, y, CELL_WIDTH, CELL_HEIGHT);
-//
-//          if (matrix[i][j]  != null)
-//            g.drawImage(matrix[i][j], x, y, CELL_WIDTH, CELL_HEIGHT);
-//
-//          x += CELL_WIDTH;
-//          if (x > canvasWidth)
-//            break;
-//        }
-//        y += CELL_HEIGHT;
-//        if (y > canvasHeight)
-//          break;
-//      }
-//    }
+              x += CELL_WIDTH;
+              if (x > canvasWidth)
+                break;
+            }
+            y += CELL_HEIGHT;
+            if (y > canvasHeight)
+              break;
+          }
+        }
+      }
+    }
 
     if (gridEnabled)
       drawGrid(g, startX, startY, stopX, stopY);
@@ -415,9 +396,6 @@ public class MapCanvas extends Canvas {
       forceUpdate = forceUpdate == 1 ? 3 : 2;
     }
     mapInfo[FORCE_UPDATE] = forceUpdate;
-
-//    if(updateContentOfOtherMap)
-//      System.out.println("rightMargin = " + rightMargin);
 
     /* from which position we should start drawing the matrix; they are matrix indexes */
     /* an index remains 0 when the canvas couldn't be dragged anymore (it reaches the maxim margin) */

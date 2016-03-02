@@ -6,7 +6,7 @@ import mapEditor.application.main_part.app_utils.AppParameters;
 import mapEditor.application.main_part.app_utils.models.ImageModel;
 import mapEditor.application.main_part.app_utils.models.KnownFileExtensions;
 import mapEditor.application.main_part.app_utils.models.LWMapModel;
-import mapEditor.application.main_part.app_utils.models.MapModel;
+import mapEditor.application.main_part.app_utils.models.MapDetail;
 import mapEditor.application.repo.models.LWProjectModel;
 import mapEditor.application.repo.models.ProjectModel;
 import mapEditor.application.repo.results.SaveImagesResult;
@@ -170,9 +170,9 @@ public class RepoController {
       try {
         String mapAbsolutePath = projectMapsPath + lwModel.getRelativePath();
         mapAbsolutePath = mapAbsolutePath.endsWith("\\") ? mapAbsolutePath : mapAbsolutePath + "\\";
-        MapModel mapModel = createMapModelFromFile(new File(mapAbsolutePath + lwModel.getName()), handler);
-        mapModel.setSelected(lwModel.isSelected());
-        project.addMapModel(mapModel);
+        MapDetail mapDetail = createMapModelFromFile(new File(mapAbsolutePath + lwModel.getName()), handler);
+        mapDetail.setSelected(lwModel.isSelected());
+        project.addMapModel(mapDetail);
       } catch (Exception ex) {
         System.out.println("*** RepoController - loadProjectMapModels - Unable to load map model for map name: " +
         lwModel.getName() + " and project maps path: " + projectMapsPath + " Error message: " + ex.getMessage());
@@ -188,16 +188,16 @@ public class RepoController {
    * MapXMLHandler, if it's null a new one will be created.
    * @return the corresponding map model of the file; null otherwise.
    */
-  public MapModel createMapModelFromFile(File mapFile, MapXMLHandler handler) throws Exception {
+  public MapDetail createMapModelFromFile(File mapFile, MapXMLHandler handler) throws Exception {
     if (mapFile == null)
       return null;
     if (handler == null)
       handler = new MapXMLHandler();
     String content = readContentFromFile(mapFile);
     handler.parse(content);
-    MapModel mapModel = handler.getMapModel();
-    mapModel.setAbsolutePath(mapFile.getParentFile().getAbsolutePath());
-    return mapModel;
+    MapDetail mapDetail = handler.getMapModel();
+    mapDetail.setAbsolutePath(mapFile.getParentFile().getAbsolutePath());
+    return mapDetail;
   }
 
   /**
@@ -263,8 +263,8 @@ public class RepoController {
       ProjectXMLConverter xmlConverter = new ProjectXMLConverter();
       String result = xmlConverter.convertProjectToXML(project);
       writeContentToFile(result, project.getConfigFilePath());
-      for (MapModel mapModel : project.getMapModels())
-        saveMap(mapModel, true);
+      for (MapDetail mapDetail : project.getMapDetails())
+        saveMap(mapDetail, true);
       return true;
     } catch (Exception ex) {
       System.out.println("RepoController - saveProject - Unable to save project. Error message: " + ex.getMessage());
@@ -276,17 +276,17 @@ public class RepoController {
    * Saves the map on the disk, into XML format. Based on the provided boolean flag, you can choose to overwrite the map
    * if already exist, or to create a new one. When creating a new one, the map name will be computed to establish if an
    * order number is required.
-   * @param mapModel
-   * MapModel
+   * @param mapDetail
+   * MapDetail
    * @param overwrite
    * TRUE if you want to overwrite the map if already exist.
    * @return The name of the map that was saved on the disk (if a map with the same name already exist into that
    *         directory, a new name will be computed with a higher order number)
    * @throws Exception
    */
-  public String saveMap(MapModel mapModel, boolean overwrite) throws Exception {
-    String mapAbsolutePath = mapModel.getAbsolutePath();
-    String mapName = mapModel.getName();
+  public String saveMap(MapDetail mapDetail, boolean overwrite) throws Exception {
+    String mapAbsolutePath = mapDetail.getAbsolutePath();
+    String mapName = mapDetail.getName();
     if (mapAbsolutePath == null || mapName == null)
       return null;
     mapAbsolutePath = mapAbsolutePath.endsWith("\\") ? mapAbsolutePath : mapAbsolutePath + "\\";
@@ -298,7 +298,7 @@ public class RepoController {
 
     MapXMLConverter converter = new MapXMLConverter();
     try {
-      String result = converter.convertMapToXML(mapModel);
+      String result = converter.convertMapToXML(mapDetail);
       writeContentToFile(result, mapAbsolutePath + mapName);
       return mapName;
     } catch (Exception ex) {

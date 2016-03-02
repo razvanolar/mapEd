@@ -1,6 +1,6 @@
 package mapEditor.application.repo.sax_handlers.project_init_file;
 
-import mapEditor.application.main_part.app_utils.models.MapModel;
+import mapEditor.application.main_part.app_utils.models.MapDetail;
 import mapEditor.application.repo.SystemParameters;
 import mapEditor.application.repo.models.ProjectModel;
 
@@ -27,9 +27,9 @@ public class ProjectXMLConverter {
 
     builder.append("\t<maps type=\"").append(project.getMapType().name()).
             append("\" cellSize=\"").append(project.getCellSize()).append("\">");
-    if (!project.getMapModels().isEmpty()) {
+    if (!project.getMapDetails().isEmpty()) {
       builder.append("\n");
-      for (MapModel map : project.getMapModels()) {
+      for (MapDetail map : project.getMapDetails()) {
         builder.append("\t\t<map name=\"").append(map.getName()).
                 append("\" path=\"").append(map.getRelativePath()).
                 append("\" isSelected=\"").append(map.isSelected()).append("\"");

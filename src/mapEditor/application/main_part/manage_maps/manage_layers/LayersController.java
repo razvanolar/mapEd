@@ -163,10 +163,15 @@ public class LayersController implements Controller, SelectableLayerListener {
    */
   public void loadLayers(List<LayerModel> layers) {
     view.removeAllLayers();
+    selectedLayer = null;
     if (layers == null || layers.isEmpty())
       return;
-    for (LayerModel layer : layers)
-      view.addLayer(new SelectableLayerView(layer, this));
+    for (LayerModel layer : layers) {
+      SelectableLayerView layerView = new SelectableLayerView(layer, this);
+      view.addLayer(layerView);
+      if (layer.isSelected())
+        layerView.select(false, 0, 0);
+    }
   }
 
   @Override
@@ -183,6 +188,8 @@ public class LayersController implements Controller, SelectableLayerListener {
       contextMenuController.getContextMenu().hide();
       contextMenuController.getContextMenu().show(this.selectedLayer, x, y);
     }
+
+    listener.selectedLayerChanged(this.selectedLayer != null ? this.selectedLayer.getLayerModel() : null);
   }
 
   public List<LayerModel> getLayers() {

@@ -13,4 +13,5 @@ public interface MapLayersListener {
   void removeLayer(LayerModel layer);
   void moveLayerUp(LayerModel layer);
   void moveLayerDown(LayerModel layer);
+  void selectedLayerChanged(LayerModel layer);
 }

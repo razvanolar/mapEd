@@ -1,7 +1,7 @@
 package mapEditor.application.repo.models;
 
 import mapEditor.application.main_part.app_utils.models.LWMapModel;
-import mapEditor.application.main_part.app_utils.models.MapModel;
+import mapEditor.application.main_part.app_utils.models.MapDetail;
 import mapEditor.application.repo.HexCounter;
 import mapEditor.application.repo.SystemParameters;
 import mapEditor.application.repo.types.MapType;
@@ -29,7 +29,7 @@ public class ProjectModel {
   private File mapsFile;
 
   private List<LWMapModel> lwMapModels;
-  private List<MapModel> mapModels = new ArrayList<>();
+  private List<MapDetail> mapDetails = new ArrayList<>();
 
   public ProjectModel() {}
 
@@ -85,8 +85,8 @@ public class ProjectModel {
     return tilesFile;
   }
 
-  public List<MapModel> getMapModels() {
-    return mapModels;
+  public List<MapDetail> getMapDetails() {
+    return mapDetails;
   }
 
   public List<LWMapModel> getLwMapModels() {
@@ -157,13 +157,13 @@ public class ProjectModel {
     return getHexValue();
   }
 
-  public void addMapModel(MapModel mapModel) {
-    if (mapModel != null && !mapModels.contains(mapModel))
-      mapModels.add(mapModel);
+  public void addMapModel(MapDetail mapDetail) {
+    if (mapDetail != null && !mapDetails.contains(mapDetail))
+      mapDetails.add(mapDetail);
   }
 
-  public void removeMapModel(MapModel mapModel) {
-    if (mapModels.contains(mapModel))
-      mapModels.remove(mapModel);
+  public void removeMapModel(MapDetail mapDetail) {
+    if (mapDetails.contains(mapDetail))
+      mapDetails.remove(mapDetail);
   }
 }

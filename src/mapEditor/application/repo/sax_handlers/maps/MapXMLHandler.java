@@ -1,6 +1,6 @@
 package mapEditor.application.repo.sax_handlers.maps;
 
-import mapEditor.application.main_part.app_utils.models.MapModel;
+import mapEditor.application.main_part.app_utils.models.MapDetail;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -30,7 +30,7 @@ public class MapXMLHandler {
     parser.parse(inputStream, mapSAXHandler);
   }
 
-  public MapModel getMapModel() {
-    return mapSAXHandler.getMapModel();
+  public MapDetail getMapModel() {
+    return mapSAXHandler.getMapDetail();
   }
 }
