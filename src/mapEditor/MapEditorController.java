@@ -193,7 +193,7 @@ public class MapEditorController {
     try {
       maskView();
 
-      String name = repoController.saveMap(mapDetail, false);
+      String name = repoController.saveMap(mapDetail, null, false);
       mapDetail.setName(name);
       manageMapsController.addNewMap(mapDetail);
 

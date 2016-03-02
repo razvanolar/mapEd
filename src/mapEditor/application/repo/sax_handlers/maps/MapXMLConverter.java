@@ -38,6 +38,7 @@ public class MapXMLConverter {
       for (LayerModel layer : layers) {
         builder.append("\t\t").append("<layer name=\"").append(layer.getName()).
                 append("\" type=\"").append(layer.getType().name()).
+                append("\" isSelected=\"").append(layer.isSelected()).
                 append("\" />\n");
       }
       builder.append("\t</layers>\n");

@@ -263,8 +263,9 @@ public class RepoController {
       ProjectXMLConverter xmlConverter = new ProjectXMLConverter();
       String result = xmlConverter.convertProjectToXML(project);
       writeContentToFile(result, project.getConfigFilePath());
+      MapXMLConverter converter = new MapXMLConverter();
       for (MapDetail mapDetail : project.getMapDetails())
-        saveMap(mapDetail, true);
+        saveMap(mapDetail, converter, true);
       return true;
     } catch (Exception ex) {
       System.out.println("RepoController - saveProject - Unable to save project. Error message: " + ex.getMessage());
@@ -278,13 +279,15 @@ public class RepoController {
    * order number is required.
    * @param mapDetail
    * MapDetail
+   * @param converter
+   * MapXMLConverter, if it's null, a new one will be created.
    * @param overwrite
    * TRUE if you want to overwrite the map if already exist.
    * @return The name of the map that was saved on the disk (if a map with the same name already exist into that
    *         directory, a new name will be computed with a higher order number)
    * @throws Exception
    */
-  public String saveMap(MapDetail mapDetail, boolean overwrite) throws Exception {
+  public String saveMap(MapDetail mapDetail, MapXMLConverter converter, boolean overwrite) throws Exception {
     String mapAbsolutePath = mapDetail.getAbsolutePath();
     String mapName = mapDetail.getName();
     if (mapAbsolutePath == null || mapName == null)
@@ -296,7 +299,9 @@ public class RepoController {
         return null;
     }
 
-    MapXMLConverter converter = new MapXMLConverter();
+    if (converter == null)
+      converter = new MapXMLConverter();
+
     try {
       String result = converter.convertMapToXML(mapDetail);
       writeContentToFile(result, mapAbsolutePath + mapName);

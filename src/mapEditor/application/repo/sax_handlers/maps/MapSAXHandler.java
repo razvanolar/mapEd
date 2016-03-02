@@ -39,7 +39,9 @@ public class MapSAXHandler extends DefaultHandler {
         mapDetail.setSquareColor(createColorFromAttributes(attributes));
         break;
       case "layer":
-        mapDetail.addLayer(new LayerModel(attributes.getValue("name"), LayerType.valueOf(attributes.getValue("type"))));
+        LayerModel layer = new LayerModel(attributes.getValue("name"), LayerType.valueOf(attributes.getValue("type")));
+        layer.setSelected(Boolean.parseBoolean(attributes.getValue("isSelected")));
+        mapDetail.addLayer(layer);
         break;
     }
   }
