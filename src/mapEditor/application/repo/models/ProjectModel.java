@@ -1,14 +1,19 @@
 package mapEditor.application.repo.models;
 
+import mapEditor.application.main_part.app_utils.models.ImageModel;
 import mapEditor.application.main_part.app_utils.models.LWMapModel;
 import mapEditor.application.main_part.app_utils.models.MapDetail;
+import mapEditor.application.main_part.app_utils.models.TabKey;
+import mapEditor.application.main_part.manage_maps.manage_tiles.tab_container_types.AbstractTabContainer;
 import mapEditor.application.repo.HexCounter;
 import mapEditor.application.repo.SystemParameters;
 import mapEditor.application.repo.types.MapType;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -30,6 +35,7 @@ public class ProjectModel {
 
   private List<LWMapModel> lwMapModels;
   private List<MapDetail> mapDetails = new ArrayList<>();
+  private Map<TabKey, List<ImageModel>> openedTileTabs = new HashMap<>();
 
   public ProjectModel() {}
 
@@ -87,6 +93,10 @@ public class ProjectModel {
 
   public List<MapDetail> getMapDetails() {
     return mapDetails;
+  }
+
+  public Map<TabKey, List<ImageModel>> getOpenedTileTabs() {
+    return openedTileTabs;
   }
 
   public List<LWMapModel> getLwMapModels() {
@@ -163,7 +173,25 @@ public class ProjectModel {
   }
 
   public void removeMapModel(MapDetail mapDetail) {
-    if (mapDetails.contains(mapDetail))
+    if (mapDetail != null && mapDetails.contains(mapDetail))
       mapDetails.remove(mapDetail);
+  }
+
+  public void addTileForTileTabKey(TabKey key, ImageModel tile) {
+    if (key != null && tile != null) {
+      List<ImageModel> tiles = openedTileTabs.get(key);
+      if (tiles == null) {
+        tiles = new ArrayList<>();
+        tiles.add(tile);
+        openedTileTabs.put(key, tiles);
+      } else if (!tiles.contains(tile)) {
+        tiles.add(tile);
+      }
+    }
+  }
+
+  public void removeTileTabKey(TabKey key) {
+    if (key != null && openedTileTabs.containsKey(key))
+      openedTileTabs.remove(key);
   }
 }

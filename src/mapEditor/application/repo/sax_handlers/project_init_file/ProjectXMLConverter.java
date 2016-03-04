@@ -1,8 +1,16 @@
 package mapEditor.application.repo.sax_handlers.project_init_file;
 
+import mapEditor.application.main_part.app_utils.models.ImageModel;
 import mapEditor.application.main_part.app_utils.models.MapDetail;
+import mapEditor.application.main_part.app_utils.models.TabKey;
+import mapEditor.application.main_part.manage_maps.manage_tiles.tab_container_types.AbstractTabContainer;
+import mapEditor.application.main_part.manage_maps.manage_tiles.tab_container_types.TilesTabContainer;
+import mapEditor.application.main_part.manage_maps.utils.TabType;
 import mapEditor.application.repo.SystemParameters;
 import mapEditor.application.repo.models.ProjectModel;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -25,7 +33,8 @@ public class ProjectXMLConverter {
 
     builder.append("\t<hex_counter value=\"").append(project.getHexValue()).append("\" />\n");
 
-    builder.append("\t<maps type=\"").append(project.getMapType().name()).
+    // convert opened maps
+    builder.append("\n\t<maps type=\"").append(project.getMapType().name()).
             append("\" cellSize=\"").append(project.getCellSize()).append("\">");
     if (!project.getMapDetails().isEmpty()) {
       builder.append("\n");
@@ -39,8 +48,41 @@ public class ProjectXMLConverter {
     } else
       builder.append("</maps>\n");
 
+    // convert opened tile tabs
+    convertImageModelTabs(builder, project.getOpenedTileTabs(), project.getHomePath());
+
     builder.append("</project>");
 
     return builder.toString();
+  }
+
+  private void convertImageModelTabs(StringBuilder builder, Map<TabKey, List<ImageModel>> tabs, String projectPath) {
+    builder.append("\n\t<tabs>");
+    if (!tabs.isEmpty()) {
+      builder.append("\n");
+      for (TabKey key : tabs.keySet()) {
+        if (key.getType() == TabType.TILES)
+          convertTileTabs(builder, key.getName(), tabs.get(key), projectPath);
+      }
+      builder.append("\t</tabs>\n");
+    } else
+      builder.append("</tabs>\n");
+  }
+
+  private void convertTileTabs(StringBuilder builder, String tabName, List<ImageModel> tiles, String projectPath) {
+    if (tiles == null)
+      return;
+    builder.append("\t\t<tab name=\"").append(tabName).append("\" type=\"").append(TabType.TILES.name()).append("\" ");
+    if (tiles.isEmpty()) {
+      builder.append("/>");
+      return;
+    }
+    builder.append(">\n");
+    for (ImageModel tile : tiles) {
+      builder.append("\t\t\t<tile name=\"").append(tile.getImageName()).
+              append("\" path=\"").append(tile.getImagePath().replace(projectPath, "")).
+              append("\" />\n");
+    }
+    builder.append("\t\t</tab>\n");
   }
 }

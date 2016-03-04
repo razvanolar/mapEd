@@ -13,6 +13,7 @@ import mapEditor.application.main_part.manage_maps.utils.TabType;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -27,7 +28,8 @@ public class TilesTabContainer extends AbstractTabContainer {
   private boolean detailed;
   private List<SelectableTileView> selectableTileViews;
 
-  public TilesTabContainer(boolean detailed) {
+  public TilesTabContainer(String name, boolean detailed) {
+    this.name = name;
     this.tabType = TabType.TILES;
     this.detailed = detailed;
     initGUI();
@@ -85,6 +87,14 @@ public class TilesTabContainer extends AbstractTabContainer {
       if (tileView.isSelected())
         return tileView;
     return null;
+  }
+
+  public List<ImageModel> getTileModels() {
+    List<ImageModel> tiles = new ArrayList<>();
+    if (selectableTileViews == null || selectableTileViews.isEmpty())
+      return tiles;
+    tiles.addAll(selectableTileViews.stream().map(SelectableTileView::getImage).collect(Collectors.toList()));
+    return tiles;
   }
 
   @Override

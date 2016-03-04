@@ -1,9 +1,11 @@
 package mapEditor.application.main_part.manage_maps.manage_tiles;
 
+import javafx.collections.ListChangeListener;
 import javafx.scene.control.Button;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.Region;
+import mapEditor.application.main_part.app_utils.AppParameters;
 import mapEditor.application.main_part.app_utils.inputs.FileExtensionUtil;
 import mapEditor.application.main_part.app_utils.inputs.ImageProvider;
 import mapEditor.application.main_part.app_utils.inputs.StringValidator;
@@ -17,6 +19,7 @@ import mapEditor.application.main_part.manage_maps.utils.SelectableTileView;
 import mapEditor.application.main_part.manage_maps.utils.SelectedTileListener;
 import mapEditor.application.main_part.manage_maps.utils.TabType;
 import mapEditor.application.main_part.types.Controller;
+import mapEditor.application.repo.models.ProjectModel;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -54,6 +57,33 @@ public class ManageTilesController implements Controller, SelectableTileListener
 
     view.getTabPane().getSelectionModel().selectedItemProperty().addListener((observable, oldItem, newItem) -> {
       onTabChanged(oldItem, newItem);
+    });
+
+    view.getTabPane().getTabs().addListener((ListChangeListener<Tab>) c -> {
+      while (c.next()) {
+        ProjectModel currentProject = AppParameters.CURRENT_PROJECT;
+
+        List<? extends Tab> deleted = c.getRemoved();
+        if (deleted != null && !deleted.isEmpty()) {
+          deleted.stream().filter(tab -> tab.getUserData() != null).forEach(
+                  tab -> currentProject.removeTileTabKey(((AbstractTabContainer) tab.getUserData()).getKey())
+          );
+        }
+
+        List<? extends Tab> added = c.getAddedSubList();
+        if (added != null && !added.isEmpty()) {
+          for (Tab tab : added) {
+            if (tab.getUserData() != null && tab.getUserData() instanceof AbstractTabContainer) {
+              AbstractTabContainer abstractTab = (AbstractTabContainer) tab.getUserData();
+              if (abstractTab.getTabType() == TabType.TILES && abstractTab instanceof TilesTabContainer) {
+                TilesTabContainer tilesTab = (TilesTabContainer) abstractTab;
+                for (ImageModel tile : tilesTab.getTileModels())
+                  currentProject.addTileForTileTabKey(tilesTab.getKey(), tile);
+              }
+            }
+          }
+        }
+      }
     });
   }
 
@@ -100,7 +130,7 @@ public class ManageTilesController implements Controller, SelectableTileListener
         images.add(image);
     });
 
-    TilesTabContainer tilesTabContainer = new TilesTabContainer(true);
+    TilesTabContainer tilesTabContainer = new TilesTabContainer(title, true);
     for (ImageModel image : images)
       tilesTabContainer.addTile(new SelectableTileView(image, true, this));
 
