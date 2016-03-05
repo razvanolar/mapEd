@@ -22,11 +22,11 @@ public class ProjectXMLHandler {
   private ProjectSAXHandler projectSAXHandler;
   private String resource;
 
-  public ProjectXMLHandler(String resource) throws ParserConfigurationException, SAXException {
+  public ProjectXMLHandler(String resource, String projectDirPath) throws ParserConfigurationException, SAXException {
     this.resource = resource;
     SAXParserFactory parserFactory = SAXParserFactory.newInstance();
     parser = parserFactory.newSAXParser();
-    projectSAXHandler = new ProjectSAXHandler();
+    projectSAXHandler = new ProjectSAXHandler(projectDirPath);
   }
 
   public void parse() throws IOException, SAXException {

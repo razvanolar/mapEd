@@ -177,7 +177,7 @@ public class ProjectTreeController implements Controller, ProjectTreeContextMenu
       MapEditorController.getInstance().changeToImageEditorView();
     File file = item.getValue();
     Image image = ImageProvider.getImage(file);
-    ImageModel imageModel = new ImageModel(image, file.getParentFile().getAbsolutePath(), file.getName());
+    ImageModel imageModel = new ImageModel(image, file);
     if (manageImagesController != null)
       manageImagesController.addNewTab(file.getName(), imageModel);
   }
@@ -219,7 +219,7 @@ public class ProjectTreeController implements Controller, ProjectTreeContextMenu
         return;
       }
 
-      tilesController.addTilesTab(tilesTabController.getTabName(), imageFiles);
+      tilesController.addTilesTabForFiles(tilesTabController.getTabName(), imageFiles);
     });
     dialog.setContent(tilesTabView.asNode());
     dialog.show();

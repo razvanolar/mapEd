@@ -53,7 +53,7 @@ public class SimpleCroppedTileContextMenuController implements Controller {
     view.getSetNameMenuItem().setOnAction(event -> {
       SaveImageController.ISaveImageView view = getSaveImageController().getView();
       view.setState(SaveImageController.ISaveImageViewState.NAME);
-      getSaveImageController().setName(currentImageModel.getImageName());
+      getSaveImageController().setName(currentImageModel.getName());
       getSaveImageController().validateInput();
       OkCancelDialog okDialog = getDialog();
       okDialog.setContent(view.asNode());
@@ -64,7 +64,7 @@ public class SimpleCroppedTileContextMenuController implements Controller {
     view.getSetPathMenuItem().setOnAction(event -> {
       SaveImageController.ISaveImageView view = getSaveImageController().getView();
       view.setState(SaveImageController.ISaveImageViewState.PATH);
-      getSaveImageController().setPath(currentImageModel.getImagePath());
+      getSaveImageController().setPath(currentImageModel.getPath());
       getSaveImageController().validateInput();
       OkCancelDialog okDialog = getDialog();
       okDialog.setContent(view.asNode());
@@ -94,9 +94,9 @@ public class SimpleCroppedTileContextMenuController implements Controller {
         String name = getSaveImageController().getName();
         String path = getSaveImageController().getPath();
         if (editState == CroppedTileEditState.NAME && !StringValidator.isNullOrEmpty(name)) {
-          currentImageModel.setImageName(name);
+          currentImageModel.setName(name);
         } else if (editState == CroppedTileEditState.PATH && !StringValidator.isNullOrEmpty(path)) {
-          currentImageModel.setImagePath(path);
+          currentImageModel.setPath(path);
         }
         dialog.close();
         editState = CroppedTileEditState.NONE;

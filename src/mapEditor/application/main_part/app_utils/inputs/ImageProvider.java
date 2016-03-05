@@ -43,6 +43,6 @@ public class ImageProvider {
 
   public static ImageModel getImageModel(File file) {
     Image image = getImage(file);
-    return image != null ? new ImageModel(image, file.getParentFile() != null ? file.getParentFile().getAbsolutePath() : "", file.getName()) : null;
+    return image != null ? new ImageModel(image, file) : null;
   }
 }

@@ -32,7 +32,7 @@ public class ImagesLoader {
     fileChooser.setInitialDirectory(new File(DEFAULT_PATH));
     File file = fileChooser.showOpenDialog(owner);
     if (file != null && (file.getName().endsWith(".png") || file.getName().endsWith(".jpg"))) {
-      callback.call(new ImageModel(ImageProvider.getImage(file), file.getAbsolutePath(), file.getName()));
+      callback.call(new ImageModel(ImageProvider.getImage(file), file));
     }
   }
 

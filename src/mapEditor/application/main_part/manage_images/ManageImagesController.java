@@ -35,6 +35,7 @@ import mapEditor.application.repo.SystemParameters;
 import mapEditor.application.repo.results.SaveImagesResult;
 import mapEditor.application.repo.statuses.SaveImagesStatus;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -235,11 +236,11 @@ public class ManageImagesController implements Controller, ManageImagesListener 
       check and inform the user if there are images without a name or path set
      */
     for (ImageModel image : images) {
-      if (StringValidator.isNullOrEmpty(image.getImageName()))
+      if (StringValidator.isNullOrEmpty(image.getName()))
         areImagesWithNoName = true;
       if (usePathForAllTiles)
-        image.setImagePath(selectedPath);
-      else if (!StringValidator.isValidTilesPath(image.getImagePath()))
+        image.setPath(selectedPath);
+      else if (!StringValidator.isValidTilesPath(image.getPath()))
         areImagesWithNoPath = true;
     }
 
@@ -261,10 +262,10 @@ public class ManageImagesController implements Controller, ManageImagesListener 
     if (areImagesWithNoName || areImagesWithNoPath) {
       String defaultPath = AppParameters.CURRENT_PROJECT.getTilesFile().getAbsolutePath();
       for (ImageModel image : images) {
-        if (StringValidator.isNullOrEmpty(image.getImageName()))
-          image.setImageName(AppParameters.CURRENT_PROJECT.nextHexValue() + KnownFileExtensions.PNG.getExtension());
-        if (!StringValidator.isValidTilesPath(image.getImagePath()))
-          image.setImagePath(defaultPath);
+        if (StringValidator.isNullOrEmpty(image.getName()))
+          image.setName(AppParameters.CURRENT_PROJECT.nextHexValue() + KnownFileExtensions.PNG.getExtension());
+        if (!StringValidator.isValidTilesPath(image.getPath()))
+          image.setPath(defaultPath);
       }
     }
 
@@ -414,7 +415,7 @@ public class ManageImagesController implements Controller, ManageImagesListener 
     }
 
 //    ImageModel image = (ImageModel) currentCanvas.getUserData();
-//    String imagePath = image.getImagePath();
+//    String imagePath = image.getPath();
 //    String tileSetsPath = AppParameters.CURRENT_PROJECT.getTileSetsFile().getAbsolutePath();
 //    view.getSaveTileSetButton().setDisable(imagePath.contains(tileSetsPath));
     view.getSaveTileSetButton().setDisable(false);
@@ -478,7 +479,7 @@ public class ManageImagesController implements Controller, ManageImagesListener 
           synchronized (SystemParameters.MESSAGE_KEY) {
             SystemParameters.MESSAGE_KEY.setName(saveImageView.getNameTextField().getText());
             SystemParameters.MESSAGE_KEY.setPath(saveImageView.getPathTextField().getText());
-            SystemParameters.MESSAGE_KEY.setImageModel(new ImageModel(param, image.getImagePath(), image.getImageName()));
+            SystemParameters.MESSAGE_KEY.setImageModel(new ImageModel(param, image.getPath(), image.getName()));
             SystemParameters.MESSAGE_KEY.setMessageType(MessageType.SAVE_TILE_SET_IMAGE);
             SystemParameters.MESSAGE_KEY.notify();
             saveTilesetDialog.close();
@@ -496,31 +497,14 @@ public class ManageImagesController implements Controller, ManageImagesListener 
     return saveTilesetDialog;
   }
 
-  private void saveNewTileset(SaveImageController controller) {
-    currentCanvas.cropFullImage(param -> {
-      ImageModel image = controller.getImageModel();
-      if (image != null) {
-        synchronized (SystemParameters.MESSAGE_KEY) {
-          SystemParameters.MESSAGE_KEY.setName(controller.getName());
-          SystemParameters.MESSAGE_KEY.setPath(controller.getPath());
-          SystemParameters.MESSAGE_KEY.setImageModel(new ImageModel(param, image.getImagePath(), image.getImageName()));
-          SystemParameters.MESSAGE_KEY.setMessageType(MessageType.SAVE_TILE_SET_IMAGE);
-          SystemParameters.MESSAGE_KEY.notify();
-          saveTilesetDialog.close();
-        }
-      }
-      return null;
-    });
-  }
-
   private void overwriteTileset(SaveImageController controller) {
     currentCanvas.cropFullImage(param -> {
       ImageModel image = controller.getImageModel();
-      if (image != null && controller.isValidSelection(image.getImageName(), image.getImagePath())) {
+      if (image != null && controller.isValidSelection(image.getName(), image.getPath())) {
         synchronized (SystemParameters.MESSAGE_KEY) {
-          SystemParameters.MESSAGE_KEY.setName(image.getImageName());
-          SystemParameters.MESSAGE_KEY.setPath(image.getImagePath());
-          SystemParameters.MESSAGE_KEY.setImageModel(new ImageModel(param, image.getImagePath(), image.getImageName()));
+          SystemParameters.MESSAGE_KEY.setName(image.getName());
+          SystemParameters.MESSAGE_KEY.setPath(image.getPath());
+          SystemParameters.MESSAGE_KEY.setImageModel(new ImageModel(param, new File(image.getPath())));
           SystemParameters.MESSAGE_KEY.setMessageType(MessageType.OVERWRITE_TILE_SET_IMAGE);
           SystemParameters.MESSAGE_KEY.notify();
           saveTilesetDialog.close();

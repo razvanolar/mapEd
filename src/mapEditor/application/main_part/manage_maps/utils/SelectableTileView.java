@@ -19,7 +19,7 @@ public class SelectableTileView extends StackPane {
 
   private static EventHandler<MouseEvent> onMouseEnteredListener;
   private static EventHandler<MouseEvent> onMouseExitedListener;
-  private static EventHandler<MouseEvent> onMouseClickedListener;
+  private static EventHandler<MouseEvent> onMousePressedListener;
 
   private HBox detailedContainer;
   private ImageView imageView;
@@ -32,7 +32,7 @@ public class SelectableTileView extends StackPane {
 
   public SelectableTileView(ImageModel image, boolean detailedView, SelectableTileListener listener) {
     this.image = image;
-    this.name = image.getImageName();
+    this.name = image.getName();
     this.detailedView = detailedView;
     this.imageView = new ImageView(image.getImage());
     this.listener = listener;
@@ -40,7 +40,7 @@ public class SelectableTileView extends StackPane {
 
     this.setOnMouseEntered(getOnMouseEnteredListener());
     this.setOnMouseExited(getOnMouseExitedListener());
-    this.setOnMouseClicked(getOnMouseClickedListener());
+    this.setOnMousePressed(getOnMousePressedListener());
   }
 
   private void setContentBasedOnViewType() {
@@ -115,14 +115,14 @@ public class SelectableTileView extends StackPane {
     return onMouseExitedListener;
   }
 
-  private static EventHandler<MouseEvent> getOnMouseClickedListener() {
-    if (onMouseClickedListener == null) {
-      onMouseClickedListener = event -> {
+  private static EventHandler<MouseEvent> getOnMousePressedListener() {
+    if (onMousePressedListener == null) {
+      onMousePressedListener = event -> {
         SelectableTileView source = (SelectableTileView) event.getSource();
         source.onMouseClicked();
       };
     }
-    return onMouseClickedListener;
+    return onMousePressedListener;
   }
 
   public ImageModel getImage() {

@@ -141,13 +141,14 @@ public class RepoController {
   public ProjectModel loadProjectSettings(LWProjectModel lwProject) throws Exception {
     // compute project file path
     String projectFilePath = lwProject.getPath();
-    if (!projectFilePath.endsWith("\\"))
+    if (!projectFilePath.endsWith("\\")) {
       projectFilePath += "\\";
+    }
     projectFilePath += lwProject.getName() + SystemParameters.PROJECT_FILE_EXT;
 
     // parse the file
     String content = readContentFromFile(projectFilePath);
-    ProjectXMLHandler handler = new ProjectXMLHandler(content);
+    ProjectXMLHandler handler = new ProjectXMLHandler(content, lwProject.getPath());
     handler.parse();
     ProjectModel projectModel = handler.getProjectModel();
 
@@ -472,8 +473,8 @@ public class RepoController {
     RepoUtil repoUtil = getRepoUtil();
     boolean areUnsavedImages = false;
     for (ImageModel image : images) {
-      String name = image.getImageName();
-      String path = image.getImagePath();
+      String name = image.getName();
+      String path = image.getPath();
       path = !path.endsWith("\\") ? path + "\\" : path;
       name = repoUtil.checkNameOrGetAnAlternativeOne(path, name);
       try {
@@ -481,7 +482,7 @@ public class RepoController {
       } catch (Exception ex) {
         areUnsavedImages = true;
         unsavedImages.add(image);
-        System.out.println("*** Unable to save image. Name: " + image.getImagePath() + " path: " + image.getImagePath() +
+        System.out.println("*** Unable to save image. Name: " + image.getPath() + " path: " + image.getPath() +
                       " Error message: " + ex.getMessage());
       }
     }

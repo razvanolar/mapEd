@@ -38,8 +38,8 @@ public class MessageHandler {
           showWarningDialog(null, "Unable to copy the image in the tile_sets directory.");
         else {
           toPath = toPath.endsWith("\\") ? toPath : toPath + "\\";
-          image.setImageName(imageName);
-          image.setImagePath(toPath + imageName);
+          image.setName(imageName);
+          image.setPath(toPath + imageName);
         }
       }
     };

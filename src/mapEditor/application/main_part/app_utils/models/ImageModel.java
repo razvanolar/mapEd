@@ -2,6 +2,8 @@ package mapEditor.application.main_part.app_utils.models;
 
 import javafx.scene.image.Image;
 
+import java.io.File;
+
 /**
  *
  * Created by razvanolar on 30.01.2016.
@@ -9,32 +11,59 @@ import javafx.scene.image.Image;
 public class ImageModel {
 
   private Image image;
-  private String imagePath;
-  private String imageName;
+  private String name;
+  private String path;
+  private File file;
 
-  public ImageModel(Image image, String imagePath, String imageName) {
+  public ImageModel(Image image, File file) {
     this.image = image;
-    this.imagePath = imagePath;
-    this.imageName = imageName;
+    this.file = file;
+    this.path = refinePath(file.getParentFile().getAbsolutePath());
+    this.name = file.getName();
+  }
+
+  public ImageModel(Image image, String path, String name) {
+    this.image = image;
+    this.path = refinePath(path);
+    this.name = name;
   }
 
   public Image getImage() {
     return image;
   }
 
-  public String getImagePath() {
-    return imagePath;
+  public String getPath() {
+    return path;
   }
 
-  public String getImageName() {
-    return imageName;
+  public String getName() {
+    return name;
   }
 
-  public void setImagePath(String imagePath) {
-    this.imagePath = imagePath;
+  public void setPath(String imagePath) {
+    this.path = refinePath(imagePath);
+    this.file = null;
   }
 
-  public void setImageName(String imageName) {
-    this.imageName = imageName;
+  public void setName(String imageName) {
+    this.name = imageName;
+    this.file = null;
+  }
+
+  public File getFile() {
+    if (file == null && path != null && name != null)
+      file = new File(path + name);
+    return file;
+  }
+
+  private String refinePath(String pathValue) {
+    if (pathValue != null && !pathValue.endsWith("\\"))
+      pathValue += "\\";
+    return pathValue;
+  }
+
+  @Override
+  public String toString() {
+    return file != null ? file.toString() : "";
   }
 }

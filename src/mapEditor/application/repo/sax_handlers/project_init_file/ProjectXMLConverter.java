@@ -1,14 +1,12 @@
 package mapEditor.application.repo.sax_handlers.project_init_file;
 
-import mapEditor.application.main_part.app_utils.models.ImageModel;
 import mapEditor.application.main_part.app_utils.models.MapDetail;
 import mapEditor.application.main_part.app_utils.models.TabKey;
-import mapEditor.application.main_part.manage_maps.manage_tiles.tab_container_types.AbstractTabContainer;
-import mapEditor.application.main_part.manage_maps.manage_tiles.tab_container_types.TilesTabContainer;
 import mapEditor.application.main_part.manage_maps.utils.TabType;
 import mapEditor.application.repo.SystemParameters;
 import mapEditor.application.repo.models.ProjectModel;
 
+import java.io.File;
 import java.util.List;
 import java.util.Map;
 
@@ -56,7 +54,7 @@ public class ProjectXMLConverter {
     return builder.toString();
   }
 
-  private void convertImageModelTabs(StringBuilder builder, Map<TabKey, List<ImageModel>> tabs, String projectPath) {
+  private void convertImageModelTabs(StringBuilder builder, Map<TabKey, List<File>> tabs, String projectPath) {
     builder.append("\n\t<tabs>");
     if (!tabs.isEmpty()) {
       builder.append("\n");
@@ -69,19 +67,17 @@ public class ProjectXMLConverter {
       builder.append("</tabs>\n");
   }
 
-  private void convertTileTabs(StringBuilder builder, String tabName, List<ImageModel> tiles, String projectPath) {
+  private void convertTileTabs(StringBuilder builder, String tabName, List<File> tiles, String projectPath) {
     if (tiles == null)
       return;
     builder.append("\t\t<tab name=\"").append(tabName).append("\" type=\"").append(TabType.TILES.name()).append("\" ");
     if (tiles.isEmpty()) {
-      builder.append("/>");
+      builder.append("/>\n");
       return;
     }
     builder.append(">\n");
-    for (ImageModel tile : tiles) {
-      builder.append("\t\t\t<tile name=\"").append(tile.getImageName()).
-              append("\" path=\"").append(tile.getImagePath().replace(projectPath, "")).
-              append("\" />\n");
+    for (File tile : tiles) {
+      builder.append("\t\t\t<tile path=\"").append(tile.getAbsolutePath().replace(projectPath, "")).append("\" />\n");
     }
     builder.append("\t\t</tab>\n");
   }

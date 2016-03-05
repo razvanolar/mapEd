@@ -70,7 +70,7 @@ public class TabImageLoadView {
 
   private void addListeners() {
     browseImageButton.setOnAction(event -> ImagesLoader.getInstance().loadImageModel(imageModel -> {
-      imagePathTextField.setText(imageModel.getImagePath());
+      imagePathTextField.setText(imageModel.getPath());
       this.imageModel = imageModel;
       initFitImageCanvas();
       return null;

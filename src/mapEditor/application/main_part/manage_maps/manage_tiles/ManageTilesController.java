@@ -10,6 +10,7 @@ import mapEditor.application.main_part.app_utils.inputs.FileExtensionUtil;
 import mapEditor.application.main_part.app_utils.inputs.ImageProvider;
 import mapEditor.application.main_part.app_utils.inputs.StringValidator;
 import mapEditor.application.main_part.app_utils.models.ImageModel;
+import mapEditor.application.main_part.app_utils.models.TabKey;
 import mapEditor.application.main_part.app_utils.views.dialogs.OkCancelDialog;
 import mapEditor.application.main_part.manage_maps.manage_tiles.create_tiles_tab.CreateTilesTabView;
 import mapEditor.application.main_part.manage_maps.manage_tiles.tab_container_types.AbstractTabContainer;
@@ -24,6 +25,7 @@ import mapEditor.application.repo.models.ProjectModel;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -49,6 +51,15 @@ public class ManageTilesController implements Controller, SelectableTileListener
   }
 
   public void bind() {
+    Map<TabKey, List<File>> tabs = AppParameters.CURRENT_PROJECT.getOpenedTileTabs();
+    if (tabs != null && !tabs.isEmpty()) {
+      for (TabKey key : tabs.keySet()) {
+        List<File> tiles = tabs.get(key);
+        if (tiles != null && tiles.isEmpty())
+          continue;
+        addTilesTabForFiles(key.getName(), tiles);
+      }
+    }
     addListeners();
   }
 
@@ -78,7 +89,7 @@ public class ManageTilesController implements Controller, SelectableTileListener
               if (abstractTab.getTabType() == TabType.TILES && abstractTab instanceof TilesTabContainer) {
                 TilesTabContainer tilesTab = (TilesTabContainer) abstractTab;
                 for (ImageModel tile : tilesTab.getTileModels())
-                  currentProject.addTileForTileTabKey(tilesTab.getKey(), tile);
+                  currentProject.addTileForTileTabKey(tilesTab.getKey(), tile.getFile());
               }
             }
           }
@@ -92,7 +103,7 @@ public class ManageTilesController implements Controller, SelectableTileListener
     CreateTilesTabView tilesTabForm = new CreateTilesTabView();
     window.setContent(tilesTabForm.asNode());
     window.getOkButton().setOnAction(event -> {
-        window.close();
+      window.close();
     });
     window.show();
   }
@@ -119,7 +130,7 @@ public class ManageTilesController implements Controller, SelectableTileListener
    * @param imageFiles
    * Image files.
    */
-  public void addTilesTab(String title, List<File> imageFiles) {
+  public void addTilesTabForFiles(String title, List<File> imageFiles) {
     if (StringValidator.isNullOrEmpty(title) || imageFiles == null || imageFiles.isEmpty())
       return;
 
@@ -130,8 +141,15 @@ public class ManageTilesController implements Controller, SelectableTileListener
         images.add(image);
     });
 
+    addTilesTabForModels(title, images);
+  }
+
+  public void addTilesTabForModels(String title, List<ImageModel> tiles) {
+    if (StringValidator.isNullOrEmpty(title) || tiles == null)
+      return;
+
     TilesTabContainer tilesTabContainer = new TilesTabContainer(title, true);
-    for (ImageModel image : images)
+    for (ImageModel image : tiles)
       tilesTabContainer.addTile(new SelectableTileView(image, true, this));
 
     Tab tab = new Tab(title, tilesTabContainer.asNode());

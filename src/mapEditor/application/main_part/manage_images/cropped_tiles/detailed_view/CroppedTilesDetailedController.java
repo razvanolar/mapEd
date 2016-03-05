@@ -80,8 +80,8 @@ public class CroppedTilesDetailedController implements Controller {
     addListeners(view);
 
     ImageModel imageModel = view.getImage();
-    String name = imageModel.getImageName();
-    String path = imageModel.getImagePath();
+    String name = imageModel.getName();
+    String path = imageModel.getPath();
     name = StringValidator.isNullOrEmpty(name) ? "*" + extension.getExtension() : name;
     path =StringValidator.isNullOrEmpty(path) ? rootFile.getAbsolutePath() : path;
 
@@ -120,8 +120,8 @@ public class CroppedTilesDetailedController implements Controller {
       ImageModel image = view.getImage();
       String name = view.getNameTextField().getText();
       String path = view.getPathTextField().getText();
-      image.setImageName(isValidName(name) ? name : "");
-      image.setImagePath(isValidPath(path) ? path : "");
+      image.setName(isValidName(name) ? name : "");
+      image.setPath(isValidPath(path) ? path : "");
       result.add(image);
     }
     return result;

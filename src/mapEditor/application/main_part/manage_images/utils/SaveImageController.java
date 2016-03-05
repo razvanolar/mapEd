@@ -138,17 +138,17 @@ public class SaveImageController implements Controller {
   public void setImageModel(ImageModel imageModel) {
     this.imageModel = imageModel;
     if (imageModel != null) {
-      KnownFileExtensions ext = FileExtensionUtil.getFileExtension(imageModel.getImageName());
+      KnownFileExtensions ext = FileExtensionUtil.getFileExtension(imageModel.getName());
       if (ext != KnownFileExtensions.UNKNOWN)
         imageExtension = ext;
-      setName(imageModel.getImageName());
-      setPath(imageModel.getImagePath());
+      setName(imageModel.getName());
+      setPath(imageModel.getPath());
     }
   }
 
   public boolean isOverwriteActive() {
     return imageModel != null &&
-            imageModel.getImageName().equals(view.getNameTextField().getText()) &&
-            imageModel.getImagePath().equals(view.getPathTextField().getText());
+            imageModel.getName().equals(view.getNameTextField().getText()) &&
+            imageModel.getPath().equals(view.getPathTextField().getText());
   }
 }
