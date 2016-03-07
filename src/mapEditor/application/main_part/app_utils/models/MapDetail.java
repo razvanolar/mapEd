@@ -25,6 +25,7 @@ public class MapDetail {
   private Color squareColor;
   private MapType type;
   private List<LayerModel> layers;
+  private MapTilesInfo mapTilesInfo;
   private boolean selected;
 
   public MapDetail() {}
@@ -90,6 +91,10 @@ public class MapDetail {
     return type;
   }
 
+  public MapTilesInfo getMapTilesInfo() {
+    return mapTilesInfo;
+  }
+
   public boolean isSelected() {
     return selected;
   }
@@ -146,6 +151,10 @@ public class MapDetail {
 
   public void setType(MapType type) {
     this.type = type;
+  }
+
+  public void setMapTilesInfo(MapTilesInfo mapTilesInfo) {
+    this.mapTilesInfo = mapTilesInfo;
   }
 
   public void setSelected(boolean selected) {

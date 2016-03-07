@@ -40,6 +40,14 @@ public class LayerModel {
   }
 
   @Override
+  public boolean equals(Object obj) {
+    if (obj == null || !(obj instanceof LayerModel))
+      return false;
+    LayerModel layer = (LayerModel) obj;
+    return name.equals(layer.name) && type == layer.type;
+  }
+
+  @Override
   public String toString() {
     return name + " - " + type;
   }

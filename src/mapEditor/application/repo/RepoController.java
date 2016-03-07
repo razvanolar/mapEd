@@ -266,7 +266,7 @@ public class RepoController {
       writeContentToFile(result, project.getConfigFilePath());
       MapXMLConverter converter = new MapXMLConverter();
       for (MapDetail mapDetail : project.getMapDetails())
-        saveMap(mapDetail, converter, true);
+        saveMap(project.getHomePath(), mapDetail, converter, true);
       return true;
     } catch (Exception ex) {
       System.out.println("RepoController - saveProject - Unable to save project. Error message: " + ex.getMessage());
@@ -288,10 +288,10 @@ public class RepoController {
    *         directory, a new name will be computed with a higher order number)
    * @throws Exception
    */
-  public String saveMap(MapDetail mapDetail, MapXMLConverter converter, boolean overwrite) throws Exception {
+  public String saveMap(String projectPath, MapDetail mapDetail, MapXMLConverter converter, boolean overwrite) throws Exception {
     String mapAbsolutePath = mapDetail.getAbsolutePath();
     String mapName = mapDetail.getName();
-    if (mapAbsolutePath == null || mapName == null)
+    if (projectPath == null || mapAbsolutePath == null || mapName == null)
       return null;
     mapAbsolutePath = mapAbsolutePath.endsWith("\\") ? mapAbsolutePath : mapAbsolutePath + "\\";
     if (!overwrite) {
@@ -304,12 +304,13 @@ public class RepoController {
       converter = new MapXMLConverter();
 
     try {
-      String result = converter.convertMapToXML(mapDetail);
+      String result = converter.convertMapToXML(mapDetail, projectPath);
       writeContentToFile(result, mapAbsolutePath + mapName);
       return mapName;
     } catch (Exception ex) {
       System.out.println("*** RepoController - saveMap - Unable to save map. name: " + mapName +
       " path: " + mapAbsolutePath + " Error message: " + ex.getMessage());
+      ex.printStackTrace();
     }
     return null;
   }

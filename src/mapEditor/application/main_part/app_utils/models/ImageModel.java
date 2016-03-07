@@ -63,6 +63,14 @@ public class ImageModel {
   }
 
   @Override
+  public boolean equals(Object obj) {
+    if (obj == null || !(obj instanceof ImageModel))
+      return false;
+    ImageModel model = (ImageModel) obj;
+    return !(getFile() == null || model.getFile() == null) && getFile().equals(model.getFile());
+  }
+
+  @Override
   public String toString() {
     return file != null ? file.toString() : "";
   }

@@ -204,7 +204,8 @@ public class ManageMapsController implements Controller, MapLayersListener, Sele
   public void updateMapModelsForExistingTabs() {
     for (Tab tab : view.getMapsTabPane().getTabs()) {
       PrimaryMapView mapView = (PrimaryMapView) tab.getUserData();
-      mapView.updateMapModel();
+      mapView.updateMapModelDetails();
+      mapView.updateMapModelInfos();
     }
   }
 
@@ -218,6 +219,7 @@ public class ManageMapsController implements Controller, MapLayersListener, Sele
   public void removeLayer(LayerModel layer) {
     PrimaryMapView mapView = getSelectedMap();
     mapView.getMapDetail().removeLayer(layer);
+    mapView.paint();
   }
 
   @Override
@@ -231,6 +233,7 @@ public class ManageMapsController implements Controller, MapLayersListener, Sele
       return;
     layers.remove(index);
     layers.add(index - 1, layer);
+    mapView.paint();
   }
 
   @Override
@@ -244,6 +247,7 @@ public class ManageMapsController implements Controller, MapLayersListener, Sele
       return;
     layers.remove(index);
     layers.add(index + 1, layer);
+    mapView.paint();
   }
 
   @Override

@@ -1,14 +1,12 @@
 package mapEditor.application.repo.sax_handlers.project_init_file;
 
-import mapEditor.application.main_part.app_utils.models.MapDetail;
-import mapEditor.application.main_part.app_utils.models.TabKey;
+import mapEditor.application.main_part.app_utils.models.*;
 import mapEditor.application.main_part.manage_maps.utils.TabType;
 import mapEditor.application.repo.SystemParameters;
 import mapEditor.application.repo.models.ProjectModel;
 
 import java.io.File;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  *
@@ -32,6 +30,17 @@ public class ProjectXMLConverter {
     builder.append("\t<hex_counter value=\"").append(project.getHexValue()).append("\" />\n");
 
     // convert opened maps
+    convertMapDetails(builder, project);
+
+    // convert opened tile tabs
+    convertImageModelTabs(builder, project.getOpenedTileTabs(), project.getHomePath());
+
+    builder.append("</project>");
+
+    return builder.toString();
+  }
+
+  private void convertMapDetails(StringBuilder builder, ProjectModel project) {
     builder.append("\n\t<maps type=\"").append(project.getMapType().name()).
             append("\" cellSize=\"").append(project.getCellSize()).append("\">");
     if (!project.getMapDetails().isEmpty()) {
@@ -45,13 +54,6 @@ public class ProjectXMLConverter {
       builder.append("\t</maps>\n");
     } else
       builder.append("</maps>\n");
-
-    // convert opened tile tabs
-    convertImageModelTabs(builder, project.getOpenedTileTabs(), project.getHomePath());
-
-    builder.append("</project>");
-
-    return builder.toString();
   }
 
   private void convertImageModelTabs(StringBuilder builder, Map<TabKey, List<File>> tabs, String projectPath) {
