@@ -19,10 +19,10 @@ public class MapXMLHandler {
   private SAXParser parser;
   private MapSAXHandler mapSAXHandler;
 
-  public MapXMLHandler() throws ParserConfigurationException, SAXException {
+  public MapXMLHandler(String projectPath) throws ParserConfigurationException, SAXException {
     SAXParserFactory parserFactory = SAXParserFactory.newInstance();
     parser = parserFactory.newSAXParser();
-    mapSAXHandler = new MapSAXHandler();
+    mapSAXHandler = new MapSAXHandler(projectPath);
   }
 
   public void parse(String resource) throws IOException, SAXException {

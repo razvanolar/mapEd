@@ -180,13 +180,14 @@ public class ManageMapsController implements Controller, MapLayersListener, Sele
     // otherwise, load the map from disk
     try {
       MapEditorController.getInstance().maskView();
-      MapDetail mapDetail = MapEditorController.getInstance().getRepoController().createMapModelFromFile(file, null);
+      MapDetail mapDetail = MapEditorController.getInstance().getRepoController().createMapModelFromFile(AppParameters.CURRENT_PROJECT.getHomePath(), file, null);
       MapEditorController.getInstance().unmaskView();
       if (mapDetail != null)
         createMap(mapDetail, true, true);
       else
         Dialog.showWarningDialog("ManageMapsController - Warning", "Map instance is null.");
     } catch (Exception ex) {
+      ex.printStackTrace();
       MapEditorController.getInstance().unmaskView();
       Dialog.showErrorDialog("ManageMapsController - Error", "Error occurred while loading the map. Message: " + ex.getMessage());
     }

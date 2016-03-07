@@ -1,10 +1,7 @@
 package mapEditor.application.repo.sax_handlers.maps;
 
 import javafx.scene.paint.Color;
-import mapEditor.application.main_part.app_utils.models.ImageModel;
-import mapEditor.application.main_part.app_utils.models.LayerModel;
-import mapEditor.application.main_part.app_utils.models.MapDetail;
-import mapEditor.application.main_part.app_utils.models.MapTilesInfo;
+import mapEditor.application.main_part.app_utils.models.*;
 import mapEditor.application.repo.SystemParameters;
 
 import java.util.*;
@@ -54,9 +51,9 @@ public class MapXMLConverter {
                 append("\" isSelected=\"").append(layer.isSelected()).append("\"");
 
         if (map.getMapTilesInfo() != null) {
-          Map<LayerModel, Map<ImageModel, List<MapTilesInfo.CellModel>>> layersTilesMap = map.getMapTilesInfo().getLayersTilesMap();
+          Map<LayerModel, Map<ImageModel, List<CellModel>>> layersTilesMap = map.getMapTilesInfo().getLayersTilesMap();
           if (indexedTiles != null && layersTilesMap != null && !indexedTiles.isEmpty()) {
-            Map<ImageModel, List<MapTilesInfo.CellModel>> tilesMap = layersTilesMap.get(layer);
+            Map<ImageModel, List<CellModel>> tilesMap = layersTilesMap.get(layer);
             if (tilesMap != null && !tilesMap.isEmpty()) {
               for (ImageModel tile : tilesMap.keySet()) {
                 Integer index = indexedTiles.get(tile);
@@ -109,13 +106,13 @@ public class MapXMLConverter {
     builder.append("\t</images>\n");
   }
 
-  private String convertTileWithCells(int tileIndex, List<MapTilesInfo.CellModel> cells) {
+  private String convertTileWithCells(int tileIndex, List<CellModel> cells) {
     if (cells == null || cells.isEmpty())
       return null;
     auxBuilder.setLength(0);
     auxBuilder.append("\t\t\t<tile index=\"").append(tileIndex).append("\">\n");
-    for (MapTilesInfo.CellModel cell : cells)
-      auxBuilder.append("\t\t\t\t<cell x=\"").append(cell.getX()).append("\" ").
+    for (CellModel cell : cells)
+      auxBuilder.append("\t\t\t\t<cell x=\"").append(cell.getX()).append("\"").
               append(" y=\"").append(cell.getY()).append("\" />\n");
     auxBuilder.append("\t\t\t</tile>\n");
     return auxBuilder.toString();
@@ -134,13 +131,13 @@ public class MapXMLConverter {
     MapTilesInfo mapTilesInfo = mapDetail.getMapTilesInfo();
     if (mapTilesInfo == null)
       return null;
-    Map<LayerModel, Map<ImageModel, List<MapTilesInfo.CellModel>>> layersTilesMap = mapTilesInfo.getLayersTilesMap();
+    Map<LayerModel, Map<ImageModel, List<CellModel>>> layersTilesMap = mapTilesInfo.getLayersTilesMap();
     if (layersTilesMap == null || layersTilesMap.isEmpty())
       return null;
 
     Set<ImageModel> tilesSet = new HashSet<>();
     for (LayerModel layer : mapDetail.getLayers()) {
-      Map<ImageModel, List<MapTilesInfo.CellModel>> tilesMap = layersTilesMap.get(layer);
+      Map<ImageModel, List<CellModel>> tilesMap = layersTilesMap.get(layer);
       if (tilesMap == null || tilesMap.isEmpty())
         continue;
       tilesSet.addAll(tilesMap.keySet());

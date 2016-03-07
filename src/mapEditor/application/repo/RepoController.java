@@ -165,13 +165,13 @@ public class RepoController {
     if (lwMapModels == null || lwMapModels.isEmpty())
       return;
 
-    MapXMLHandler handler = new MapXMLHandler();
+    MapXMLHandler handler = new MapXMLHandler(project.getHomePath());
     String projectMapsPath = project.getMapsFile().getAbsolutePath();
     for (LWMapModel lwModel : lwMapModels) {
       try {
         String mapAbsolutePath = projectMapsPath + lwModel.getRelativePath();
         mapAbsolutePath = mapAbsolutePath.endsWith("\\") ? mapAbsolutePath : mapAbsolutePath + "\\";
-        MapDetail mapDetail = createMapModelFromFile(new File(mapAbsolutePath + lwModel.getName()), handler);
+        MapDetail mapDetail = createMapModelFromFile(project.getHomePath(), new File(mapAbsolutePath + lwModel.getName()), handler);
         mapDetail.setSelected(lwModel.isSelected());
         project.addMapModel(mapDetail);
       } catch (Exception ex) {
@@ -183,17 +183,19 @@ public class RepoController {
 
   /**
    * Create the map model for the specified file.
+   * @param projectPath
+   * Projetc home directory
    * @param mapFile
    * XML map file (make sure you provide the full path of the file, not just the parent directory)
    * @param handler
    * MapXMLHandler, if it's null a new one will be created.
    * @return the corresponding map model of the file; null otherwise.
    */
-  public MapDetail createMapModelFromFile(File mapFile, MapXMLHandler handler) throws Exception {
+  public MapDetail createMapModelFromFile(String projectPath, File mapFile, MapXMLHandler handler) throws Exception {
     if (mapFile == null)
       return null;
     if (handler == null)
-      handler = new MapXMLHandler();
+      handler = new MapXMLHandler(projectPath);
     String content = readContentFromFile(mapFile);
     handler.parse(content);
     MapDetail mapDetail = handler.getMapModel();

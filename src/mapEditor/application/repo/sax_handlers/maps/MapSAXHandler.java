@@ -1,12 +1,16 @@
 package mapEditor.application.repo.sax_handlers.maps;
 
 import javafx.scene.paint.Color;
-import mapEditor.application.main_part.app_utils.models.LayerModel;
-import mapEditor.application.main_part.app_utils.models.LayerType;
-import mapEditor.application.main_part.app_utils.models.MapDetail;
+import mapEditor.application.main_part.app_utils.models.*;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -14,7 +18,20 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class MapSAXHandler extends DefaultHandler {
 
+  private String projectPath;
   private MapDetail mapDetail;
+  private LayerModel layer;
+  private DiskIndexedTilesModel diskIndexedTilesModel;
+
+  private Map<Integer, File> indexedImages;
+  private int index = - 1;
+  private List<CellModel> cells;
+
+  public MapSAXHandler(String projectPath) {
+    this.projectPath = projectPath;
+    if (this.projectPath != null && !this.projectPath.endsWith("\\"))
+      this.projectPath += "\\";
+  }
 
   @Override
   public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
@@ -38,10 +55,44 @@ public class MapSAXHandler extends DefaultHandler {
       case "square_color":
         mapDetail.setSquareColor(createColorFromAttributes(attributes));
         break;
+      case "image":
+        if (indexedImages == null)
+          indexedImages = new HashMap<>();
+        indexedImages.put(Integer.valueOf(attributes.getValue("index")), new File(projectPath + attributes.getValue("path")));
+        break;
       case "layer":
-        LayerModel layer = new LayerModel(attributes.getValue("name"), LayerType.valueOf(attributes.getValue("type")));
+        layer = new LayerModel(attributes.getValue("name"), LayerType.valueOf(attributes.getValue("type")));
         layer.setSelected(Boolean.parseBoolean(attributes.getValue("isSelected")));
+        break;
+      case "tile":
+        index = Integer.valueOf(attributes.getValue("index"));
+        if (cells == null)
+          cells = new ArrayList<>();
+        else
+          cells.clear();
+        break;
+      case "cell":
+        cells.add(new CellModel(Integer.valueOf(attributes.getValue("x")), Integer.valueOf(attributes.getValue("y"))));
+        break;
+    }
+  }
+
+  @Override
+  public void endElement(String uri, String localName, String qName) throws SAXException {
+    switch (qName) {
+      case "images":
+        if (indexedImages != null)
+          diskIndexedTilesModel = new DiskIndexedTilesModel(indexedImages);
+        break;
+      case "layer":
         mapDetail.addLayer(layer);
+        break;
+      case "tile":
+        if (diskIndexedTilesModel != null) {
+          diskIndexedTilesModel.addCells(layer, index, cells);
+          index = -1;
+          cells.clear();
+        }
         break;
     }
   }

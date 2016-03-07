@@ -162,6 +162,7 @@ public class MapDetail {
   }
 
 
+
   public void addLayer(LayerModel layer) {
     if (layer == null)
       return;
