@@ -28,6 +28,8 @@ public class MapDetail {
   private MapTilesInfo mapTilesInfo;
   private boolean selected;
 
+  private DiskIndexedTilesModel diskIndexedTilesModel;
+
   public MapDetail() {}
 
   public MapDetail(String name, String absolutePath, String relativePath, int rows, int columns,
@@ -103,6 +105,11 @@ public class MapDetail {
     return layers;
   }
 
+  public DiskIndexedTilesModel getDiskIndexedTilesModel() {
+    return diskIndexedTilesModel;
+  }
+
+
 
 
   public void setName(String name) {
@@ -160,6 +167,11 @@ public class MapDetail {
   public void setSelected(boolean selected) {
     this.selected = selected;
   }
+
+  public void setDiskIndexedTilesModel(DiskIndexedTilesModel diskIndexedTilesModel) {
+    this.diskIndexedTilesModel = diskIndexedTilesModel;
+  }
+
 
 
 

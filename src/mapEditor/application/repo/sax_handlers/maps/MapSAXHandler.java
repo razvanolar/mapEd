@@ -80,6 +80,9 @@ public class MapSAXHandler extends DefaultHandler {
   @Override
   public void endElement(String uri, String localName, String qName) throws SAXException {
     switch (qName) {
+      case "map":
+        mapDetail.setDiskIndexedTilesModel(diskIndexedTilesModel);
+        break;
       case "images":
         if (indexedImages != null)
           diskIndexedTilesModel = new DiskIndexedTilesModel(indexedImages);

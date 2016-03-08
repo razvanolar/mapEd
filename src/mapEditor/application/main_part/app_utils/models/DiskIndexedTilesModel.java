@@ -38,4 +38,12 @@ public class DiskIndexedTilesModel {
       }
     }
   }
+
+  public Map<Integer, File> getIndexedImages() {
+    return indexedImages;
+  }
+
+  public Map<LayerModel, Map<Integer, List<CellModel>>> getLayerModelMap() {
+    return layerModelMap;
+  }
 }

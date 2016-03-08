@@ -498,6 +498,10 @@ public class MapCanvas extends Canvas {
 //      controller.handleChangePosition(notificationType);
   }
 
+  public MapTilesContainer getTilesContainer() {
+    return tilesContainer;
+  }
+
   /**
    * Needs to be overwritten in the canvas that used as a mini map
    * @param x - x coordinate
