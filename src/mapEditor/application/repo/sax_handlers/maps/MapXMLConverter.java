@@ -1,6 +1,7 @@
 package mapEditor.application.repo.sax_handlers.maps;
 
 import javafx.scene.paint.Color;
+import mapEditor.application.main_part.app_utils.data_types.CustomMap;
 import mapEditor.application.main_part.app_utils.models.*;
 import mapEditor.application.repo.SystemParameters;
 
@@ -37,7 +38,7 @@ public class MapXMLConverter {
     convertColorToXml(builder, "square_color", map.getSquareColor());
 
     /** convert tiles */
-    Map<ImageModel, Integer> indexedTiles = computeTilesIndex(getDistinctTiles(map));
+    CustomMap<ImageModel, Integer> indexedTiles = computeTilesIndex(getDistinctTiles(map));
     convertIndexedTiles(builder, indexedTiles, projectPath);
 
     /** convert layers */
@@ -51,11 +52,11 @@ public class MapXMLConverter {
                 append("\" isSelected=\"").append(layer.isSelected()).append("\"");
 
         if (map.getMapTilesInfo() != null) {
-          Map<LayerModel, Map<ImageModel, List<CellModel>>> layersTilesMap = map.getMapTilesInfo().getLayersTilesMap();
+          CustomMap<LayerModel, CustomMap<ImageModel, List<CellModel>>> layersTilesMap = map.getMapTilesInfo().getLayersTilesMap();
           if (indexedTiles != null && layersTilesMap != null && !indexedTiles.isEmpty()) {
-            Map<ImageModel, List<CellModel>> tilesMap = layersTilesMap.get(layer);
+            CustomMap<ImageModel, List<CellModel>> tilesMap = layersTilesMap.get(layer);
             if (tilesMap != null && !tilesMap.isEmpty()) {
-              for (ImageModel tile : tilesMap.keySet()) {
+              for (ImageModel tile : tilesMap.keys()) {
                 Integer index = indexedTiles.get(tile);
                 if (index == null)
                   continue;
@@ -91,7 +92,7 @@ public class MapXMLConverter {
     return builder.toString();
   }
 
-  private void convertIndexedTiles(StringBuilder builder, Map<ImageModel, Integer> indexedTiles, String projectPath) {
+  private void convertIndexedTiles(StringBuilder builder, CustomMap<ImageModel, Integer> indexedTiles, String projectPath) {
     builder.append("\n\t<images>");
     if (indexedTiles == null || indexedTiles.isEmpty()) {
       builder.append("</images>\n");
@@ -99,7 +100,7 @@ public class MapXMLConverter {
     }
 
     builder.append("\n");
-    for (ImageModel tile : indexedTiles.keySet()) {
+    for (ImageModel tile : indexedTiles.keys()) {
       builder.append("\t\t<image index=\"").append(indexedTiles.get(tile)).append("\" path=\"").
               append(tile.getFile().getAbsolutePath().replace(projectPath, "")).append("\" />\n");
     }
@@ -125,22 +126,24 @@ public class MapXMLConverter {
    * MapDetail
    * @return a set off all distinct ImageModels
    */
-  private Set<ImageModel> getDistinctTiles(MapDetail mapDetail) {
+  private List<ImageModel> getDistinctTiles(MapDetail mapDetail) {
     if (mapDetail == null || mapDetail.getLayers() == null || mapDetail.getLayers().isEmpty())
       return null;
     MapTilesInfo mapTilesInfo = mapDetail.getMapTilesInfo();
     if (mapTilesInfo == null)
       return null;
-    Map<LayerModel, Map<ImageModel, List<CellModel>>> layersTilesMap = mapTilesInfo.getLayersTilesMap();
+    CustomMap<LayerModel, CustomMap<ImageModel, List<CellModel>>> layersTilesMap = mapTilesInfo.getLayersTilesMap();
     if (layersTilesMap == null || layersTilesMap.isEmpty())
       return null;
 
-    Set<ImageModel> tilesSet = new HashSet<>();
+    List<ImageModel> tilesSet = new ArrayList<>();
     for (LayerModel layer : mapDetail.getLayers()) {
-      Map<ImageModel, List<CellModel>> tilesMap = layersTilesMap.get(layer);
+      CustomMap<ImageModel, List<CellModel>> tilesMap = layersTilesMap.get(layer);
       if (tilesMap == null || tilesMap.isEmpty())
         continue;
-      tilesSet.addAll(tilesMap.keySet());
+      for (ImageModel key : tilesMap.keys())
+        if (!tilesSet.contains(key))
+          tilesSet.add(key);
     }
 
     return tilesSet;
@@ -152,12 +155,12 @@ public class MapXMLConverter {
    * Set
    * @return an indexed tiles map
    */
-  private Map<ImageModel, Integer> computeTilesIndex(Set<ImageModel> set) {
+  private CustomMap<ImageModel, Integer> computeTilesIndex(List<ImageModel> set) {
     if (set == null || set.isEmpty())
       return null;
 
     int index = 0;
-    Map<ImageModel, Integer> result = new HashMap<>();
+    CustomMap<ImageModel, Integer> result = new CustomMap<>();
     for (ImageModel tile : set)
       result.put(tile, index++);
 

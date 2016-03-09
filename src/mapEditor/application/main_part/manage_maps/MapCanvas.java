@@ -1,6 +1,5 @@
 package mapEditor.application.main_part.manage_maps;
 
-import javafx.event.EventHandler;
 import javafx.scene.Cursor;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -8,12 +7,11 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import mapEditor.MapEditorController;
 import mapEditor.application.main_part.app_utils.AppParameters;
+import mapEditor.application.main_part.app_utils.data_types.CustomMap;
 import mapEditor.application.main_part.app_utils.models.ImageModel;
 import mapEditor.application.main_part.app_utils.models.LayerModel;
 import mapEditor.application.main_part.app_utils.models.MapDetail;
 import mapEditor.application.main_part.app_utils.models.MapTilesContainer;
-
-import java.util.Map;
 
 /**
  *
@@ -247,7 +245,7 @@ public class MapCanvas extends Canvas {
     g.clearRect(0, 0, canvasWidth, canvasHeight);
     g.fillRect(startX, startY, stopX, stopY);
 
-    Map<LayerModel, MapTilesContainer.TilesMatrix> map = tilesContainer.getTilesMap();
+    CustomMap<LayerModel, MapTilesContainer.TilesMatrix> map = tilesContainer.getTilesMap();
     if (map != null) {
       int x;
       for (LayerModel layer : mapDetail.getLayers()) {

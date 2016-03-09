@@ -6,14 +6,13 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import mapEditor.MapEditorController;
+import mapEditor.application.main_part.app_utils.data_types.CustomMap;
 import mapEditor.application.main_part.app_utils.models.ImageModel;
 import mapEditor.application.main_part.app_utils.models.LayerModel;
 import mapEditor.application.main_part.app_utils.models.MapDetail;
 import mapEditor.application.main_part.app_utils.models.MapTilesContainer;
 import mapEditor.application.main_part.app_utils.views.dialogs.Dialog;
 import mapEditor.application.main_part.manage_maps.MapCanvas;
-
-import java.util.Map;
 
 /**
  *
@@ -213,7 +212,7 @@ public class PrimaryMapView extends MapCanvas {
     tilesContainer.addTile(selectedTile, selectedLayer, cellY, cellX);
 
     tilesContainer.addTile(selectedTile, selectedLayer, cellY, cellX);
-    Map<LayerModel, MapTilesContainer.TilesMatrix> map = tilesContainer.getTilesMap();
+    CustomMap<LayerModel, MapTilesContainer.TilesMatrix> map = tilesContainer.getTilesMap();
     if (map != null) {
       for (LayerModel layer : mapDetail.getLayers()) {
         MapTilesContainer.TilesMatrix tilesMatrix = map.get(layer);

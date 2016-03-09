@@ -1,10 +1,10 @@
 package mapEditor.application.main_part.app_utils.models;
 
+import mapEditor.application.main_part.app_utils.data_types.CustomMap;
+
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  *
@@ -12,20 +12,20 @@ import java.util.Map;
  */
 public class DiskIndexedTilesModel {
 
-  private Map<Integer, File> indexedImages;
-  private Map<LayerModel, Map<Integer, List<CellModel>>> layerModelMap;
+  private CustomMap<Integer, File> indexedImages;
+  private CustomMap<LayerModel, CustomMap<Integer, List<CellModel>>> layerModelMap;
 
-  public DiskIndexedTilesModel(Map<Integer, File> indexedImages) {
+  public DiskIndexedTilesModel(CustomMap<Integer, File> indexedImages) {
     this.indexedImages = indexedImages;
-    this.layerModelMap = new HashMap<>();
+    this.layerModelMap = new CustomMap<>();
   }
 
   public void addCells(LayerModel layer, int index, List<CellModel> cells) {
-    if (layer == null || index < 0 || cells == null || cells.isEmpty() || !indexedImages.containsKey(index))
+    if (layer == null || index < 0 || cells == null || cells.isEmpty() || !indexedImages.contains(index))
       return;
-    Map<Integer, List<CellModel>> indexedMap = layerModelMap.get(layer);
+    CustomMap<Integer, List<CellModel>> indexedMap = layerModelMap.get(layer);
     if (indexedMap == null) {
-      indexedMap = new HashMap<>();
+      indexedMap = new CustomMap<>();
       indexedMap.put(index, new ArrayList<>(cells));
       layerModelMap.put(layer, indexedMap);
     } else {
@@ -39,11 +39,11 @@ public class DiskIndexedTilesModel {
     }
   }
 
-  public Map<Integer, File> getIndexedImages() {
+  public CustomMap<Integer, File> getIndexedImages() {
     return indexedImages;
   }
 
-  public Map<LayerModel, Map<Integer, List<CellModel>>> getLayerModelMap() {
+  public CustomMap<LayerModel, CustomMap<Integer, List<CellModel>>> getLayerModelMap() {
     return layerModelMap;
   }
 }

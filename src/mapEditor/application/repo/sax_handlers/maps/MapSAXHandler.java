@@ -1,6 +1,7 @@
 package mapEditor.application.repo.sax_handlers.maps;
 
 import javafx.scene.paint.Color;
+import mapEditor.application.main_part.app_utils.data_types.CustomMap;
 import mapEditor.application.main_part.app_utils.models.*;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -8,9 +9,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  *
@@ -23,7 +22,7 @@ public class MapSAXHandler extends DefaultHandler {
   private LayerModel layer;
   private DiskIndexedTilesModel diskIndexedTilesModel;
 
-  private Map<Integer, File> indexedImages;
+  private CustomMap<Integer, File> indexedImages;
   private int index = - 1;
   private List<CellModel> cells;
 
@@ -57,7 +56,7 @@ public class MapSAXHandler extends DefaultHandler {
         break;
       case "image":
         if (indexedImages == null)
-          indexedImages = new HashMap<>();
+          indexedImages = new CustomMap<>();
         indexedImages.put(Integer.valueOf(attributes.getValue("index")), new File(projectPath + attributes.getValue("path")));
         break;
       case "layer":
@@ -109,5 +108,14 @@ public class MapSAXHandler extends DefaultHandler {
 
   public MapDetail getMapDetail() {
     return mapDetail;
+  }
+
+  public void clearFields() {
+    mapDetail = null;
+    layer = null;
+    diskIndexedTilesModel = null;
+    indexedImages = null;
+    index = -1;
+    cells = null;
   }
 }

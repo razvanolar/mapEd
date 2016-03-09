@@ -30,6 +30,10 @@ public class MapXMLHandler {
     parser.parse(inputStream, mapSAXHandler);
   }
 
+  public void clearHandlerFields() {
+    mapSAXHandler.clearFields();
+  }
+
   public MapDetail getMapModel() {
     return mapSAXHandler.getMapDetail();
   }

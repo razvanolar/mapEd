@@ -3,6 +3,7 @@ package mapEditor.application.main_part.manage_maps.primary_map;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
+import mapEditor.application.main_part.app_utils.data_types.CustomMap;
 import mapEditor.application.main_part.app_utils.inputs.ImageProvider;
 import mapEditor.application.main_part.app_utils.models.*;
 import mapEditor.application.main_part.types.Controller;
@@ -52,10 +53,10 @@ public class PrimaryMapController implements Controller {
             diskIndexedTilesModel.getLayerModelMap().isEmpty())
       return;
 
-    Map<Integer, File> indexedFileImages = diskIndexedTilesModel.getIndexedImages();
-    Map<LayerModel, Map<Integer, List<CellModel>>> layerModelMap = diskIndexedTilesModel.getLayerModelMap();
+    CustomMap<Integer, File> indexedFileImages = diskIndexedTilesModel.getIndexedImages();
+    CustomMap<LayerModel, CustomMap<Integer, List<CellModel>>> layerModelMap = diskIndexedTilesModel.getLayerModelMap();
     Map<Integer, ImageModel> indexedImages = new HashMap<>();
-    for (Integer index : indexedFileImages.keySet()) {
+    for (Integer index : indexedFileImages.keys()) {
       try {
         ImageModel imageModel = ImageProvider.getImageModel(indexedFileImages.get(index));
         indexedImages.put(index, imageModel);
@@ -65,10 +66,10 @@ public class PrimaryMapController implements Controller {
     }
 
     for (LayerModel layer : mapDetail.getLayers()) {
-      Map<Integer, List<CellModel>> layerMap = layerModelMap.get(layer);
+      CustomMap<Integer, List<CellModel>> layerMap = layerModelMap.get(layer);
       if (layerMap == null)
         continue;
-      for (Integer index : layerMap.keySet()) {
+      for (Integer index : layerMap.keys()) {
         ImageModel tile = indexedImages.get(index);
         List<CellModel> cells = layerMap.get(index);
         if (tile == null)

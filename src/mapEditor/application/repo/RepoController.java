@@ -174,6 +174,7 @@ public class RepoController {
         MapDetail mapDetail = createMapModelFromFile(project.getHomePath(), new File(mapAbsolutePath + lwModel.getName()), handler);
         mapDetail.setSelected(lwModel.isSelected());
         project.addMapModel(mapDetail);
+        handler.clearHandlerFields();
       } catch (Exception ex) {
         System.out.println("*** RepoController - loadProjectMapModels - Unable to load map model for map name: " +
         lwModel.getName() + " and project maps path: " + projectMapsPath + " Error message: " + ex.getMessage());

@@ -1,8 +1,8 @@
 package mapEditor.application.main_part.app_utils.models;
 
-import java.util.HashMap;
+import mapEditor.application.main_part.app_utils.data_types.CustomMap;
+
 import java.util.List;
-import java.util.Map;
 
 /**
  * Used to store a map tiles per layers.
@@ -27,7 +27,7 @@ public class MapTilesContainer {
 
   private int rows;
   private int cols;
-  private Map<LayerModel, TilesMatrix> tilesMap;
+  private CustomMap<LayerModel, TilesMatrix> tilesMap;
 
   public MapTilesContainer(int rows, int cols) {
     this.rows = rows;
@@ -39,7 +39,7 @@ public class MapTilesContainer {
       return;
 
     if (tilesMap == null)
-      tilesMap = new HashMap<>();
+      tilesMap = new CustomMap<>();
     TilesMatrix matrix = tilesMap.get(layer);
     if (matrix == null) {
       matrix = new TilesMatrix();
@@ -58,7 +58,7 @@ public class MapTilesContainer {
     return tilesMatrix.tilesMatrix;
   }
 
-  public Map<LayerModel, TilesMatrix> getTilesMap() {
+  public CustomMap<LayerModel, TilesMatrix> getTilesMap() {
     return tilesMap;
   }
 

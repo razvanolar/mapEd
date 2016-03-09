@@ -67,7 +67,7 @@ public class ImageModel {
     if (obj == null || !(obj instanceof ImageModel))
       return false;
     ImageModel model = (ImageModel) obj;
-    return !(getFile() == null || model.getFile() == null) && getFile().equals(model.getFile());
+    return !(getFile() == null || model.getFile() == null) && getFile().getAbsolutePath().equals(model.getFile().getAbsolutePath());
   }
 
   @Override

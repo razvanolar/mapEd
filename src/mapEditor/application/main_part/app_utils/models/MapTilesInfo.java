@@ -1,5 +1,7 @@
 package mapEditor.application.main_part.app_utils.models;
 
+import mapEditor.application.main_part.app_utils.data_types.CustomMap;
+
 import java.util.*;
 
 /**
@@ -9,19 +11,19 @@ import java.util.*;
 public class MapTilesInfo {
 
   private List<LayerModel> layerModels;
-  private Map<LayerModel, Map<ImageModel, List<CellModel>>> layersTilesMap;
+  private CustomMap<LayerModel, CustomMap<ImageModel, List<CellModel>>> layersTilesMap;
 
   public MapTilesInfo(List<LayerModel> layerModels) {
     this.layerModels = new LinkedList<>(layerModels);
-    this.layersTilesMap = new HashMap<>();
+    this.layersTilesMap = new CustomMap<>();
   }
 
   public void addTileForLayer(LayerModel layer, ImageModel image, int x, int y) {
     if (image == null || layer == null || layerModels == null || !layerModels.contains(layer))
       return;
-    Map<ImageModel, List<CellModel>> tilesMap = layersTilesMap.get(layer);
+    CustomMap<ImageModel, List<CellModel>> tilesMap = layersTilesMap.get(layer);
     if (tilesMap == null) {
-      tilesMap = new HashMap<>();
+      tilesMap = new CustomMap<>();
       List<CellModel> cells = new ArrayList<>();
       cells.add(new CellModel(x, y));
       tilesMap.put(image, cells);
@@ -40,7 +42,7 @@ public class MapTilesInfo {
     }
   }
 
-  public Map<LayerModel, Map<ImageModel, List<CellModel>>> getLayersTilesMap() {
+  public CustomMap<LayerModel, CustomMap<ImageModel, List<CellModel>>> getLayersTilesMap() {
     return layersTilesMap;
   }
 }
