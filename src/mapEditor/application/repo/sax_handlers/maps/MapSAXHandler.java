@@ -62,6 +62,7 @@ public class MapSAXHandler extends DefaultHandler {
       case "layer":
         layer = new LayerModel(attributes.getValue("name"), LayerType.valueOf(attributes.getValue("type")));
         layer.setSelected(Boolean.parseBoolean(attributes.getValue("isSelected")));
+        layer.setChecked(Boolean.parseBoolean(attributes.getValue("isChecked")));
         break;
       case "tile":
         index = Integer.valueOf(attributes.getValue("index"));

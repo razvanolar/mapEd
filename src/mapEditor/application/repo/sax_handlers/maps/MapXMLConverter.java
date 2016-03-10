@@ -49,7 +49,8 @@ public class MapXMLConverter {
         boolean addedTileFlag = false;
         builder.append("\t\t").append("<layer name=\"").append(layer.getName()).
                 append("\" type=\"").append(layer.getType().name()).
-                append("\" isSelected=\"").append(layer.isSelected()).append("\"");
+                append("\" isSelected=\"").append(layer.isSelected()).
+                append("\" isChecked=\"").append(layer.isChecked()).append("\"");
 
         if (map.getMapTilesInfo() != null) {
           CustomMap<LayerModel, CustomMap<ImageModel, List<CellModel>>> layersTilesMap = map.getMapTilesInfo().getLayersTilesMap();
