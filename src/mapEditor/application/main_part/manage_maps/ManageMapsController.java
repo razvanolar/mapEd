@@ -161,20 +161,12 @@ public class ManageMapsController implements Controller, MapLayersListener, Sele
   public void openMap(File file) {
     if (file == null)
       return;
-    String filePath = file.getParentFile().getAbsolutePath();
-    String fileName = file.getName();
-    filePath = filePath.endsWith("\\") ? filePath : filePath + "\\";
 
-    // if the map is already opened, select it
-    for (Tab tab : view.getMapsTabPane().getTabs()) {
-      PrimaryMapView mapView = (PrimaryMapView) tab.getUserData();
-      MapDetail mapDetail = mapView.getMapDetail();
-      String mapPath = mapDetail.getAbsolutePath();
-      mapPath = mapPath.endsWith("\\") ? mapPath : mapPath + "\\";
-      if (mapPath.equals(filePath) && mapDetail.getName().equals(fileName)) {
-        view.getMapsTabPane().getSelectionModel().select(tab);
-        return;
-      }
+    // select tab if opened
+    Tab mapTab = getTabForMapIfOpened(file);
+    if (mapTab != null) {
+      view.getMapsTabPane().getSelectionModel().select(mapTab);
+      return;
     }
 
     // otherwise, load the map from disk
@@ -191,6 +183,30 @@ public class ManageMapsController implements Controller, MapLayersListener, Sele
       MapEditorController.getInstance().unmaskView();
       Dialog.showErrorDialog("ManageMapsController - Error", "Error occurred while loading the map. Message: " + ex.getMessage());
     }
+  }
+
+  public void exportMapToHtml(File file) {
+    if (file == null)
+      return;
+
+    Tab mapTab = getTabForMapIfOpened(file);
+    MapEditorController.getInstance().maskView();
+    try {
+      // if the map is opened, save it first
+      if (mapTab != null && mapTab.getUserData() != null && mapTab.getUserData() instanceof PrimaryMapView) {
+        PrimaryMapView mapView = (PrimaryMapView) mapTab.getUserData();
+        mapView.updateMapModelDetails();
+        mapView.updateMapModelInfos();
+        MapEditorController.getInstance().getRepoController().saveMap(AppParameters.CURRENT_PROJECT.getHomePath(),
+                mapView.getMapDetail(), null, true);
+        System.out.println("map saved");
+      }
+
+      MapEditorController.getInstance().getRepoController().exportMapToHtml(AppParameters.CURRENT_PROJECT.getHomePath(), file);
+    } catch (Exception ex) {
+      ex.printStackTrace();
+    }
+    MapEditorController.getInstance().unmaskView();
   }
 
   /**
@@ -264,6 +280,30 @@ public class ManageMapsController implements Controller, MapLayersListener, Sele
     PrimaryMapView selectedMap = getSelectedMap();
     if (selectedMap != null)
       selectedMap.setDrawingTile(selectedTile);
+  }
+
+  /**
+   * Return the corresponding tab for the specified map file if it's opened.
+   * @param file map file
+   * @return map tab, if opened; null otherwise
+   */
+  private Tab getTabForMapIfOpened(File file) {
+    if (file == null)
+      return null;
+    String filePath = file.getParentFile().getAbsolutePath();
+    String fileName = file.getName();
+    filePath = filePath.endsWith("\\") ? filePath : filePath + "\\";
+
+    for (Tab tab : view.getMapsTabPane().getTabs()) {
+      PrimaryMapView mapView = (PrimaryMapView) tab.getUserData();
+      MapDetail mapDetail = mapView.getMapDetail();
+      String mapPath = mapDetail.getAbsolutePath();
+      mapPath = mapPath.endsWith("\\") ? mapPath : mapPath + "\\";
+      if (mapPath.equals(filePath) && mapDetail.getName().equals(fileName)) {
+        return tab;
+      }
+    }
+    return null;
   }
 
   private PrimaryMapView getSelectedMap() {

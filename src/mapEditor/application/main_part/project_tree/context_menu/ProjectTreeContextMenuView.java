@@ -30,6 +30,7 @@ public class ProjectTreeContextMenuView implements ProjectTreeContextMenuControl
   private MenuItem deleteMenuItem;
   private MenuItem clearMenuItem;
   private MenuItem copyPathMenuItem;
+  private MenuItem exportToHtmlMenuItem;
 
   public ProjectTreeContextMenuView() {
     initGUI();
@@ -52,6 +53,7 @@ public class ProjectTreeContextMenuView implements ProjectTreeContextMenuControl
     deleteMenuItem = new MenuItem("Delete");
     clearMenuItem = new MenuItem("Clear");
     copyPathMenuItem = new MenuItem("Copy Path");
+    exportToHtmlMenuItem = new MenuItem("Export to HTML...");
     contextMenu = new ContextMenu();
 
     newMenu.getItems().addAll(newDirectoryMenuItem,
@@ -74,7 +76,9 @@ public class ProjectTreeContextMenuView implements ProjectTreeContextMenuControl
             deleteMenuItem,
             clearMenuItem,
             new SeparatorMenuItem(),
-            copyPathMenuItem);
+            copyPathMenuItem,
+            new SeparatorMenuItem(),
+            exportToHtmlMenuItem);
   }
 
   @Override
@@ -85,6 +89,7 @@ public class ProjectTreeContextMenuView implements ProjectTreeContextMenuControl
     }
     enableAllItems(true);
     openTilesMenu.setDisable(true);
+    exportToHtmlMenuItem.setDisable(true);
     switch (treeItemType) {
       case NORMAL:
         newMenu.setDisable(true);
@@ -106,6 +111,7 @@ public class ProjectTreeContextMenuView implements ProjectTreeContextMenuControl
         openTilesMenu.setDisable(true);
         openInImageEditorMenuItem.setDisable(true);
         useForDrawingMenuItem.setDisable(true);
+        exportToHtmlMenuItem.setDisable(false);
         break;
       case FOLDER:
         switch (parentItemType) {
@@ -190,6 +196,7 @@ public class ProjectTreeContextMenuView implements ProjectTreeContextMenuControl
     deleteMenuItem.setDisable(!value);
     clearMenuItem.setDisable(!value);
     copyPathMenuItem.setDisable(!value);
+    exportToHtmlMenuItem.setDisable(!value);
   }
 
   private void enableOpenMenuItems(boolean value) {
@@ -212,6 +219,10 @@ public class ProjectTreeContextMenuView implements ProjectTreeContextMenuControl
 
   public MenuItem getOpenInImageEditorMenuItem() {
     return openInImageEditorMenuItem;
+  }
+
+  public MenuItem getExportToHtmlMenuItem() {
+    return exportToHtmlMenuItem;
   }
 
   public ContextMenu getContextMenu() {

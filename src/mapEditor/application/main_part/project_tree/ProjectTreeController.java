@@ -224,4 +224,12 @@ public class ProjectTreeController implements Controller, ProjectTreeContextMenu
     dialog.setContent(tilesTabView.asNode());
     dialog.show();
   }
+
+  @Override
+  public void exportMapToHtml() {
+    TreeItem<File> item = view.getTree().getSelectionModel().getSelectedItem();
+    if (item == null || item.getValue() == null || !FileExtensionUtil.isMapFile(item.getValue().getName()))
+      return;
+    manageMapsController.exportMapToHtml(item.getValue());
+  }
 }

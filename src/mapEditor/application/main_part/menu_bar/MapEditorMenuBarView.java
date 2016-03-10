@@ -18,7 +18,6 @@ public class MapEditorMenuBarView implements MapEditorMenuBarController.IMapEdit
   private MenuItem openMenuItem;
   private MenuItem closeProjectMenuItem;
   private MenuItem settingsMenuItem;
-  private MenuItem exportAsHtmlMenuItem;
   private MenuItem exitMenuItem;
   private Menu editMenu;
   private Menu preferencesMenu;
@@ -33,7 +32,6 @@ public class MapEditorMenuBarView implements MapEditorMenuBarController.IMapEdit
     openMenuItem = new MenuItem("Open...");
     closeProjectMenuItem = new MenuItem("Close Project");
     settingsMenuItem = new MenuItem("Settings");
-    exportAsHtmlMenuItem = new MenuItem("Export to Html...");
     exitMenuItem = new MenuItem("Exit");
     fileMenu = new Menu("File", null, newMenuItem,
             openMenuItem,
@@ -41,7 +39,6 @@ public class MapEditorMenuBarView implements MapEditorMenuBarController.IMapEdit
             new SeparatorMenuItem(),
             settingsMenuItem,
             new SeparatorMenuItem(),
-            exportAsHtmlMenuItem,
             new SeparatorMenuItem(),
             exitMenuItem);
     editMenu = new Menu("Edit");

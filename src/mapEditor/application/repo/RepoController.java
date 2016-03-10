@@ -3,10 +3,12 @@ package mapEditor.application.repo;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import mapEditor.application.main_part.app_utils.AppParameters;
+import mapEditor.application.main_part.app_utils.data_types.CustomMap;
 import mapEditor.application.main_part.app_utils.models.ImageModel;
 import mapEditor.application.main_part.app_utils.models.KnownFileExtensions;
 import mapEditor.application.main_part.app_utils.models.LWMapModel;
 import mapEditor.application.main_part.app_utils.models.MapDetail;
+import mapEditor.application.repo.html_exporter.MapHtmlExporter;
 import mapEditor.application.repo.models.LWProjectModel;
 import mapEditor.application.repo.models.ProjectModel;
 import mapEditor.application.repo.results.SaveImagesResult;
@@ -25,6 +27,7 @@ import javax.imageio.ImageIO;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -281,6 +284,8 @@ public class RepoController {
    * Saves the map on the disk, into XML format. Based on the provided boolean flag, you can choose to overwrite the map
    * if already exist, or to create a new one. When creating a new one, the map name will be computed to establish if an
    * order number is required.
+   * @param projectPath
+   * Project absolute path.
    * @param mapDetail
    * MapDetail
    * @param converter
@@ -316,6 +321,47 @@ public class RepoController {
       ex.printStackTrace();
     }
     return null;
+  }
+
+  public boolean exportMapToHtml(String projectPath, File mapFile) throws Exception {
+    if (projectPath == null || projectPath.isEmpty() || mapFile == null || !mapFile.exists())
+      return false;
+    MapDetail mapDetail = createMapModelFromFile(projectPath, mapFile, null);
+    MapHtmlExporter htmlExporter = new MapHtmlExporter(mapDetail);
+    String preloadImagesText = htmlExporter.getPreloadImagesText();
+    String attributesText = htmlExporter.getAttributesText();
+
+    String path = "C:\\Users\\razvanolar\\Desktop\\MapEditor_Util\\exported_html_maps\\";
+    File directory = new File(path);
+    if (!directory.exists() && !directory.mkdirs())
+      return false;
+    writeContentToFile(preloadImagesText, path + SystemParameters.PRELOAD_IMAGES_FILE_NAME);
+    writeContentToFile(attributesText, path + SystemParameters.ATTRIBUTES_FILE_NAME);
+
+    // copy template files
+    File templatesDir = new File(SystemParameters.HTML_EXPORTER_TEMPLATES_FILE_PATH);
+    if (!templatesDir.exists())
+      return false;
+    File[] templates = templatesDir.listFiles();
+    if (templates == null || templates.length == 0)
+      return false;
+    for (File template : templates) {
+      copyToPath(template.getAbsolutePath(), path, template.getName(), true);
+    }
+
+    //copy tiles
+    File tilesDir = new File(path + SystemParameters.EXPORTED_TILES_FOLDER_PATH);
+    if (!tilesDir.exists() && !tilesDir.mkdirs())
+      return false;
+    CustomMap<Integer, File> indexedImages = mapDetail.getDiskIndexedTilesModel().getIndexedImages();
+    if (indexedImages != null && !indexedImages.isEmpty()) {
+      for (Integer key : indexedImages.keys()) {
+        File tile = indexedImages.get(key);
+        copyToPath(tile.getAbsolutePath(), tilesDir.getAbsolutePath(), tile.getName(), true);
+      }
+    }
+
+    return true;
   }
 
   public boolean closeProject(String projectPath) {
@@ -395,18 +441,25 @@ public class RepoController {
   /**
    * Copy the content of the file specified by 'from' into the directory represented by 'where'.
    * Name of the saved file is represented by the 'name' parameter.
-   * @param from - file that will be copied
-   * @param where - path of the directory where the file will be copied
-   * @param name - name of the file that will be saved
+   *
+   * @param from
+   * File that will be copied.
+   * @param where
+   * Path of the directory where the file will be copied.
+   * @param name
+   * Name of the file that will be saved.
+   * @param overwrite
+   * TRUE to overwrite the destination file if already exist; If FALSE, a file with a higher order number will be created.
+   *
    * @return fileName - if the file was saved; null otherwise
    */
-  public String copyToPath(String from, String where, String name) {
+  public String copyToPath(String from, String where, String name, boolean overwrite) {
     File fromFile = new File(from);
     where = where.endsWith("\\") ? where : where + "\\";
     File whereFile = new File(where + name);
     if (!fromFile.exists())
       return null;
-    if (whereFile.exists()) {
+    if (whereFile.exists() && !overwrite) {
       String auxName = getRepoUtil().getAlternativeNameForExistingFile(where, name);
       if (auxName == null)
         return null;
@@ -414,7 +467,7 @@ public class RepoController {
     }
 
     try {
-      Files.copy(fromFile.toPath(), whereFile.toPath());
+      Files.copy(fromFile.toPath(), whereFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
       return whereFile.getName();
     } catch (IOException e) {
       System.out.println("*** Unable to copy file to the specified path. From: " + from + " To: " + where + " Error message: " + e.getMessage());

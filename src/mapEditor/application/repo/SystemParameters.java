@@ -16,6 +16,9 @@ public class SystemParameters {
   public static String XML_HEADER = "<?xml version=\"1.0\" encoding=\"utf-8\"?>";
   public static final String CONFIG_FILE_PATH = "med_config\\";
   public static final String KNOWN_PROJECTS_FILE_PATH = CONFIG_FILE_PATH + "projects\\";
+  public static final String RESOURCES_FILE_PATH = "resources\\";
+  public static final String TEMPLATES_FILE_PATH = RESOURCES_FILE_PATH + "templates\\";
+  public static final String HTML_EXPORTER_TEMPLATES_FILE_PATH = TEMPLATES_FILE_PATH + "html_exporter\\";
   public static final String PROJECT_FILE_EXT = ".med";
   public static final String MAP_FILE_EXT = ".map";
   public static final String TILE_GROUPS_FOLDER_PATH = "tile_groups\\";
@@ -25,6 +28,15 @@ public class SystemParameters {
   public static final String MAPS_FOLDER_PATH = "maps\\";
   public static final String UNTITLED_TAB_NAME = "*Untitled";
   public static final String UNTITLED_MAP_TAB = UNTITLED_TAB_NAME + MAP_FILE_EXT;
+
+  /**
+   * Constants for exporting map to html
+   */
+  public static final String PRELOAD_IMAGES_FUNCTION_NAME = "preload";
+  public static final String PRELOAD_IMAGES_FILE_NAME = "preload_images.js";
+  public static final String ATTRIBUTES_FILE_NAME = "attributes.js";
+  public static final String EXPORTED_TILES_FOLDER_PATH = "tiles\\";
+  public static final String JAVA_SCRIPT_NULL_VALUE = "null";
 
   public static final int MAP_MIN_SIZE_NUMBER = 1;
   public static final int MAP_MAX_SIZE_NUMBER = 9999;

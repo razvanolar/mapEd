@@ -18,6 +18,7 @@ public class ProjectTreeContextMenuController implements Controller {
     MenuItem getOpenMapMenuItem();
     MenuItem getOpenInImageEditorMenuItem();
     MenuItem getOpenTilesInNewTabMenuItem();
+    MenuItem getExportToHtmlMenuItem();
     MenuItem getOpenTilesInExistingTabMenuItem();
     ContextMenu getContextMenu();
   }
@@ -43,6 +44,8 @@ public class ProjectTreeContextMenuController implements Controller {
     view.getOpenInImageEditorMenuItem().setOnAction(event -> listener.openInImageEditor());
 
     view.getOpenTilesInNewTabMenuItem().setOnAction(event -> listener.openTilesInNewTab());
+
+    view.getExportToHtmlMenuItem().setOnAction(event -> listener.exportMapToHtml());
   }
 
   private LazyTreeItem getParentForSelectedItem() {
