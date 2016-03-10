@@ -192,6 +192,11 @@ public class LayersController implements Controller, SelectableLayerListener {
     listener.selectedLayerChanged(this.selectedLayer != null ? this.selectedLayer.getLayerModel() : null);
   }
 
+  @Override
+  public void checkedLayerChanged(LayerModel layer) {
+    listener.checkedLayerChanged(layer);
+  }
+
   public List<LayerModel> getLayers() {
     ObservableList<Node> children = view.getLayers();
     List<LayerModel> layers = new ArrayList<>();

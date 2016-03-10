@@ -249,6 +249,8 @@ public class MapCanvas extends Canvas {
     if (map != null) {
       int x;
       for (LayerModel layer : mapDetail.getLayers()) {
+        if (!layer.isChecked())
+          continue;
         int y = startY;
         MapTilesContainer.TilesMatrix tilesMatrix = map.get(layer);
         if (tilesMatrix != null) {

@@ -270,8 +270,15 @@ public class ManageMapsController implements Controller, MapLayersListener, Sele
   @Override
   public void selectedLayerChanged(LayerModel layer) {
     PrimaryMapView selectedMap = getSelectedMap();
-    if (selectedMap != null)
+    if (selectedMap != null && selectedMap.getMapDetail().getLayers().contains(layer))
       selectedMap.setCurrentLayer(layer);
+  }
+
+  @Override
+  public void checkedLayerChanged(LayerModel layer) {
+    PrimaryMapView selectedMap = getSelectedMap();
+    if (selectedMap != null && selectedMap.getMapDetail().getLayers().contains(layer))
+      selectedMap.paint();
   }
 
   @Override

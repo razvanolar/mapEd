@@ -9,10 +9,12 @@ public class LayerModel {
   private String name;
   private LayerType type;
   private boolean selected;
+  private boolean checked;
 
   public LayerModel(String name, LayerType type) {
     this.name = name;
     this.type = type;
+    this.checked = true;
   }
 
   public String getName() {
@@ -37,6 +39,14 @@ public class LayerModel {
 
   public void setSelected(boolean isSelected) {
     this.selected = isSelected;
+  }
+
+  public boolean isChecked() {
+    return checked;
+  }
+
+  public void setChecked(boolean checked) {
+    this.checked = checked;
   }
 
   @Override

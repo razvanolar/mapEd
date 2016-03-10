@@ -1,5 +1,7 @@
 package mapEditor.application.main_part.manage_maps.utils;
 
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -20,12 +22,13 @@ public class SelectableLayerView extends StackPane {
 
   private static EventHandler<MouseEvent> onMouseEnteredListener;
   private static EventHandler<MouseEvent> onMouseExitedListener;
-  private static EventHandler<MouseEvent> onMouseClickedListener;
+  private static ChangeListener<Boolean> checkBoxSelectionListener;
 
+  private static EventHandler<MouseEvent> onMouseClickedListener;
   private CheckBox checkBox;
   private Text text;
-  private HBox container;
 
+  private HBox container;
   private SelectableLayerListener listener;
   private LayerModel layerModel;
   private boolean isSelected;
@@ -42,8 +45,10 @@ public class SelectableLayerView extends StackPane {
     text = new Text(layerModel.getName());
     container = new HBox(5, checkBox, text);
 
-    checkBox.setSelected(true);
+    checkBox.setSelected(layerModel.isChecked());
     checkBox.setPadding(new Insets(3, 0, 5, 5));
+    checkBox.setUserData(this);
+
     container.setAlignment(Pos.CENTER_LEFT);
     container.setPrefWidth(25);
     getChildren().add(container);
@@ -53,6 +58,8 @@ public class SelectableLayerView extends StackPane {
     this.setOnMouseEntered(getOnMouseEnteredListener());
     this.setOnMouseExited(getOnMouseExitedListener());
     this.setOnMouseClicked(getOnMouseClickedListener());
+
+    checkBox.selectedProperty().addListener(getCheckBoxSelectionChangeListener());
   }
 
   public void select(boolean isRightClick, double x, double y) {
@@ -76,6 +83,11 @@ public class SelectableLayerView extends StackPane {
   private void onMouseExited() {
     if (!isSelected)
       container.setBackground(AppParameters.TRANSPARENT_BG);
+  }
+
+  public void setLayerChecked(boolean value) {
+    layerModel.setChecked(value);
+    listener.checkedLayerChanged(layerModel);
   }
 
   private static EventHandler<MouseEvent> getOnMouseEnteredListener() {
@@ -106,6 +118,20 @@ public class SelectableLayerView extends StackPane {
       };
     }
     return onMouseClickedListener;
+  }
+
+  private static ChangeListener<Boolean> getCheckBoxSelectionChangeListener() {
+    if (checkBoxSelectionListener == null) {
+      checkBoxSelectionListener = (observable, oldValue, newValue) -> {
+        BooleanProperty booleanProperty = (BooleanProperty) observable;
+        if (booleanProperty.getBean() instanceof CheckBox) {
+          CheckBox checkBox = (CheckBox) booleanProperty.getBean();
+          if (checkBox.getUserData() instanceof SelectableLayerView)
+            ((SelectableLayerView) checkBox.getUserData()).setLayerChecked(newValue);
+        }
+      };
+    }
+    return checkBoxSelectionListener;
   }
 
   public LayerModel getLayerModel() {

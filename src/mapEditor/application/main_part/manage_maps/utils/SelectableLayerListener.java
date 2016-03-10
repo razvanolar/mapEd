@@ -1,5 +1,7 @@
 package mapEditor.application.main_part.manage_maps.utils;
 
+import mapEditor.application.main_part.app_utils.models.LayerModel;
+
 /**
  *
  * Created by razvanolar on 24.02.2016.
@@ -18,6 +20,8 @@ public interface SelectableLayerListener {
    * Indicates the y coordinate for context menu.
    */
   void selectedLayerChanged(SelectableLayerView selectedLayer, boolean showContextMenu, double x, double y);
+
+  void checkedLayerChanged(LayerModel layer);
 
   void onEditLayerButtonSelection();
   void onDeleteLayerButtonSelection();

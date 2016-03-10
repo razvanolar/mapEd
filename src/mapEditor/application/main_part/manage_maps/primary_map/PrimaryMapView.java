@@ -192,6 +192,9 @@ public class PrimaryMapView extends MapCanvas {
     if (selectedLayer == null) {
       Dialog.showWarningDialog(null, "Please select a layer");
       return;
+    } else if (!selectedLayer.isChecked()) {
+      Dialog.showWarningDialog(null, "Selected layer is not checked");
+      return;
     }
     /* the cartesian coordinates of the hovered cell */
 //    int x = (int) event.getX() + 1;
@@ -215,6 +218,8 @@ public class PrimaryMapView extends MapCanvas {
     CustomMap<LayerModel, MapTilesContainer.TilesMatrix> map = tilesContainer.getTilesMap();
     if (map != null) {
       for (LayerModel layer : mapDetail.getLayers()) {
+        if (!layer.isChecked())
+          continue;
         MapTilesContainer.TilesMatrix tilesMatrix = map.get(layer);
         if (tilesMatrix != null) {
           ImageModel[][] matrix = tilesMatrix.getTilesMatrix();
