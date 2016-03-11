@@ -14,8 +14,8 @@ import mapEditor.application.main_part.app_utils.models.MapDetail;
 import mapEditor.application.main_part.app_utils.views.dialogs.Dialog;
 import mapEditor.application.main_part.main_app_toolbars.project_tree_toolbar.ProjectVerticalToolbarController;
 import mapEditor.application.main_part.main_app_toolbars.project_tree_toolbar.ProjectVerticalToolbarView;
-import mapEditor.application.main_part.manage_images.ManageImagesController;
-import mapEditor.application.main_part.manage_images.ManageImagesView;
+import mapEditor.application.main_part.manage_images.manage_tile_sets.ManageTileSetsController;
+import mapEditor.application.main_part.manage_images.manage_tile_sets.ManageTileSetsView;
 import mapEditor.application.main_part.manage_maps.ManageMapsController;
 import mapEditor.application.main_part.manage_maps.ManageMapsView;
 import mapEditor.application.main_part.main_app_toolbars.main_toolbar.MapEditorToolbarController;
@@ -46,7 +46,7 @@ public class MapEditorController {
   private RepoController repoController;
   private MapEditorToolbarController toolbarController;
   private ManageMapsController manageMapsController;
-  private ManageImagesController manageImagesController;
+  private ManageTileSetsController manageTileSetsController;
   private ProjectTreeController projectTreeController;
 
   public static MapEditorController getInstance() {
@@ -126,13 +126,13 @@ public class MapEditorController {
   }
 
   private void setImageView() {
-    if (manageImagesController == null) {
-      ManageImagesController.IManageImagesView imagesView = new ManageImagesView();
-      manageImagesController = new ManageImagesController(imagesView);
-      manageImagesController.bind();
-      projectTreeController.setManageImagesController(manageImagesController);
+    if (manageTileSetsController == null) {
+      ManageTileSetsController.IManageTileSetsView imagesView = new ManageTileSetsView();
+      manageTileSetsController = new ManageTileSetsController(imagesView);
+      manageTileSetsController.bind();
+      projectTreeController.setManageTileSetsController(manageTileSetsController);
     }
-    setContentView(manageImagesController.getView().asNode());
+    setContentView(manageTileSetsController.getView().asNode());
   }
 
   private void setProjectTreeView() {

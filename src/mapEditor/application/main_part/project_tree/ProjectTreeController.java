@@ -16,7 +16,9 @@ import mapEditor.application.main_part.app_utils.models.LazyTreeItem;
 import mapEditor.application.main_part.app_utils.models.TreeItemType;
 import mapEditor.application.main_part.app_utils.views.dialogs.Dialog;
 import mapEditor.application.main_part.app_utils.views.dialogs.OkCancelDialog;
-import mapEditor.application.main_part.manage_images.ManageImagesController;
+import mapEditor.application.main_part.manage_images.manage_tile_sets.ManageTileSetsController;
+import mapEditor.application.main_part.manage_images.manage_tiles.ManageEditEditTilesView;
+import mapEditor.application.main_part.manage_images.manage_tiles.ManageEditTilesController;
 import mapEditor.application.main_part.manage_maps.ManageMapsController;
 import mapEditor.application.main_part.manage_maps.manage_tiles.ManageTilesController;
 import mapEditor.application.main_part.project_tree.context_menu.ProjectTreeContextMenuController;
@@ -52,7 +54,7 @@ public class ProjectTreeController implements Controller, ProjectTreeContextMenu
 
   private ProjectTreeContextMenuController contextMenuController;
   private ManageMapsController manageMapsController;
-  private ManageImagesController manageImagesController;
+  private ManageTileSetsController manageTileSetsController;
 
   public ProjectTreeController(IProjectTreeView view) {
     this.view = view;
@@ -99,6 +101,8 @@ public class ProjectTreeController implements Controller, ProjectTreeContextMenu
     tilesItem.expandedProperty().addListener(treeItemListener);
     charactersItem.expandedProperty().addListener(treeItemListener);
     mapsItem.expandedProperty().addListener(treeItemListener);
+
+    tilesItem.setExpanded(true);
 
     initWatchDirThreads(tileSetsItem);
     initWatchDirThreads(tilesItem);
@@ -154,8 +158,8 @@ public class ProjectTreeController implements Controller, ProjectTreeContextMenu
     this.manageMapsController = manageMapsController;
   }
 
-  public void setManageImagesController(ManageImagesController manageImagesController) {
-    this.manageImagesController = manageImagesController;
+  public void setManageTileSetsController(ManageTileSetsController manageTileSetsController) {
+    this.manageTileSetsController = manageTileSetsController;
   }
 
   @Override
@@ -171,15 +175,27 @@ public class ProjectTreeController implements Controller, ProjectTreeContextMenu
   @Override
   public void openInImageEditor() {
     TreeItem<File> item = view.getTree().getSelectionModel().getSelectedItem();
-    if (item == null || item.getValue() == null || !FileExtensionUtil.isImageFile(item.getValue().getName()))
+    if (item == null || item.getValue() == null || !FileExtensionUtil.isImageFile(item.getValue().getName()) || !(item instanceof LazyTreeItem))
       return;
+    LazyTreeItem selectedItem = (LazyTreeItem) item;
+    LazyTreeItem parentItem = getRootForFile(selectedItem);
+
+    // if selected item is under tiles folder, open it's specific editor
+    if (parentItem != null && parentItem.getType() == TreeItemType.PROJECT_TILES_FOLDER) {
+      List<File> tiles = new ArrayList<>();
+      tiles.add(selectedItem.getValue());
+      openTilesForEditing(tiles);
+      return;
+    }
+
+    // else, open the image editor
     if (!MapEditorController.getInstance().isImageEditorView())
       MapEditorController.getInstance().changeToImageEditorView();
     File file = item.getValue();
     Image image = ImageProvider.getImage(file);
     ImageModel imageModel = new ImageModel(image, file);
-    if (manageImagesController != null)
-      manageImagesController.addNewTab(file.getName(), imageModel);
+    if (manageTileSetsController != null)
+      manageTileSetsController.addNewTab(file.getName(), imageModel);
   }
 
   @Override
@@ -226,10 +242,58 @@ public class ProjectTreeController implements Controller, ProjectTreeContextMenu
   }
 
   @Override
+  public void openTilesInImageEditor() {
+    TreeItem<File> item = view.getTree().getSelectionModel().getSelectedItem();
+    if (item == null || item.getValue() == null || !(item instanceof LazyTreeItem))
+      return;
+    LazyTreeItem selectedItem = (LazyTreeItem) item;
+    LazyTreeItem parentItem = getRootForFile(selectedItem);
+    if (selectedItem.getType() != TreeItemType.PROJECT_TILES_FOLDER && parentItem != null && parentItem.getType() != TreeItemType.PROJECT_TILES_FOLDER)
+      return;
+    File[] files = item.getValue().listFiles();
+    if (files == null) {
+      Dialog.showWarningDialog(null, "Unable to read children of the selected file.");
+      return;
+    } else if (files.length == 0) {
+      Dialog.showWarningDialog(null, "Selected file is empty.");
+      return;
+    }
+
+    List<File> tiles = new ArrayList<>();
+    for (File file : files) {
+      if (FileExtensionUtil.isImageFile(file.getName())) {
+        tiles.add(file);
+      }
+    }
+    openTilesForEditing(tiles);
+  }
+
+  @Override
   public void exportMapToHtml() {
     TreeItem<File> item = view.getTree().getSelectionModel().getSelectedItem();
     if (item == null || item.getValue() == null || !FileExtensionUtil.isMapFile(item.getValue().getName()))
       return;
     manageMapsController.exportMapToHtml(item.getValue());
+  }
+
+  private void openTilesForEditing(List<File> items) {
+    OkCancelDialog dialog = new OkCancelDialog("Tiles Editor", StageStyle.UTILITY, Modality.APPLICATION_MODAL, true, true);
+
+    ManageEditTilesController.IManageEditTilesView view = new ManageEditEditTilesView();
+    ManageEditTilesController editTilesController = new ManageEditTilesController(view, items, dialog.getOkButton());
+    editTilesController.bind();
+
+    dialog.getOkButton().setText("Save");
+    dialog.setContent(view.asNode());
+    dialog.show();
+  }
+
+  private LazyTreeItem getRootForFile(LazyTreeItem selectedItem) {
+    if (selectedItem == null || selectedItem.getType().isSystemType())
+      return null;
+    LazyTreeItem parent = (LazyTreeItem) selectedItem.getParent();
+    while (parent != null && !parent.getType().isSystemType())
+      parent = (LazyTreeItem) parent.getParent();
+    return parent;
   }
 }

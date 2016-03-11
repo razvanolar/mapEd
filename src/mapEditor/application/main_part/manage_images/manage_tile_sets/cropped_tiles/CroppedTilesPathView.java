@@ -1,4 +1,4 @@
-package mapEditor.application.main_part.manage_images.cropped_tiles;
+package mapEditor.application.main_part.manage_images.manage_tile_sets.cropped_tiles;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;

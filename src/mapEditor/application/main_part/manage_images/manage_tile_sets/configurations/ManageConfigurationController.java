@@ -1,4 +1,4 @@
-package mapEditor.application.main_part.manage_images.configurations;
+package mapEditor.application.main_part.manage_images.manage_tile_sets.configurations;
 
 import javafx.beans.value.ChangeListener;
 import javafx.scene.control.ColorPicker;
@@ -6,7 +6,7 @@ import javafx.scene.control.Slider;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.paint.Color;
 import mapEditor.application.main_part.app_utils.views.canvas.StyleListener;
-import mapEditor.application.main_part.manage_images.ManageImagesController;
+import mapEditor.application.main_part.manage_images.manage_tile_sets.ManageTileSetsController;
 import mapEditor.application.main_part.types.Controller;
 import mapEditor.application.main_part.types.View;
 
@@ -17,7 +17,7 @@ import mapEditor.application.main_part.types.View;
 public class ManageConfigurationController implements Controller {
 
   public interface IManageConfigurationView extends View {
-    void setState(ManageImagesController.IManageConfigurationViewState state);
+    void setState(ManageTileSetsController.IManageConfigurationViewState state);
     Slider getImageHueSlider();
     Slider getImageBrightnessSlider();
     Slider getImageContrastSlider();
@@ -151,7 +151,7 @@ public class ManageConfigurationController implements Controller {
             view.getSquareFillTransparencySlider().getValue());
   }
 
-  public void setViewState(ManageImagesController.IManageConfigurationViewState state) {
+  public void setViewState(ManageTileSetsController.IManageConfigurationViewState state) {
     view.setState(state);
   }
 

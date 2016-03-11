@@ -24,6 +24,7 @@ public class ProjectTreeContextMenuView implements ProjectTreeContextMenuControl
   private Menu openTilesMenu;
   private MenuItem openTilesInNewTabMenuItem;
   private MenuItem openTilesInExistingTabMenuItem;
+  private MenuItem openTilesInImageEditor;
   private MenuItem openInImageEditorMenuItem;
   private MenuItem useForDrawingMenuItem;
   private MenuItem renameMenuItem;
@@ -47,6 +48,7 @@ public class ProjectTreeContextMenuView implements ProjectTreeContextMenuControl
     openTilesMenu = new Menu("Open Tiles");
     openTilesInNewTabMenuItem = new MenuItem("In New Tab");
     openTilesInExistingTabMenuItem = new MenuItem("In Existing Tab");
+    openTilesInImageEditor = new MenuItem("In Image Editor");
     openInImageEditorMenuItem = new MenuItem("Open in Image Editor");
     useForDrawingMenuItem = new MenuItem("Use For Drawing");
     renameMenuItem = new MenuItem("Rename");
@@ -63,7 +65,8 @@ public class ProjectTreeContextMenuView implements ProjectTreeContextMenuControl
             newMapMenuItem);
 
     openTilesMenu.getItems().addAll(openTilesInNewTabMenuItem,
-            openTilesInExistingTabMenuItem);
+            openTilesInExistingTabMenuItem,
+            openTilesInImageEditor);
 
     contextMenu.getItems().addAll(newMenu,
             new SeparatorMenuItem(),
@@ -215,6 +218,10 @@ public class ProjectTreeContextMenuView implements ProjectTreeContextMenuControl
 
   public MenuItem getOpenTilesInExistingTabMenuItem() {
     return openTilesInExistingTabMenuItem;
+  }
+
+  public MenuItem getOpenTilesInImageEditor() {
+    return openTilesInImageEditor;
   }
 
   public MenuItem getOpenInImageEditorMenuItem() {

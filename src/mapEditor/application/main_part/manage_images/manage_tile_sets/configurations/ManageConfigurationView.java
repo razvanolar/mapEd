@@ -1,4 +1,4 @@
-package mapEditor.application.main_part.manage_images.configurations;
+package mapEditor.application.main_part.manage_images.manage_tile_sets.configurations;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -11,7 +11,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import mapEditor.application.main_part.app_utils.constants.CssConstants;
-import mapEditor.application.main_part.manage_images.ManageImagesController;
+import mapEditor.application.main_part.manage_images.manage_tile_sets.ManageTileSetsController;
 
 /**
  *
@@ -138,7 +138,7 @@ public class ManageConfigurationView implements ManageConfigurationController.IM
             createTitleLabelContainer("Selection Colors"),
             squareColorsContainer);
 
-    setState(ManageImagesController.IManageConfigurationViewState.NO_TAB_SELECTED);
+    setState(ManageTileSetsController.IManageConfigurationViewState.NO_TAB_SELECTED);
   }
 
   private HBox createTitleLabelContainer(String title) {
@@ -148,7 +148,7 @@ public class ManageConfigurationView implements ManageConfigurationController.IM
     return container;
   }
 
-  public void setState(ManageImagesController.IManageConfigurationViewState state) {
+  public void setState(ManageTileSetsController.IManageConfigurationViewState state) {
     switch (state) {
       case NO_TAB_SELECTED:
         setEnableImageColorAdjust(false);

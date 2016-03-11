@@ -30,6 +30,7 @@ public class OkCancelDialog {
   private StageStyle stageStyle = StageStyle.UTILITY;
   private Modality modality = Modality.APPLICATION_MODAL;
   private boolean isResizable;
+  private boolean isAlwaysOnTop;
 
   /**
    * Used to customize the default dialog UI and add a new functionality to the dialog.
@@ -52,6 +53,11 @@ public class OkCancelDialog {
     this.modality = modality != null ? modality : this.modality;
     this.isResizable = isResizable;
     initGUI();
+  }
+
+  public OkCancelDialog(String title, StageStyle stageStyle, Modality modality, boolean isResizable, boolean alwaysOnTop) {
+    this(title, stageStyle, modality, isResizable);
+    this.isAlwaysOnTop = alwaysOnTop;
   }
 
   private void initGUI() {
@@ -94,6 +100,7 @@ public class OkCancelDialog {
       stage.sizeToScene();
       stage.initModality(modality);
       stage.setResizable(isResizable);
+      stage.setAlwaysOnTop(isAlwaysOnTop);
     }
     stage.show();
   }

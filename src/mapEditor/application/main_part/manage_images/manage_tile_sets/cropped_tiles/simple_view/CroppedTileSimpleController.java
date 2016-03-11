@@ -1,10 +1,10 @@
-package mapEditor.application.main_part.manage_images.cropped_tiles.simple_view;
+package mapEditor.application.main_part.manage_images.manage_tile_sets.cropped_tiles.simple_view;
 
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import mapEditor.application.main_part.app_utils.models.ImageModel;
-import mapEditor.application.main_part.manage_images.cropped_tiles.simple_view.context_menu.SimpleCroppedTileContextMenuController;
-import mapEditor.application.main_part.manage_images.cropped_tiles.simple_view.context_menu.SimpleCroppedTileContextMenuView;
+import mapEditor.application.main_part.manage_images.manage_tile_sets.cropped_tiles.simple_view.context_menu.SimpleCroppedTileContextMenuController;
+import mapEditor.application.main_part.manage_images.manage_tile_sets.cropped_tiles.simple_view.context_menu.SimpleCroppedTileContextMenuView;
 import mapEditor.application.main_part.types.Controller;
 import mapEditor.application.main_part.types.View;
 

@@ -1,4 +1,4 @@
-package mapEditor.application.main_part.manage_images;
+package mapEditor.application.main_part.manage_images.manage_tile_sets;
 
 import javafx.beans.value.ChangeListener;
 import javafx.collections.ListChangeListener;
@@ -19,16 +19,16 @@ import mapEditor.application.main_part.app_utils.views.TabImageLoadView;
 import mapEditor.application.main_part.app_utils.views.dialogs.Dialog;
 import mapEditor.application.main_part.app_utils.views.dialogs.OkCancelDialog;
 import mapEditor.application.main_part.app_utils.views.others.SystemFilesView;
-import mapEditor.application.main_part.manage_images.configurations.ManageConfigurationController;
-import mapEditor.application.main_part.manage_images.cropped_tiles.detailed_view.CroppedTilesDetailedController;
-import mapEditor.application.main_part.manage_images.cropped_tiles.detailed_view.CroppedTileDetailedDetailedView;
-import mapEditor.application.main_part.manage_images.cropped_tiles.CroppedTilesPathView;
-import mapEditor.application.main_part.manage_images.cropped_tiles.simple_view.CroppedTileSimpleController;
-import mapEditor.application.main_part.manage_images.cropped_tiles.simple_view.CroppedTileSimpleView;
-import mapEditor.application.main_part.manage_images.utils.ManageImagesListener;
-import mapEditor.application.main_part.manage_images.utils.SaveImageController;
-import mapEditor.application.main_part.manage_images.utils.SaveImageView;
-import mapEditor.application.main_part.manage_images.utils.TabContentView;
+import mapEditor.application.main_part.manage_images.manage_tile_sets.configurations.ManageConfigurationController;
+import mapEditor.application.main_part.manage_images.manage_tile_sets.cropped_tiles.detailed_view.CroppedTilesDetailedController;
+import mapEditor.application.main_part.manage_images.manage_tile_sets.cropped_tiles.detailed_view.CroppedTileDetailedDetailedView;
+import mapEditor.application.main_part.manage_images.manage_tile_sets.cropped_tiles.CroppedTilesPathView;
+import mapEditor.application.main_part.manage_images.manage_tile_sets.cropped_tiles.simple_view.CroppedTileSimpleController;
+import mapEditor.application.main_part.manage_images.manage_tile_sets.cropped_tiles.simple_view.CroppedTileSimpleView;
+import mapEditor.application.main_part.manage_images.manage_tile_sets.utils.ManageImagesListener;
+import mapEditor.application.main_part.manage_images.manage_tile_sets.utils.SaveImageController;
+import mapEditor.application.main_part.manage_images.manage_tile_sets.utils.SaveImageView;
+import mapEditor.application.main_part.manage_images.manage_tile_sets.utils.TabContentView;
 import mapEditor.application.main_part.types.Controller;
 import mapEditor.application.main_part.types.View;
 import mapEditor.application.repo.SystemParameters;
@@ -44,20 +44,20 @@ import java.util.Map;
  *
  * Created by razvanolar on 24.01.2016.
  */
-public class ManageImagesController implements Controller, ManageImagesListener {
+public class ManageTileSetsController implements Controller, ManageImagesListener {
 
   //TODO: refactor the listeners logic (many of them can be created only once)
 
   public enum IManageConfigurationViewState {
     /**
-     * NO_TAB_SELECTED   - The tab pane of the ManageImagesView have no tab registered
+     * NO_TAB_SELECTED   - The tab pane of the ManageTileSetsView have no tab registered
      * NO_IMAGE_SELECTED - Tab exists, but no image was selected
      * FULL_SELECTION    - There is an image selected in the current tab, so all effect objects exist
      */
     NO_TAB_SELECTED, NO_IMAGE_SELECTED, FULL_SELECTION
   }
 
-  public interface IManageImagesView extends View {
+  public interface IManageTileSetsView extends View {
     ScrollPane addTab(String title, TabContentView content);
     TabPane getTabPane();
     Button getAddNewTabButton();
@@ -73,7 +73,7 @@ public class ManageImagesController implements Controller, ManageImagesListener 
     void setState(IManageConfigurationViewState state);
   }
 
-  private IManageImagesView view;
+  private IManageTileSetsView view;
   private ManageConfigurationController configurationController;
   private ImageCanvas currentCanvas;
   private TabContentView currentTabContent;
@@ -82,7 +82,7 @@ public class ManageImagesController implements Controller, ManageImagesListener 
 
   private OkCancelDialog saveTilesetDialog;
 
-  public ManageImagesController(IManageImagesView view) {
+  public ManageTileSetsController(IManageTileSetsView view) {
     this.view = view;
   }
 
@@ -166,7 +166,7 @@ public class ManageImagesController implements Controller, ManageImagesListener 
     if (!currentTabContent.isSimpleView()) {
       CroppedTilesDetailedController controller = tabDetailedControllerMap.get(currentTabContent);
       if (controller == null) {
-        controller = new CroppedTilesDetailedController(AppParameters.CURRENT_PROJECT.getTilesFile(), ManageImagesController.this);
+        controller = new CroppedTilesDetailedController(AppParameters.CURRENT_PROJECT.getTilesFile(), ManageTileSetsController.this);
         controller.bind();
         tabDetailedControllerMap.put(currentTabContent, controller);
       }

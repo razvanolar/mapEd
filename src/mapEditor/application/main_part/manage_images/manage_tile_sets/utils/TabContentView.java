@@ -1,4 +1,4 @@
-package mapEditor.application.main_part.manage_images.utils;
+package mapEditor.application.main_part.manage_images.manage_tile_sets.utils;
 
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -12,7 +12,7 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import mapEditor.application.main_part.app_utils.constants.CssConstants;
 import mapEditor.application.main_part.app_utils.views.others.HorizontalSeparatorBar;
-import mapEditor.application.main_part.manage_images.cropped_tiles.CroppedTilesPathView;
+import mapEditor.application.main_part.manage_images.manage_tile_sets.cropped_tiles.CroppedTilesPathView;
 import mapEditor.application.main_part.types.View;
 
 /**

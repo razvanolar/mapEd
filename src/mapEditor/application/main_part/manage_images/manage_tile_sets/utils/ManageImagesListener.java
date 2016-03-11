@@ -1,6 +1,6 @@
-package mapEditor.application.main_part.manage_images.utils;
+package mapEditor.application.main_part.manage_images.manage_tile_sets.utils;
 
-import mapEditor.application.main_part.manage_images.cropped_tiles.detailed_view.CroppedTilesDetailedController;
+import mapEditor.application.main_part.manage_images.manage_tile_sets.cropped_tiles.detailed_view.CroppedTilesDetailedController;
 
 /**
  *

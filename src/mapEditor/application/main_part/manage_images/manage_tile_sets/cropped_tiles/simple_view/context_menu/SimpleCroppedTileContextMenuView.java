@@ -1,4 +1,4 @@
-package mapEditor.application.main_part.manage_images.cropped_tiles.simple_view.context_menu;
+package mapEditor.application.main_part.manage_images.manage_tile_sets.cropped_tiles.simple_view.context_menu;
 
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;

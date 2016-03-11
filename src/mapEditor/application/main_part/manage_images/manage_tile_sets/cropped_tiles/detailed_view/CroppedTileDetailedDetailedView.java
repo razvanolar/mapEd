@@ -1,4 +1,4 @@
-package mapEditor.application.main_part.manage_images.cropped_tiles.detailed_view;
+package mapEditor.application.main_part.manage_images.manage_tile_sets.cropped_tiles.detailed_view;
 
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;

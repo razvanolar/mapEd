@@ -1,4 +1,4 @@
-package mapEditor.application.main_part.manage_images.cropped_tiles.simple_view;
+package mapEditor.application.main_part.manage_images.manage_tile_sets.cropped_tiles.simple_view;
 
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;

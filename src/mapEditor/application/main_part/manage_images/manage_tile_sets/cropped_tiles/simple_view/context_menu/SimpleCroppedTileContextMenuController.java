@@ -1,4 +1,4 @@
-package mapEditor.application.main_part.manage_images.cropped_tiles.simple_view.context_menu;
+package mapEditor.application.main_part.manage_images.manage_tile_sets.cropped_tiles.simple_view.context_menu;
 
 import javafx.geometry.Side;
 import javafx.scene.Node;
@@ -11,8 +11,8 @@ import mapEditor.application.main_part.app_utils.inputs.StringValidator;
 import mapEditor.application.main_part.app_utils.models.ImageModel;
 import mapEditor.application.main_part.app_utils.models.KnownFileExtensions;
 import mapEditor.application.main_part.app_utils.views.dialogs.OkCancelDialog;
-import mapEditor.application.main_part.manage_images.utils.SaveImageController;
-import mapEditor.application.main_part.manage_images.utils.SaveImageView;
+import mapEditor.application.main_part.manage_images.manage_tile_sets.utils.SaveImageController;
+import mapEditor.application.main_part.manage_images.manage_tile_sets.utils.SaveImageView;
 import mapEditor.application.main_part.types.Controller;
 
 /**

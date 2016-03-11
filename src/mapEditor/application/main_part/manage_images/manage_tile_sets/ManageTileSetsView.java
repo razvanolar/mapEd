@@ -1,4 +1,4 @@
-package mapEditor.application.main_part.manage_images;
+package mapEditor.application.main_part.manage_images.manage_tile_sets;
 
 import javafx.geometry.Orientation;
 import javafx.scene.control.*;
@@ -6,15 +6,15 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
 import mapEditor.application.main_part.app_utils.constants.CssConstants;
 import mapEditor.application.main_part.app_utils.views.others.FillToolItem;
-import mapEditor.application.main_part.manage_images.configurations.ManageConfigurationController;
-import mapEditor.application.main_part.manage_images.configurations.ManageConfigurationView;
-import mapEditor.application.main_part.manage_images.utils.TabContentView;
+import mapEditor.application.main_part.manage_images.manage_tile_sets.configurations.ManageConfigurationController;
+import mapEditor.application.main_part.manage_images.manage_tile_sets.configurations.ManageConfigurationView;
+import mapEditor.application.main_part.manage_images.manage_tile_sets.utils.TabContentView;
 
 /**
  *
  * Created by razvanolar on 24.01.2016.
  */
-public class ManageImagesView implements ManageImagesController.IManageImagesView {
+public class ManageTileSetsView implements ManageTileSetsController.IManageTileSetsView {
 
   private SplitPane mainSplitPane;
   private TabPane tabPane;
@@ -30,7 +30,7 @@ public class ManageImagesView implements ManageImagesController.IManageImagesVie
 
   private ToolBar tabsToolbar;
 
-  public ManageImagesView() {
+  public ManageTileSetsView() {
     initGUI();
   }
 
@@ -67,7 +67,7 @@ public class ManageImagesView implements ManageImagesController.IManageImagesVie
     mainSplitPane.setDividerPositions(0.8);
   }
 
-  public void setState(ManageImagesController.IManageConfigurationViewState state) {
+  public void setState(ManageTileSetsController.IManageConfigurationViewState state) {
     switch (state) {
       case NO_TAB_SELECTED:
         cropSelectionButton.setDisable(true);

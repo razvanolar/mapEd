@@ -1,4 +1,4 @@
-package mapEditor.application.main_part.manage_images.cropped_tiles.detailed_view;
+package mapEditor.application.main_part.manage_images.manage_tile_sets.cropped_tiles.detailed_view;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -13,7 +13,7 @@ import mapEditor.application.main_part.app_utils.models.ImageModel;
 import mapEditor.application.main_part.app_utils.models.KnownFileExtensions;
 import mapEditor.application.main_part.app_utils.views.dialogs.OkCancelDialog;
 import mapEditor.application.main_part.app_utils.views.others.SystemFilesView;
-import mapEditor.application.main_part.manage_images.utils.ManageImagesListener;
+import mapEditor.application.main_part.manage_images.manage_tile_sets.utils.ManageImagesListener;
 import mapEditor.application.main_part.types.Controller;
 import mapEditor.application.main_part.types.View;
 
