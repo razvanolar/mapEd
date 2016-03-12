@@ -10,6 +10,7 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.stage.Window;
 import mapEditor.application.main_part.app_utils.constants.CssConstants;
 import mapEditor.application.main_part.types.Controller;
 
@@ -29,6 +30,7 @@ public class OkCancelDialog {
 
   private StageStyle stageStyle = StageStyle.UTILITY;
   private Modality modality = Modality.APPLICATION_MODAL;
+  private Window owner;
   private boolean isResizable;
   private boolean isAlwaysOnTop;
 
@@ -58,6 +60,11 @@ public class OkCancelDialog {
   public OkCancelDialog(String title, StageStyle stageStyle, Modality modality, boolean isResizable, boolean alwaysOnTop) {
     this(title, stageStyle, modality, isResizable);
     this.isAlwaysOnTop = alwaysOnTop;
+  }
+
+  public OkCancelDialog(String title, StageStyle stageStyle, Modality modality, boolean isResizable, boolean alwaysOnTop, Window owner) {
+    this(title, stageStyle, modality, isResizable, alwaysOnTop);
+    this.owner = owner;
   }
 
   private void initGUI() {
@@ -101,6 +108,8 @@ public class OkCancelDialog {
       stage.initModality(modality);
       stage.setResizable(isResizable);
       stage.setAlwaysOnTop(isAlwaysOnTop);
+      if (owner != null)
+        stage.initOwner(owner);
     }
     stage.show();
   }

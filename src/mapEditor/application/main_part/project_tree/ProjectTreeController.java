@@ -280,7 +280,7 @@ public class ProjectTreeController implements Controller, ProjectTreeContextMenu
     OkCancelDialog dialog = new OkCancelDialog("Tiles Editor", StageStyle.UTILITY, Modality.APPLICATION_MODAL, true, true);
 
     ManageEditTilesController.IManageEditTilesView view = new ManageEditEditTilesView();
-    ManageEditTilesController editTilesController = new ManageEditTilesController(view, items, dialog.getOkButton());
+    ManageEditTilesController editTilesController = new ManageEditTilesController(view, items, dialog.getOkButton(), dialog.getStage());
     editTilesController.bind();
 
     dialog.getOkButton().setText("Save");

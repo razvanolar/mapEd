@@ -3,8 +3,8 @@ package mapEditor.application.main_part.manage_images.manage_tiles;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
@@ -88,8 +88,40 @@ public class ManageEditEditTilesView implements ManageEditTilesController.IManag
   }
 
   @Override
-  public void addTile(ImageView imageView) {
+  public void addTile(Node imageView) {
     tilesFlowPane.getChildren().add(imageView);
+  }
+
+  public Slider getImageHueSlider() {
+    return imageHueSlider;
+  }
+
+  public Slider getImageBrightnessSlider() {
+    return imageBrightnessSlider;
+  }
+
+  public Slider getImageContrastSlider() {
+    return imageContrastSlider;
+  }
+
+  public Slider getImageSaturationSlider() {
+    return imageSaturationSlider;
+  }
+
+  public TextField getNameTextField() {
+    return nameTextField;
+  }
+
+  public TextField getPathTextField() {
+    return pathTextField;
+  }
+
+  public Button getPathButton() {
+    return pathButton;
+  }
+
+  public CheckBox getOverwriteCheckBox() {
+    return overwriteCheckBox;
   }
 
   @Override

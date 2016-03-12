@@ -45,6 +45,7 @@ public class SystemParameters {
   public static final Color MAP_DEFAULT_BG_COLOR = new Color(.5, .5, .5, .5);
   public static final Color MAP_DEFAULT_GRID_COLOR = Color.DARKCYAN;
   public static final Color MAP_DEFAULT_SQUARE_COLOR = Color.YELLOW;
+  public static final Color EDIT_SELECTABLE_TILE_HOVER_COLOR = new Color(.3, .5, .5, .7);
 
   public static List<LWProjectModel> PROJECTS;
 
