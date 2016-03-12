@@ -5,12 +5,10 @@ import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 import mapEditor.application.main_part.app_utils.constants.CssConstants;
+import mapEditor.application.main_part.app_utils.views.others.FillToolItem;
 
 /**
  *
@@ -18,7 +16,7 @@ import mapEditor.application.main_part.app_utils.constants.CssConstants;
  */
 public class ManageEditEditTilesView implements ManageEditTilesController.IManageEditTilesView {
 
-  private SplitPane mainContainer;
+  private BorderPane mainContainer;
   private FlowPane tilesFlowPane;
 
   private Slider imageHueSlider;
@@ -27,8 +25,11 @@ public class ManageEditEditTilesView implements ManageEditTilesController.IManag
   private Slider imageSaturationSlider;
   private TextField nameTextField;
   private TextField pathTextField;
+  private TextField allPathTextField;
   private Button pathButton;
-  private CheckBox overwriteCheckBox;
+  private Button loadTilesButton;
+  private Button allPathButton;
+  private CheckBox usePathForAllCheckBox;
 
   public ManageEditEditTilesView() {
     initGUI();
@@ -42,17 +43,23 @@ public class ManageEditEditTilesView implements ManageEditTilesController.IManag
 
     nameTextField = new TextField();
     pathTextField = new TextField();
+    allPathTextField = new TextField();
     pathButton = new Button("...");
-    overwriteCheckBox = new CheckBox();
+    allPathButton = new Button("...");
+    loadTilesButton = new Button("Load");
+    usePathForAllCheckBox = new CheckBox("Use For All");
 
     tilesFlowPane = new FlowPane(Orientation.HORIZONTAL, 5, 5);
     ScrollPane tilesScrollPane = new ScrollPane(tilesFlowPane);
     GridPane imageStylesGridPane = new GridPane();
     VBox imageSlidersContainer = new VBox(5, imageStylesGridPane);
-    mainContainer = new SplitPane(tilesScrollPane, imageSlidersContainer);
+    SplitPane splitContainer = new SplitPane(tilesScrollPane, imageSlidersContainer);
+    ToolBar toolBar = new ToolBar(loadTilesButton, new FillToolItem(), new Text("Path : "), allPathTextField, allPathButton, usePathForAllCheckBox);
+    mainContainer = new BorderPane(splitContainer);
 
     SplitPane.setResizableWithParent(imageSlidersContainer, false);
-    mainContainer.setDividerPositions(0.5);
+    splitContainer.setDividerPositions(0.5);
+    allPathTextField.setMinWidth(250);
 
     imageStylesGridPane.setAlignment(Pos.TOP_CENTER);
     imageStylesGridPane.setHgap(5);
@@ -71,8 +78,6 @@ public class ManageEditEditTilesView implements ManageEditTilesController.IManag
     imageStylesGridPane.add(new Text("Path : "), 0, 5);
     imageStylesGridPane.add(pathTextField, 1, 5);
     imageStylesGridPane.add(pathButton, 2, 5);
-    imageStylesGridPane.add(new Text("Overwrite : "), 0, 6);
-    imageStylesGridPane.add(overwriteCheckBox, 1, 6);
 
     imageSlidersContainer.setMinWidth(250);
 
@@ -82,9 +87,11 @@ public class ManageEditEditTilesView implements ManageEditTilesController.IManag
     tilesFlowPane.setAlignment(Pos.CENTER);
     tilesScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
     tilesScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-    tilesScrollPane.setPrefWidth(150);
-    tilesScrollPane.setPrefHeight(150);
+    tilesScrollPane.setPrefWidth(200);
+    tilesScrollPane.setPrefHeight(170);
     tilesScrollPane.getStyleClass().add(CssConstants.CANVAS_CONTAINER_LIGHT_BG);
+
+    mainContainer.setTop(toolBar);
   }
 
   @Override
@@ -116,12 +123,24 @@ public class ManageEditEditTilesView implements ManageEditTilesController.IManag
     return pathTextField;
   }
 
+  public TextField getAllPathTextField() {
+    return allPathTextField;
+  }
+
   public Button getPathButton() {
     return pathButton;
   }
 
-  public CheckBox getOverwriteCheckBox() {
-    return overwriteCheckBox;
+  public Button getLoadTilesButton() {
+    return loadTilesButton;
+  }
+
+  public Button getAllPathButton() {
+    return allPathButton;
+  }
+
+  public CheckBox getUsePathForAllCheckBox() {
+    return usePathForAllCheckBox;
   }
 
   @Override

@@ -19,11 +19,15 @@ public class EditSelectableTileView implements View {
 
   private int size;
   private StackPane mainContainer;
+  private ImageModelWrapper model;
   private ImageView contentTile;
+  private EditSelectableTileListener listener;
 
-  public EditSelectableTileView(ImageView contentTile, int size) {
-    this.contentTile = contentTile;
+  public EditSelectableTileView(ImageModelWrapper model, int size, EditSelectableTileListener listener) {
+    this.model = model;
+    this.contentTile = new ImageView(this.model.getImage());
     this.size = size;
+    this.listener = listener;
     initGUI();
   }
 
@@ -36,10 +40,13 @@ public class EditSelectableTileView implements View {
     mainContainer.setUserData(this);
   }
 
-  private void setSelected(boolean value) {
-    if (value) {
-      if (!mainContainer.getChildren().contains(getHoverPane()))
-        mainContainer.getChildren().add(getHoverPane());
+  private void changeSelection() {
+    if (!mainContainer.getChildren().contains(getHoverPane())) {
+      mainContainer.getChildren().add(getHoverPane());
+      listener.selectedTileChanged(this);
+    } else {
+      mainContainer.getChildren().remove(getHoverPane());
+      listener.selectedTileChanged(null);
     }
   }
 
@@ -63,14 +70,16 @@ public class EditSelectableTileView implements View {
         StackPane stackPane = (StackPane) event.getSource();
         if (stackPane.getUserData() == null || !(stackPane.getUserData() instanceof EditSelectableTileView))
           return;
-
         EditSelectableTileView source = (EditSelectableTileView) stackPane.getUserData();
-        source.setSelected(true);
-
+        source.changeSelection();
         event.consume();
       };
     }
     return mousePressedHandler;
+  }
+
+  public ImageModelWrapper getModel() {
+    return model;
   }
 
   @Override
