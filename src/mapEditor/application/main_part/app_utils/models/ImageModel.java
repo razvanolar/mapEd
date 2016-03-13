@@ -50,6 +50,10 @@ public class ImageModel {
     this.file = null;
   }
 
+  public void setImage(Image image) {
+    this.image = image;
+  }
+
   public File getFile() {
     if (file == null && path != null && name != null)
       file = new File(path + name);

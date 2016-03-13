@@ -7,16 +7,21 @@ import javafx.scene.effect.ColorAdjust;
 import javafx.stage.Modality;
 import javafx.stage.StageStyle;
 import javafx.stage.Window;
+import mapEditor.MapEditorController;
 import mapEditor.application.main_part.app_utils.AppParameters;
+import mapEditor.application.main_part.app_utils.inputs.FileExtensionUtil;
 import mapEditor.application.main_part.app_utils.inputs.ImageProvider;
 import mapEditor.application.main_part.app_utils.models.ImageModel;
-import mapEditor.application.main_part.app_utils.views.dialogs.OkCancelDialog;
+import mapEditor.application.main_part.app_utils.views.dialogs.*;
+import mapEditor.application.main_part.app_utils.views.dialogs.Dialog;
 import mapEditor.application.main_part.app_utils.views.others.SystemFilesView;
 import mapEditor.application.main_part.manage_images.manage_tiles.utils.EditSelectableTileListener;
 import mapEditor.application.main_part.manage_images.manage_tiles.utils.EditSelectableTileView;
 import mapEditor.application.main_part.manage_images.manage_tiles.utils.ImageModelWrapper;
 import mapEditor.application.main_part.types.Controller;
 import mapEditor.application.main_part.types.View;
+import mapEditor.application.repo.results.SaveImagesResult;
+import mapEditor.application.repo.statuses.SaveImagesStatus;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -29,7 +34,8 @@ import java.util.List;
 public class ManageEditTilesController implements Controller, EditSelectableTileListener {
 
   public interface IManageEditTilesView extends View {
-    void addTile(Node imageView);
+    void addTile(Node node);
+    void removeTile(Node node);
     Slider getImageHueSlider();
     Slider getImageBrightnessSlider();
     Slider getImageContrastSlider();
@@ -50,6 +56,7 @@ public class ManageEditTilesController implements Controller, EditSelectableTile
   private ColorAdjust colorAdjust;
   private List<EditSelectableTileView> tileViews;
   private EditSelectableTileView selectedTileView;
+  private File root;
 
   public ManageEditTilesController(IManageEditTilesView view, List<File> tileFiles, Button saveButton, Window parentWindow) {
     this.view = view;
@@ -62,9 +69,11 @@ public class ManageEditTilesController implements Controller, EditSelectableTile
   public void bind() {
     colorAdjust = new ColorAdjust(0, 0, 0, 0);
     tileViews = new ArrayList<>();
+    root = AppParameters.CURRENT_PROJECT.getTilesFile();
     loadTiles();
     setEnableFields(false);
     view.getUsePathForAllCheckBox().setSelected(true);
+    view.getAllPathTextField().setText(root.getAbsolutePath());
     addListeners();
   }
 
@@ -83,13 +92,23 @@ public class ManageEditTilesController implements Controller, EditSelectableTile
     colorAdjust.brightnessProperty().addListener(numberChangeListener);
     colorAdjust.contrastProperty().addListener(numberChangeListener);
 
-    view.getPathTextField().textProperty().addListener((observable1, oldValue1, newValue1) -> {
+    view.getNameTextField().textProperty().addListener((observable, oldValue, newValue) -> {
+      if (selectedTileView != null)
+        selectedTileView.getModel().setName(newValue);
+    });
+    view.getPathTextField().textProperty().addListener((observable, oldValue, newValue) -> {
       Tooltip tooltip = view.getPathTextField().getTooltip();
       if (tooltip == null) {
         tooltip = new Tooltip();
         view.getPathTextField().setTooltip(tooltip);
       }
-      tooltip.setText(newValue1);
+      tooltip.setText(newValue);
+      if (selectedTileView != null)
+        selectedTileView.getModel().setPath(newValue);
+    });
+
+    view.getAllPathTextField().textProperty().addListener((observable1, oldValue1, newValue1) -> {
+      saveButton.setDisable(isUseAllSelected() && !isValidPath(newValue1));
     });
 
     view.getPathButton().setOnAction(event -> onPathButtonSelection(view.getPathTextField()));
@@ -98,6 +117,8 @@ public class ManageEditTilesController implements Controller, EditSelectableTile
     view.getUsePathForAllCheckBox().selectedProperty().addListener((observable, oldValue, newValue) -> {
       setEnableFields(!newValue);
     });
+
+    saveButton.setOnAction(event -> onSaveButtonSelection());
   }
 
   private void onPathButtonSelection(TextField field) {
@@ -111,6 +132,69 @@ public class ManageEditTilesController implements Controller, EditSelectableTile
 
     dialog.setContent(filesView.asNode());
     dialog.show();
+  }
+
+  private void onSaveButtonSelection() {
+    if (tileViews == null || tileViews.isEmpty()) {
+      parentWindow.hide();
+      return;
+    }
+
+    boolean usePathForAll = isUseAllSelected();
+    String selectedPath = view.getAllPathTextField().getText();
+    if (usePathForAll && !isValidPath(selectedPath)) {
+      Dialog.showWarningDialog(null, "Selected path is not a valid one!", parentWindow);
+      return;
+    }
+
+    List<ImageModel> models = new ArrayList<>();
+    for (EditSelectableTileView tileView : tileViews) {
+      ImageModelWrapper wrapper = tileView.getModel();
+      String name = wrapper.getName();
+      String path = wrapper.getPath();
+      if (!isValidName(name)) {
+        Dialog.showWarningDialog(null, name + " is not a valid tile name!", parentWindow);
+        return;
+      }
+      if (!usePathForAll && !isValidPath(path)) {
+        Dialog.showWarningDialog(null, path + " is not a valid path for " + name, parentWindow);
+        return;
+      } else if (usePathForAll)
+        wrapper.setPath(selectedPath);
+      ImageModel model = wrapper.computeModel();
+      model.setImage(tileView.getImage());
+      models.add(model);
+    }
+
+    MapEditorController.getInstance().maskView();
+    SaveImagesResult result = MapEditorController.getInstance().getRepoController().saveImages(models);
+    MapEditorController.getInstance().unmaskView();
+    handleSaveImagesResult(result);
+  }
+
+  private void handleSaveImagesResult(SaveImagesResult result) {
+    // All the tiles were saved successfully; Display an information message and close the dialog
+    if (result.getStatus() == SaveImagesStatus.COMPLETE) {
+      parentWindow.hide();
+      Dialog.showInformDialog(null, result.getStatus().getMessage());
+      return;
+    }
+
+    // Only a part of tiles where saved; Keep only the unsaved tiles and remove the rest
+    if (result.getStatus() == SaveImagesStatus.PARTIAL) {
+      Dialog.showWarningDialog(null, result.getStatus().getMessage(), parentWindow);
+      if (result.getUnsavedImages() == null)
+        return;
+      for (EditSelectableTileView tileView : tileViews) {
+        ImageModel tileModel = tileView.getModel().getModel();
+        for (ImageModel model : result.getUnsavedImages()) {
+          if (model.equals(tileModel)) {
+            view.removeTile(tileView.asNode());
+            break;
+          }
+        }
+      }
+    }
   }
 
   private void loadTiles() {
@@ -141,12 +225,27 @@ public class ManageEditTilesController implements Controller, EditSelectableTile
       return;
     }
     view.getNameTextField().setText(selectedTileView.getModel().getName());
-    view.getPathTextField().setText(selectedTileView.getModel().getPath());
+    if (isUseAllSelected())
+      view.getPathTextField().setText(view.getAllPathTextField().getText());
+    else
+      view.getPathTextField().setText(selectedTileView.getModel().getPath());
   }
 
   private void setEnableFields(boolean value) {
     view.getNameTextField().setDisable(!value);
     view.getPathTextField().setDisable(!value);
     view.getPathButton().setDisable(!value);
+  }
+
+  private boolean isUseAllSelected() {
+    return view.getUsePathForAllCheckBox().isSelected();
+  }
+
+  private boolean isValidPath(String path) {
+    return path != null && path.contains(root.getAbsolutePath());
+  }
+
+  private boolean isValidName(String name) {
+    return FileExtensionUtil.isImageFile(name);
   }
 }

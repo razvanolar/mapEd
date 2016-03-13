@@ -18,7 +18,7 @@ import mapEditor.application.main_part.types.Controller;
  *
  * Created by razvanolar on 23.01.2016.
  */
-public class OkCancelDialog {
+public class OkCancelDialog implements DialogListener {
 
   private BorderPane mainContainer;
   private HBox buttonsContainer;

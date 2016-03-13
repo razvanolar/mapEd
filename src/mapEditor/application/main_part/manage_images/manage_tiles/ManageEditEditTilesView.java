@@ -95,8 +95,14 @@ public class ManageEditEditTilesView implements ManageEditTilesController.IManag
   }
 
   @Override
-  public void addTile(Node imageView) {
-    tilesFlowPane.getChildren().add(imageView);
+  public void addTile(Node node) {
+    tilesFlowPane.getChildren().add(node);
+  }
+
+  @Override
+  public void removeTile(Node node) {
+    if (tilesFlowPane.getChildren().contains(node))
+      tilesFlowPane.getChildren().remove(node);
   }
 
   public Slider getImageHueSlider() {

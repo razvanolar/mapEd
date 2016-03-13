@@ -1,10 +1,15 @@
 package mapEditor.application.main_part.manage_images.manage_tiles.utils;
 
 import javafx.event.EventHandler;
+import javafx.geometry.Rectangle2D;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.effect.ColorAdjust;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import mapEditor.application.main_part.app_utils.AppParameters;
 import mapEditor.application.main_part.types.View;
 import mapEditor.application.repo.SystemParameters;
 
@@ -16,6 +21,7 @@ public class EditSelectableTileView implements View {
 
   private static Pane hoverPane;
   private static EventHandler<MouseEvent> mousePressedHandler;
+  private static SnapshotParameters snapshotParameters;
 
   private int size;
   private StackPane mainContainer;
@@ -54,6 +60,10 @@ public class EditSelectableTileView implements View {
     contentTile.setEffect(colorAdjust);
   }
 
+  public Image getImage() {
+    return contentTile.snapshot(getSnapshotParameters(), null);
+  }
+
   public static Pane getHoverPane() {
     if (hoverPane == null) {
       hoverPane = new Pane();
@@ -85,5 +95,15 @@ public class EditSelectableTileView implements View {
   @Override
   public Region asNode() {
     return mainContainer;
+  }
+
+  private static SnapshotParameters getSnapshotParameters() {
+    if (snapshotParameters == null) {
+      int size = AppParameters.CURRENT_PROJECT.getCellSize();
+      snapshotParameters = new SnapshotParameters();
+      snapshotParameters.setViewport(new Rectangle2D(0, 0, size, size));
+      snapshotParameters.setFill(Color.TRANSPARENT);
+    }
+    return snapshotParameters;
   }
 }

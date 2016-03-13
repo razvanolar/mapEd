@@ -533,8 +533,8 @@ public class RepoController {
       String name = image.getName();
       String path = image.getPath();
       path = !path.endsWith("\\") ? path + "\\" : path;
-      name = repoUtil.checkNameOrGetAnAlternativeOne(path, name);
       try {
+        name = repoUtil.checkNameOrGetAnAlternativeOne(path, name);
         ImageIO.write(SwingFXUtils.fromFXImage(image.getImage(), null), KnownFileExtensions.PNG.getFormat(), new File(path + name));
       } catch (Exception ex) {
         areUnsavedImages = true;
