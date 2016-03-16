@@ -104,6 +104,10 @@ public class MapEditorController {
     createProjectController.bind();
   }
 
+  public void changeVisibilityState(boolean is2DVisibilitySelected) {
+    manageMapsController.change2DVisibilityState(is2DVisibilitySelected);
+  }
+
   /**
    * Change primary content view. It is switching between map view and image view.
    * It is called when the view selection of the toolbar is changed.

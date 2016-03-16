@@ -233,21 +233,6 @@ public class PrimaryMapView extends MapCanvas {
     drawGridLines(hoveredCellX - canvasX, hoveredCellY - canvasY);
   }
 
-  public void updateMapModelDetails() {
-    mapDetail.setX(canvasX);
-    mapDetail.setY(canvasY);
-    mapDetail.setZoomStatus(zoomStatus);
-  }
-
-  public void updateMapModelInfos() {
-    mapDetail.setMapTilesInfo(tilesContainer.getMapInfo(mapDetail.getLayers()));
-  }
-
-  public MapDetail getMapDetail() {
-    updateMapModelDetails();
-    return mapDetail;
-  }
-
   public void setDrawingTile(ImageModel image) {
     selectedTile = image;
   }

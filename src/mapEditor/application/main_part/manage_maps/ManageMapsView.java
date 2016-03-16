@@ -13,6 +13,7 @@ import mapEditor.application.main_part.manage_maps.manage_layers.LayersView;
 import mapEditor.application.main_part.manage_maps.manage_tiles.ManageTilesController;
 import mapEditor.application.main_part.manage_maps.manage_tiles.ManageTilesView;
 import mapEditor.application.main_part.manage_maps.primary_map.PrimaryMapView;
+import mapEditor.application.main_part.manage_maps.utils.MapContentStateKeys;
 
 /**
  *
@@ -64,6 +65,7 @@ public class ManageMapsView implements ManageMapsController.IMangeMapsView {
 
     Tab tab = new Tab(title, scrollPane);
     tab.setUserData(mapView);
+    tab.getProperties().put(MapContentStateKeys.MAP_SCROLL_PANE, scrollPane);
     mapsTabPane.getTabs().add(tab);
     if (selectTab)
       mapsTabPane.getSelectionModel().select(tab);

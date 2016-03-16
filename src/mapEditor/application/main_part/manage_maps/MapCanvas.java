@@ -106,9 +106,9 @@ public class MapCanvas extends Canvas {
 
       /* this 'if' block is same as in the MiniMapCanvas method; be careful when you modified it, probably the one from
        * the child class method needs to be modified also */
+      MapEditorController.getInstance().setSceneCursor(Cursor.DEFAULT);
       if(paintMap) {
         paint();
-        MapEditorController.getInstance().setSceneCursor(Cursor.DEFAULT);
         notifyPositionChange();
       }
     }
@@ -157,6 +157,8 @@ public class MapCanvas extends Canvas {
     int newCanvasX = canvasX + x;
 
     //System.out.println("---horizontal x=" + x + "newX=" + newCanvasX + " ZOOM=" + CELL_WIDTH);
+    if (getMapWidth() < getWidth())
+      return (int) (getWidth() - getMapWidth()) / 2;
 
     if((newCanvasX >= 0 && newCanvasX <= CELL_WIDTH) ||
             (newCanvasX < 0 && ((newCanvasX + getMapWidth()) - getWidth()) >= -CELL_WIDTH))
@@ -176,6 +178,8 @@ public class MapCanvas extends Canvas {
     int newCanvasY = canvasY + y;
 
     //System.out.println("---vertical y=" + y + "newY=" + newCanvasY + " ZOOM=" + CELL_WIDTH);
+    if (getMapHeight() < getHeight())
+      return (int) (getHeight() - getMapHeight()) / 2;
 
     if((newCanvasY >= 0 && newCanvasY <= CELL_HEIGHT) ||
             (newCanvasY < 0 && ((newCanvasY + getMapHeight()) - getHeight()) >= -CELL_HEIGHT)) {
@@ -500,6 +504,23 @@ public class MapCanvas extends Canvas {
 
   public MapTilesContainer getTilesContainer() {
     return tilesContainer;
+  }
+
+  public void updateMapModelDetails() {
+    if (mapDetail != null) {
+      mapDetail.setX(canvasX);
+      mapDetail.setY(canvasY);
+      mapDetail.setZoomStatus(zoomStatus);
+    }
+  }
+
+  public void updateMapModelInfos() {
+    mapDetail.setMapTilesInfo(tilesContainer.getMapInfo(mapDetail.getLayers()));
+  }
+
+  public MapDetail getMapDetail() {
+    updateMapModelDetails();
+    return mapDetail;
   }
 
   /**

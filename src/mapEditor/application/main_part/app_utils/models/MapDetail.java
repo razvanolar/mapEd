@@ -189,6 +189,26 @@ public class MapDetail {
       layers.remove(layer);
   }
 
+  public MapDetail duplicate() {
+    MapDetail result = new MapDetail();
+    result.name = name;
+    result.absolutePath = absolutePath;
+    result.relativePath = relativePath;
+    result.x = x;
+    result.y = y;
+    result.rows = rows;
+    result.columns = columns;
+    result.zoomStatus = zoomStatus;
+    result.backgroundColor = backgroundColor;
+    result.gridColor = gridColor;
+    result.squareColor = squareColor;
+    result.type = type;
+    result.layers = layers;
+    result.mapTilesInfo = mapTilesInfo;
+    result.diskIndexedTilesModel = diskIndexedTilesModel;
+    return result;
+  }
+
   @Override
   public String toString() {
     return name + " - " + absolutePath;

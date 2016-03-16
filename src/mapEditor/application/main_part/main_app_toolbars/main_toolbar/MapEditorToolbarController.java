@@ -22,6 +22,7 @@ public class MapEditorToolbarController implements Controller {
 
   public interface IMapEditorToolbarView extends View {
     Button getNewMapButton();
+    ToggleButton getChangeVisibility();
     ToggleButton getMapEditorViewButton();
     ToggleButton getImageEditorViewButton();
   }
@@ -45,6 +46,9 @@ public class MapEditorToolbarController implements Controller {
     view.getImageEditorViewButton().selectedProperty().addListener(changeListener);
 
     view.getNewMapButton().setOnAction(event -> onNewMapButtonSelection());
+    view.getChangeVisibility().selectedProperty().addListener((observable, oldValue, newValue) -> {
+      MapEditorController.getInstance().changeVisibilityState(newValue);
+    });
   }
 
   /**

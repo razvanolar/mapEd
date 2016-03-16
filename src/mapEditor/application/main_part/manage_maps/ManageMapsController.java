@@ -13,8 +13,11 @@ import mapEditor.application.main_part.app_utils.models.MapDetail;
 import mapEditor.application.main_part.app_utils.views.dialogs.Dialog;
 import mapEditor.application.main_part.manage_maps.manage_layers.LayersController;
 import mapEditor.application.main_part.manage_maps.manage_tiles.ManageTilesController;
+import mapEditor.application.main_part.manage_maps.visibility_map.MapVisibilityController;
+import mapEditor.application.main_part.manage_maps.visibility_map.MapVisibilityView;
 import mapEditor.application.main_part.manage_maps.primary_map.PrimaryMapController;
 import mapEditor.application.main_part.manage_maps.primary_map.PrimaryMapView;
+import mapEditor.application.main_part.manage_maps.utils.MapContentStateKeys;
 import mapEditor.application.main_part.manage_maps.utils.MapLayersListener;
 import mapEditor.application.main_part.manage_maps.utils.SelectedTileListener;
 import mapEditor.application.main_part.types.Controller;
@@ -207,6 +210,38 @@ public class ManageMapsController implements Controller, MapLayersListener, Sele
       ex.printStackTrace();
     }
     MapEditorController.getInstance().unmaskView();
+  }
+
+  public void change2DVisibilityState(boolean is2DVisibilitySelected) {
+    Tab tab = view.getMapsTabPane().getSelectionModel().getSelectedItem();
+    if (tab == null || tab.getUserData() == null || !(tab.getUserData() instanceof PrimaryMapView))
+      return;
+
+    PrimaryMapView mapView = (PrimaryMapView) tab.getUserData();
+    mapView.updateMapModelDetails();
+    mapView.updateMapModelInfos();
+
+    if (is2DVisibilitySelected) {
+      Object object = tab.getProperties().get(MapContentStateKeys.VISIBILITY_CONTROLLER);
+      if (object == null) {
+        MapVisibilityController.IMapVisibilityView visibilityView = new MapVisibilityView();
+        MapVisibilityController visibilityController = new MapVisibilityController(visibilityView, mapView.getMapDetail().duplicate());
+        visibilityController.bind();
+
+        tab.setContent(visibilityView.asNode());
+        tab.getProperties().put(MapContentStateKeys.VISIBILITY_CONTROLLER, visibilityController);
+      } else if (object instanceof MapVisibilityController) {
+        MapVisibilityController visibilityController = (MapVisibilityController) object;
+        visibilityController.setMapDetail(mapView.getMapDetail().duplicate());
+        tab.setContent(visibilityController.getView().asNode());
+      }
+    } else {
+      Object object = tab.getProperties().get(MapContentStateKeys.MAP_SCROLL_PANE);
+      if (object != null && object instanceof ScrollPane) {
+        ScrollPane scrollPane = (ScrollPane) object;
+        tab.setContent(scrollPane);
+      }
+    }
   }
 
   /**

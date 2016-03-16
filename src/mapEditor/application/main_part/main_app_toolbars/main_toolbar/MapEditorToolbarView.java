@@ -15,6 +15,7 @@ public class MapEditorToolbarView implements MapEditorToolbarController.IMapEdit
 
   private ToolBar toolBar;
   private Button newMapButton;
+  private ToggleButton changeVisibility;
   private ToggleButton mapEditorViewButton;
   private ToggleButton imageEditorViewButton;
   private ToggleGroup toggleGroup;
@@ -25,6 +26,7 @@ public class MapEditorToolbarView implements MapEditorToolbarController.IMapEdit
 
   private void initGUI() {
     newMapButton = new Button("New Map");
+    changeVisibility = new ToggleButton("2D Visibility");
     mapEditorViewButton = new ToggleButton("Map Editor");
     imageEditorViewButton = new ToggleButton("Image Editor");
     toolBar = new ToolBar();
@@ -34,11 +36,15 @@ public class MapEditorToolbarView implements MapEditorToolbarController.IMapEdit
     toggleGroup = new ToggleGroup();
     toggleGroup.getToggles().addAll(mapEditorViewButton, imageEditorViewButton);
 
-    toolBar.getItems().addAll(newMapButton, new FillToolItem(), mapEditorViewButton, imageEditorViewButton);
+    toolBar.getItems().addAll(newMapButton, changeVisibility, new FillToolItem(), mapEditorViewButton, imageEditorViewButton);
   }
 
   public Button getNewMapButton() {
     return newMapButton;
+  }
+
+  public ToggleButton getChangeVisibility() {
+    return changeVisibility;
   }
 
   public ToggleButton getMapEditorViewButton() {
