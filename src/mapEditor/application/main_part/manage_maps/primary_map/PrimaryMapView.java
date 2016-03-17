@@ -233,10 +233,6 @@ public class PrimaryMapView extends MapCanvas {
     drawGridLines(hoveredCellX - canvasX, hoveredCellY - canvasY);
   }
 
-  public void setDrawingTile(ImageModel image) {
-    selectedTile = image;
-  }
-
   public void setCurrentLayer(LayerModel layer) {
     selectedLayer = layer;
   }

@@ -70,20 +70,42 @@ public class ManageMapsController implements Controller, MapLayersListener, Sele
   private void addListeners() {
     view.getMapsTabPane().getSelectionModel().selectedItemProperty().addListener((observable, oldItem, newItem) -> {
       if (newItem != null) {
+        boolean is2DVisibilitySelected = MapEditorController.getInstance().is2DVisibilitySelected();
+        MapCanvas mapCanvas = (MapCanvas) newItem.getUserData();
+        MapCanvas visibilityCanvas = null;
+
+        // update map details fields before changing the view
+        MapDetail mapDetail = mapCanvas.getMapDetail();
+        mapDetail.setSelected(true);
+        layersController.loadLayers(mapDetail.getLayers());
+        mapCanvas.setDrawingTile(selectedTile);
+
+        // change view according to selected visibility state
+        change2DVisibilityState(is2DVisibilitySelected, newItem);
+
+        // add scroll pane size change listeners
         ScrollPane scrollPane = (ScrollPane) newItem.getContent();
-        PrimaryMapView mapView = (PrimaryMapView) newItem.getUserData();
-        if (scrollPane.getUserData() != null) {
+        if (scrollPane.getUserData() != null && scrollPane.getUserData() instanceof ChangeListener) {
           ChangeListener listener = (ChangeListener) scrollPane.getUserData();
           scrollPane.widthProperty().addListener(listener);
           scrollPane.heightProperty().addListener(listener);
-          mapView.widthProperty().bind(scrollPane.widthProperty());
-          mapView.heightProperty().bind(scrollPane.heightProperty());
         }
-        MapDetail mapDetail = mapView.getMapDetail();
-        mapDetail.setSelected(true);
-        layersController.loadLayers(mapDetail.getLayers());
-        mapView.setDrawingTile(selectedTile);
-        mapView.paint();
+
+        // bind canvas size properties with the scroll pane properties
+        if (is2DVisibilitySelected) {
+          Object object = newItem.getProperties().get(MapContentStateKeys.VISIBILITY_CONTROLLER);
+          if (object != null && object instanceof MapVisibilityController) {
+            MapVisibilityController visibilityController = (MapVisibilityController) object;
+            visibilityCanvas = visibilityController.getShadowMap();
+            visibilityCanvas.widthProperty().bind(scrollPane.widthProperty());
+            visibilityCanvas.heightProperty().bind(scrollPane.heightProperty());
+            visibilityCanvas.paint();
+          }
+        } else {
+          mapCanvas.widthProperty().bind(scrollPane.widthProperty());
+          mapCanvas.heightProperty().bind(scrollPane.heightProperty());
+          mapCanvas.paint();
+        }
       } else {
         createMap(defaultModel, false, false);
       }
@@ -91,11 +113,20 @@ public class ManageMapsController implements Controller, MapLayersListener, Sele
       if (oldItem != null) {
         ScrollPane scrollPane = (ScrollPane) oldItem.getContent();
         PrimaryMapView mapView = (PrimaryMapView) oldItem.getUserData();
+
+        // unbind and remove listeners for primary map
         ChangeListener listener = (ChangeListener) scrollPane.getUserData();
         scrollPane.widthProperty().removeListener(listener);
         scrollPane.widthProperty().removeListener(listener);
         mapView.widthProperty().unbind();
+        mapView.heightProperty().unbind();
         mapView.getMapDetail().setSelected(false);
+
+        // if there is a visibility map created, make sure to unbind that also
+        Object object = oldItem.getProperties().get(MapContentStateKeys.VISIBILITY_CONTROLLER);
+        if (object != null && object instanceof MapVisibilityController) {
+          ((MapVisibilityController) object).unbindMap();
+        }
       }
     });
 
@@ -212,34 +243,46 @@ public class ManageMapsController implements Controller, MapLayersListener, Sele
     MapEditorController.getInstance().unmaskView();
   }
 
-  public void change2DVisibilityState(boolean is2DVisibilitySelected) {
-    Tab tab = view.getMapsTabPane().getSelectionModel().getSelectedItem();
+  public void change2DVisibilityState(boolean is2DVisibilitySelected, Tab tab) {
+    if (tab == null)
+      tab = view.getMapsTabPane().getSelectionModel().getSelectedItem();
     if (tab == null || tab.getUserData() == null || !(tab.getUserData() instanceof PrimaryMapView))
       return;
 
     PrimaryMapView mapView = (PrimaryMapView) tab.getUserData();
+
+    MapVisibilityController visibilityController = null;
+    Object object = tab.getProperties().get(MapContentStateKeys.VISIBILITY_CONTROLLER);
+    if (object != null && object instanceof MapVisibilityController)
+      visibilityController = (MapVisibilityController) object;
+
     mapView.updateMapModelDetails();
     mapView.updateMapModelInfos();
 
     if (is2DVisibilitySelected) {
-      Object object = tab.getProperties().get(MapContentStateKeys.VISIBILITY_CONTROLLER);
-      if (object == null) {
+      if (visibilityController == null) {
         MapVisibilityController.IMapVisibilityView visibilityView = new MapVisibilityView();
-        MapVisibilityController visibilityController = new MapVisibilityController(visibilityView, mapView.getMapDetail().duplicate());
+        visibilityController = new MapVisibilityController(visibilityView, mapView.getMapDetail().duplicate());
         visibilityController.bind();
 
         tab.setContent(visibilityView.asNode());
         tab.getProperties().put(MapContentStateKeys.VISIBILITY_CONTROLLER, visibilityController);
-      } else if (object instanceof MapVisibilityController) {
-        MapVisibilityController visibilityController = (MapVisibilityController) object;
+      } else {
         visibilityController.setMapDetail(mapView.getMapDetail().duplicate());
         tab.setContent(visibilityController.getView().asNode());
       }
+      mapView.widthProperty().unbind();
+      mapView.heightProperty().unbind();
     } else {
-      Object object = tab.getProperties().get(MapContentStateKeys.MAP_SCROLL_PANE);
+      object = tab.getProperties().get(MapContentStateKeys.MAP_SCROLL_PANE);
       if (object != null && object instanceof ScrollPane) {
         ScrollPane scrollPane = (ScrollPane) object;
         tab.setContent(scrollPane);
+        mapView.widthProperty().bind(scrollPane.widthProperty());
+        mapView.heightProperty().bind(scrollPane.heightProperty());
+        if (visibilityController != null)
+          visibilityController.unbindMap();
+        mapView.paint();
       }
     }
   }

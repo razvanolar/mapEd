@@ -82,6 +82,10 @@ public class MapEditorToolbarController implements Controller {
     return view.getMapEditorViewButton().isSelected();
   }
 
+  public boolean is2DVisibilitySelected() {
+    return view.getChangeVisibility().isSelected();
+  }
+
   public void showCreateMapDialog() {
     onNewMapButtonSelection();
   }

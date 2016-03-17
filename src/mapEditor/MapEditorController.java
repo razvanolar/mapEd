@@ -105,7 +105,7 @@ public class MapEditorController {
   }
 
   public void changeVisibilityState(boolean is2DVisibilitySelected) {
-    manageMapsController.change2DVisibilityState(is2DVisibilitySelected);
+    manageMapsController.change2DVisibilityState(is2DVisibilitySelected, null);
   }
 
   /**
@@ -269,6 +269,10 @@ public class MapEditorController {
 
   public boolean isMapView() {
     return toolbarController.isMapViewSelected();
+  }
+
+  public boolean is2DVisibilitySelected() {
+    return toolbarController.is2DVisibilitySelected();
   }
 
   public ManageTilesController getManageTilesController() {

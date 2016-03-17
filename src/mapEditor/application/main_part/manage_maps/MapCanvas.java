@@ -103,6 +103,7 @@ public class MapCanvas extends Canvas {
       canvasY = getDragVerticalValue(event);
       lastValidCanvasX = canvasX;
       lastValidCanvasY = canvasY;
+      updateMapModelDetails();
 
       /* this 'if' block is same as in the MiniMapCanvas method; be careful when you modified it, probably the one from
        * the child class method needs to be modified also */
@@ -224,6 +225,7 @@ public class MapCanvas extends Canvas {
         lastValidCanvasY = canvasY;
       }
     }
+    updateMapModelDetails();
 
     paintContent(info[STOP_INDEX_Y], info[STOP_INDEX_X], info[START_INDEX_X], info[START_INDEX_Y], info[START_X], info[START_Y], info[STOP_X], info[STOP_Y]);
   }
@@ -231,7 +233,7 @@ public class MapCanvas extends Canvas {
   /**
    * Paint all the canvas content. This includes all the enabled layers and the grid.
    *
-//   * @param mapLayers - map layers
+  //   * @param mapLayers - map layers
    * @param stopIndexY - number of rows in the matrix
    * @param stopIndexX - number of columns in the matrix
    * @param startIndexX - the horizontal index from which to take the tiles (horizontally)
@@ -516,6 +518,10 @@ public class MapCanvas extends Canvas {
 
   public void updateMapModelInfos() {
     mapDetail.setMapTilesInfo(tilesContainer.getMapInfo(mapDetail.getLayers()));
+  }
+
+  public void setDrawingTile(ImageModel image) {
+    selectedTile = image;
   }
 
   public MapDetail getMapDetail() {

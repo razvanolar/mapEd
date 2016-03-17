@@ -6,6 +6,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import mapEditor.application.main_part.app_utils.models.*;
+import mapEditor.application.main_part.manage_maps.MapCanvas;
 import mapEditor.application.main_part.manage_maps.utils.MapStoredImagesLoader;
 import mapEditor.application.main_part.manage_maps.visibility_map.maps.ShadowMap;
 import mapEditor.application.main_part.manage_maps.visibility_map.utils.Line;
@@ -24,6 +25,8 @@ import java.util.List;
  * Created by razvanolar on 14.03.2016.
  */
 public class MapVisibilityController implements Controller {
+
+  private ChangeListener<Number> sizeChangeListener;
 
   public interface IMapVisibilityView extends View {
     ScrollPane getScrollPane();
@@ -59,26 +62,18 @@ public class MapVisibilityController implements Controller {
     shadowMap.widthProperty().bind(view.getScrollPane().widthProperty());
     shadowMap.heightProperty().bind(view.getScrollPane().heightProperty());
 
-    ChangeListener<Number> sizeChangeListener = (observable, oldValue, newValue) -> {
-      if (shadowMap != null) {
-        if (borderSegments.isEmpty()) {
-          computeObjectSegments();
-        }
-        shadowMap.paint();
-      }
-    };
-    view.getScrollPane().setUserData(sizeChangeListener);
-    view.getScrollPane().widthProperty().addListener(sizeChangeListener);
-    view.getScrollPane().heightProperty().addListener(sizeChangeListener);
+    view.getScrollPane().setUserData(getSizeChangeListener());
+    view.getScrollPane().widthProperty().addListener(getSizeChangeListener());
+    view.getScrollPane().heightProperty().addListener(getSizeChangeListener());
 
     shadowMap.addEventHandler(MouseEvent.MOUSE_PRESSED, shadowMap::onMousePressed);
     shadowMap.addEventFilter(MouseEvent.MOUSE_RELEASED, shadowMap::onMouseReleased);
     shadowMap.addEventHandler(MouseEvent.MOUSE_DRAGGED, this::onMouseDragged);
 
     view.getScrollPane().setContent(shadowMap);
-    computeObjectSegments();
     addListeners();
     shadowMap.paint();
+    computeObjectSegments();
   }
 
   private void computeObjectSegments() {
@@ -180,6 +175,7 @@ public class MapVisibilityController implements Controller {
     int canvasY = shadowMap.getCanvasY();
     int mapWidth = shadowMap.getMapWidth();
     int mapHeight = shadowMap.getMapHeight();
+    System.out.println(canvasX);
     Point p1 = new Point(canvasX, canvasY);
     Point p2 = new Point(canvasX + mapWidth, canvasY);
     Point p3 = new Point(canvasX + mapWidth, canvasY + mapHeight);
@@ -198,5 +194,29 @@ public class MapVisibilityController implements Controller {
 
   public IMapVisibilityView getView() {
     return view;
+  }
+
+  public MapCanvas getShadowMap() {
+    return shadowMap;
+  }
+
+  public void unbindMap() {
+    if (shadowMap != null) {
+      shadowMap.widthProperty().unbind();
+      shadowMap.heightProperty().unbind();
+      shadowMap = null;
+    }
+  }
+
+  private ChangeListener<Number> getSizeChangeListener() {
+    if (sizeChangeListener == null) {
+      sizeChangeListener = (observable, oldValue, newValue) -> {
+        if (shadowMap != null) {
+          shadowMap.paint();
+          computeObjectSegments();
+        }
+      };
+    }
+    return sizeChangeListener;
   }
 }
