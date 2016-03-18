@@ -354,9 +354,20 @@ public class ManageMapsController implements Controller, MapLayersListener, Sele
 
   @Override
   public void checkedLayerChanged(LayerModel layer) {
-    PrimaryMapView selectedMap = getSelectedMap();
-    if (selectedMap != null && selectedMap.getMapDetail().getLayers().contains(layer))
-      selectedMap.paint();
+    boolean is2DVisibilitySelected = MapEditorController.getInstance().is2DVisibilitySelected();
+    if (is2DVisibilitySelected) {
+      Tab tab = view.getMapsTabPane().getSelectionModel().getSelectedItem();
+      if (tab == null)
+        return;
+      Object object = tab.getProperties().get(MapContentStateKeys.VISIBILITY_CONTROLLER);
+      if (object != null && object instanceof MapVisibilityController) {
+        ((MapVisibilityController) object).update();
+      }
+    } else {
+      PrimaryMapView selectedMap = getSelectedMap();
+      if (selectedMap != null && selectedMap.getMapDetail().getLayers().contains(layer))
+        selectedMap.paint();
+    }
   }
 
   @Override

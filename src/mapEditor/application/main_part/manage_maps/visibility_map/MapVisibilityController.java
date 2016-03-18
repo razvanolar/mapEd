@@ -86,7 +86,7 @@ public class MapVisibilityController implements Controller {
     int canvasX = shadowMap.getCanvasX();
     int canvasY = shadowMap.getCanvasY();
     for (LayerModel layer : layers) {
-      if (layer.getType() != LayerType.OBJECT)
+      if (layer.getType() != LayerType.OBJECT || !layer.isChecked())
         continue;
       ImageModel[][] matrix = tilesContainer.getTilesForLayer(layer);
       if (matrix == null)
@@ -175,7 +175,6 @@ public class MapVisibilityController implements Controller {
     int canvasY = shadowMap.getCanvasY();
     int mapWidth = shadowMap.getMapWidth();
     int mapHeight = shadowMap.getMapHeight();
-    System.out.println(canvasX);
     Point p1 = new Point(canvasX, canvasY);
     Point p2 = new Point(canvasX + mapWidth, canvasY);
     Point p3 = new Point(canvasX + mapWidth, canvasY + mapHeight);
@@ -198,6 +197,11 @@ public class MapVisibilityController implements Controller {
 
   public MapCanvas getShadowMap() {
     return shadowMap;
+  }
+
+  public void update() {
+    computeObjectSegments();
+    shadowMap.paint();
   }
 
   public void unbindMap() {
