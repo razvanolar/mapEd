@@ -35,6 +35,8 @@ public class ProjectModel {
   private List<MapDetail> mapDetails = new ArrayList<>();
   private Map<TabKey, List<File>> openedTileTabs = new HashMap<>();
 
+  private boolean is2DVisibilitySelected;
+
   public ProjectModel() {}
 
   public ProjectModel(String name, String homePath, MapType mapType, int cellSize) {
@@ -101,6 +103,10 @@ public class ProjectModel {
     return lwMapModels;
   }
 
+  public boolean is2DVisibilitySelected() {
+    return is2DVisibilitySelected;
+  }
+
   public void setName(String name) {
     this.name = name;
   }
@@ -145,6 +151,10 @@ public class ProjectModel {
 
   public void setLwMapModels(List<LWMapModel> lwMapModels) {
     this.lwMapModels = lwMapModels;
+  }
+
+  public void setIs2DVisibilitySelected(boolean is2DVisibilitySelected) {
+    this.is2DVisibilitySelected = is2DVisibilitySelected;
   }
 
   /**

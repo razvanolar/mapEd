@@ -28,6 +28,7 @@ public class ProjectXMLConverter {
     builder.append("\">\n");
 
     builder.append("\t<hex_counter value=\"").append(project.getHexValue()).append("\" />\n");
+    builder.append("\t<light_visibility value=\"").append(project.is2DVisibilitySelected()).append("\" />");
 
     // convert opened maps
     convertMapDetails(builder, project);

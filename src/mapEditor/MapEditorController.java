@@ -63,7 +63,7 @@ public class MapEditorController {
 
     /* init main toolbar */
     MapEditorToolbarController.IMapEditorToolbarView toolbarView = new MapEditorToolbarView();
-    toolbarController = new MapEditorToolbarController(toolbarView);
+    toolbarController = new MapEditorToolbarController(toolbarView, AppParameters.CURRENT_PROJECT.is2DVisibilitySelected());
     toolbarController.bind();
 
     /* init status bar */
@@ -94,6 +94,8 @@ public class MapEditorController {
         if (isCtrlDown) {
           if (event.getCode() == KeyCode.N)
             toolbarController.showCreateMapDialog();
+          if (event.getCode() == KeyCode.S)
+            saveSelectedMap();
         }
       });
     }
@@ -105,6 +107,7 @@ public class MapEditorController {
   }
 
   public void changeVisibilityState(boolean is2DVisibilitySelected) {
+    AppParameters.CURRENT_PROJECT.setIs2DVisibilitySelected(is2DVisibilitySelected);
     manageMapsController.change2DVisibilityState(is2DVisibilitySelected, null);
   }
 
@@ -210,7 +213,26 @@ public class MapEditorController {
 
   public void saveCurrentProjectState() {
     manageMapsController.updateMapModelsForExistingTabs();
+    AppParameters.CURRENT_PROJECT.setIs2DVisibilitySelected(is2DVisibilitySelected());
     repoController.saveProject(AppParameters.CURRENT_PROJECT);
+  }
+
+  public void saveSelectedMap() {
+    if (manageMapsController == null)
+      return;
+    MapDetail mapDetail = manageMapsController.getSelectedMapDetail();
+    if (mapDetail == null) {
+      Dialog.showWarningDialog(null, "Detail model for the selected map is null!");
+      return;
+    }
+    Platform.runLater(() -> {
+      try {
+        repoController.saveMap(AppParameters.CURRENT_PROJECT.getHomePath(), mapDetail, null, true);
+        System.out.println("MapEditorController - saveSelectedMap - " + mapDetail.getName() + " was saved");
+      } catch (Exception ex) {
+        System.out.println("MapEditorController - saveSelectedMap - Unable to save map: " + mapDetail.getName() + " Error message: " + ex.getMessage());
+      }
+    });
   }
 
   public void changeToMapView() {
@@ -277,16 +299,5 @@ public class MapEditorController {
 
   public ManageTilesController getManageTilesController() {
     return manageMapsController != null ? manageMapsController.getManageTilesController() : null;
-  }
-
-  /**
-   * Controller thread
-   */
-  private void runMapEditorListener() {
-    Platform.runLater(() -> {
-      while (true) {
-
-      }
-    });
   }
 }

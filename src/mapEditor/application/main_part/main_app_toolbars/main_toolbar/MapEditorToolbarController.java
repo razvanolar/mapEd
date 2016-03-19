@@ -29,8 +29,9 @@ public class MapEditorToolbarController implements Controller {
 
   private IMapEditorToolbarView view;
 
-  public MapEditorToolbarController(IMapEditorToolbarView view) {
+  public MapEditorToolbarController(IMapEditorToolbarView view, boolean is2DVisibilitySelected) {
     this.view = view;
+    this.view.getChangeVisibility().setSelected(is2DVisibilitySelected);
   }
 
   public void bind() {
@@ -76,6 +77,10 @@ public class MapEditorToolbarController implements Controller {
 
   public void changeToImageEditorView() {
     view.getImageEditorViewButton().setSelected(true);
+  }
+
+  public void setVisibilitySelected(boolean value) {
+    view.getChangeVisibility().setSelected(value);
   }
 
   public boolean isMapViewSelected() {

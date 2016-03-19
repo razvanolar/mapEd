@@ -23,6 +23,7 @@ public class PrimaryMapController implements Controller {
   @Override
   public void bind() {
     MapStoredImagesLoader.createTilesContainerFromFromDiskIndexTiles(canvas);
+    canvas.updateMapModelInfos();
     addListeners();
     canvas.paint();
   }

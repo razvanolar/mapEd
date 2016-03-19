@@ -57,7 +57,7 @@ public class ManageMapsController implements Controller, MapLayersListener, Sele
             SystemParameters.MAP_DEFAULT_SIZE_NUMBER, SystemParameters.MAP_DEFAULT_BG_COLOR,
             SystemParameters.MAP_DEFAULT_GRID_COLOR, SystemParameters.MAP_DEFAULT_SQUARE_COLOR,
             AppParameters.CURRENT_PROJECT.getMapType());
-    addListeners();
+
     initControllers();
     List<MapDetail> mapDetails = AppParameters.CURRENT_PROJECT.getMapDetails();
     if (mapDetails != null && !mapDetails.isEmpty()) {
@@ -65,6 +65,9 @@ public class ManageMapsController implements Controller, MapLayersListener, Sele
         createMap(mapDetail, false, mapDetail.isSelected());
     } else
       createMap(defaultModel, false, false);
+
+    addListeners();
+    change2DVisibilityState(MapEditorController.getInstance().is2DVisibilitySelected(), getSelectedTab());
   }
 
   private void addListeners() {
@@ -165,6 +168,8 @@ public class ManageMapsController implements Controller, MapLayersListener, Sele
 
     if (mapDetail != defaultModel)
       AppParameters.CURRENT_PROJECT.addMapModel(mapDetail);
+    if (selectTab)
+      layersController.loadLayers(mapDetail.getLayers());
 
     if (removeUntitled)
       removeUntitledTab();
@@ -402,8 +407,25 @@ public class ManageMapsController implements Controller, MapLayersListener, Sele
     return null;
   }
 
+  /**
+   * Gets the selected map model. The data model will be updated.
+   * @return MapDetail
+   */
+  public MapDetail getSelectedMapDetail() {
+    PrimaryMapView mapView = getSelectedMap();
+    if (mapView == null)
+      return null;
+    mapView.updateMapModelDetails();
+    mapView.updateMapModelInfos();
+    return mapView.getMapDetail();
+  }
+
   private PrimaryMapView getSelectedMap() {
     return (PrimaryMapView) view.getMapsTabPane().getSelectionModel().getSelectedItem().getUserData();
+  }
+
+  private Tab getSelectedTab() {
+    return view.getMapsTabPane().getSelectionModel().getSelectedItem();
   }
 
   public View getView() {

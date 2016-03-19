@@ -85,27 +85,29 @@ public class MapVisibilityController implements Controller {
     MapTilesContainer tilesContainer = shadowMap.getTilesContainer();
     int canvasX = shadowMap.getCanvasX();
     int canvasY = shadowMap.getCanvasY();
-    for (LayerModel layer : layers) {
-      if (layer.getType() != LayerType.OBJECT || !layer.isChecked())
-        continue;
-      ImageModel[][] matrix = tilesContainer.getTilesForLayer(layer);
-      if (matrix == null)
-        continue;
-      for (int i=0; i<matrix.length; i++) {
-        for (int j=0; j<matrix[i].length; j++) {
-          if (matrix[i][j] != null) {
-            Point p1 = new Point(j * size + canvasX, i * size + canvasY);
-            Point p2 = new Point((j+1) * size + canvasX, i * size + canvasY);
-            Point p3 = new Point((j+1) * size + canvasX, (i+1) * size + canvasY);
-            Point p4 = new Point(j * size + canvasX, (i+1) * size + canvasY);
+    if (layers != null) {
+      for (LayerModel layer : layers) {
+        if (layer.getType() != LayerType.OBJECT || !layer.isChecked())
+          continue;
+        ImageModel[][] matrix = tilesContainer.getTilesForLayer(layer);
+        if (matrix == null)
+          continue;
+        for (int i = 0; i < matrix.length; i++) {
+          for (int j = 0; j < matrix[i].length; j++) {
+            if (matrix[i][j] != null) {
+              Point p1 = new Point(j * size + canvasX, i * size + canvasY);
+              Point p2 = new Point((j + 1) * size + canvasX, i * size + canvasY);
+              Point p3 = new Point((j + 1) * size + canvasX, (i + 1) * size + canvasY);
+              Point p4 = new Point(j * size + canvasX, (i + 1) * size + canvasY);
 
-            List<Line> lines = new ArrayList<>();
-            lines.add(new Line(p1, p2));
-            lines.add(new Line(p2, p3));
-            lines.add(new Line(p3, p4));
-            lines.add(new Line(p4, p1));
+              List<Line> lines = new ArrayList<>();
+              lines.add(new Line(p1, p2));
+              lines.add(new Line(p2, p3));
+              lines.add(new Line(p3, p4));
+              lines.add(new Line(p4, p1));
 
-            tilesLineSegments.add(lines);
+              tilesLineSegments.add(lines);
+            }
           }
         }
       }
