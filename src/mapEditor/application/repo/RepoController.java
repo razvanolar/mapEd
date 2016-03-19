@@ -170,12 +170,14 @@ public class RepoController {
 
     MapXMLHandler handler = new MapXMLHandler(project.getHomePath());
     String projectMapsPath = project.getMapsFile().getAbsolutePath();
+    boolean showGrid = project.isShowGrid();
     for (LWMapModel lwModel : lwMapModels) {
       try {
         String mapAbsolutePath = projectMapsPath + lwModel.getRelativePath();
         mapAbsolutePath = mapAbsolutePath.endsWith("\\") ? mapAbsolutePath : mapAbsolutePath + "\\";
         MapDetail mapDetail = createMapModelFromFile(project.getHomePath(), new File(mapAbsolutePath + lwModel.getName()), handler);
         mapDetail.setSelected(lwModel.isSelected());
+        mapDetail.setShowGrid(showGrid);
         project.addMapModel(mapDetail);
         handler.clearHandlerFields();
       } catch (Exception ex) {

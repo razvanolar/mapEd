@@ -46,6 +46,9 @@ public class ProjectSAXHandler extends DefaultHandler {
       case "light_visibility":
         project.setIs2DVisibilitySelected(Boolean.valueOf(attributes.getValue("value")));
         break;
+      case "show_grid":
+        project.setShowGrid(Boolean.valueOf(attributes.getValue("value")));
+        break;
       case "maps":
         project.setCellSize(Integer.parseInt(attributes.getValue("cellSize")));
         project.setMapType(MapType.valueOf(attributes.getValue("type")));

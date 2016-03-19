@@ -31,9 +31,10 @@ public class MapEditorToolbarController implements Controller {
 
   private IMapEditorToolbarView view;
 
-  public MapEditorToolbarController(IMapEditorToolbarView view, boolean is2DVisibilitySelected) {
+  public MapEditorToolbarController(IMapEditorToolbarView view, boolean is2DVisibilitySelected, boolean isShowGridSelected) {
     this.view = view;
     this.view.getChange2DVisibility().setSelected(is2DVisibilitySelected);
+    this.view.getShowGridButton().setSelected(isShowGridSelected);
   }
 
   public void bind() {

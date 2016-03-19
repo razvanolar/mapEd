@@ -154,6 +154,7 @@ public class ManageMapsController implements Controller, MapLayersListener, Sele
   }
 
   private void createMap(MapDetail mapDetail, boolean removeUntitled, boolean selectTab) {
+    mapDetail.setShowGrid(AppParameters.CURRENT_PROJECT.isShowGrid());
     PrimaryMapView primaryMapView = new PrimaryMapView(mapDetail);
     ScrollPane scrollPane = view.addMap(mapDetail.getName(), primaryMapView, selectTab);
     PrimaryMapController controller = new PrimaryMapController(primaryMapView, scrollPane);

@@ -63,7 +63,9 @@ public class MapEditorController {
 
     /* init main toolbar */
     MapEditorToolbarController.IMapEditorToolbarView toolbarView = new MapEditorToolbarView();
-    toolbarController = new MapEditorToolbarController(toolbarView, AppParameters.CURRENT_PROJECT.is2DVisibilitySelected());
+    toolbarController = new MapEditorToolbarController(toolbarView,
+            AppParameters.CURRENT_PROJECT.is2DVisibilitySelected(),
+            AppParameters.CURRENT_PROJECT.isShowGrid());
     toolbarController.bind();
 
     /* init status bar */
