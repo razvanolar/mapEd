@@ -309,6 +309,15 @@ public class ManageMapsController implements Controller, MapLayersListener, Sele
     }
   }
 
+  public void showGridValueChanged(boolean value) {
+    for (Tab tab : view.getMapsTabPane().getTabs()) {
+      PrimaryMapView mapView = (PrimaryMapView) tab.getUserData();
+      mapView.setEnableGrid(value);
+      if (tab.isSelected())
+        mapView.paint();
+    }
+  }
+
   @Override
   public void addLayer(LayerModel layer) {
     PrimaryMapView mapView = getSelectedMap();

@@ -22,7 +22,9 @@ public class MapEditorToolbarController implements Controller {
 
   public interface IMapEditorToolbarView extends View {
     Button getNewMapButton();
-    ToggleButton getChangeVisibility();
+    ToggleButton getChange2DVisibility();
+    ToggleButton getChangeGridVisibility();
+    ToggleButton getShowGridButton();
     ToggleButton getMapEditorViewButton();
     ToggleButton getImageEditorViewButton();
   }
@@ -31,7 +33,7 @@ public class MapEditorToolbarController implements Controller {
 
   public MapEditorToolbarController(IMapEditorToolbarView view, boolean is2DVisibilitySelected) {
     this.view = view;
-    this.view.getChangeVisibility().setSelected(is2DVisibilitySelected);
+    this.view.getChange2DVisibility().setSelected(is2DVisibilitySelected);
   }
 
   public void bind() {
@@ -39,17 +41,26 @@ public class MapEditorToolbarController implements Controller {
   }
 
   private void addListeners() {
-    ChangeListener<Boolean> changeListener = (observable, oldValue, newValue) -> {
+    // new map listener
+    view.getNewMapButton().setOnAction(event -> onNewMapButtonSelection());
+
+    // visibility listener
+    view.getChange2DVisibility().selectedProperty().addListener((observable, oldValue, newValue) -> {
+      MapEditorController.getInstance().changeVisibilityState(newValue);
+    });
+
+    // show grid listener
+    view.getShowGridButton().selectedProperty().addListener((observable1, oldValue1, newValue1) -> {
+      MapEditorController.getInstance().showMapGrid(newValue1);
+    });
+
+    // editors listeners
+    ChangeListener<Boolean> editorsChangeListener = (observable, oldValue, newValue) -> {
       if (newValue)
         MapEditorController.getInstance().changeView();
     };
-    view.getMapEditorViewButton().selectedProperty().addListener(changeListener);
-    view.getImageEditorViewButton().selectedProperty().addListener(changeListener);
-
-    view.getNewMapButton().setOnAction(event -> onNewMapButtonSelection());
-    view.getChangeVisibility().selectedProperty().addListener((observable, oldValue, newValue) -> {
-      MapEditorController.getInstance().changeVisibilityState(newValue);
-    });
+    view.getMapEditorViewButton().selectedProperty().addListener(editorsChangeListener);
+    view.getImageEditorViewButton().selectedProperty().addListener(editorsChangeListener);
   }
 
   /**
@@ -79,16 +90,12 @@ public class MapEditorToolbarController implements Controller {
     view.getImageEditorViewButton().setSelected(true);
   }
 
-  public void setVisibilitySelected(boolean value) {
-    view.getChangeVisibility().setSelected(value);
-  }
-
   public boolean isMapViewSelected() {
     return view.getMapEditorViewButton().isSelected();
   }
 
   public boolean is2DVisibilitySelected() {
-    return view.getChangeVisibility().isSelected();
+    return view.getChange2DVisibility().isSelected();
   }
 
   public void showCreateMapDialog() {

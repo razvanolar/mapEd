@@ -34,6 +34,7 @@ public class PrimaryMapView extends MapCanvas {
     fillColor = mapDetail.getBackgroundColor();
     gridColor = mapDetail.getGridColor();
     squareColor = mapDetail.getSquareColor();
+    gridEnabled = mapDetail.isShowGrid();
     this.setCache(true);
     this.setCacheHint(CacheHint.SPEED);
 
@@ -62,15 +63,15 @@ public class PrimaryMapView extends MapCanvas {
       lastValidCanvasX = canvasX;
       lastValidCanvasY = canvasY;
 
-      /* this 'if' block is same as in the MiniMapCanvas method; be careful when you modified it, probably the one from
-       * the child class method needs to be modified also */
       if(paintMap) {
         paint();
         MapEditorController.getInstance().setSceneCursor(Cursor.DEFAULT);
         notifyPositionChange();
       }
+    } else {
+      if (!gridEnabled && paintMap)
+        paint();
     }
-
   }
 
   public void onMouseMovedEvent(MouseEvent event) {
@@ -87,6 +88,8 @@ public class PrimaryMapView extends MapCanvas {
     if (lastMoveX == hoveredCellX && lastMoveY == hoveredCellY)
       return;
 
+    if (!gridEnabled)
+      paint();
     drawGridLines(hoveredCellX, hoveredCellY);
 
     lastMoveX = hoveredCellX;

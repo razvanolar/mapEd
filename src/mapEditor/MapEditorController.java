@@ -111,6 +111,11 @@ public class MapEditorController {
     manageMapsController.change2DVisibilityState(is2DVisibilitySelected, null);
   }
 
+  public void showMapGrid(boolean showMapGrid) {
+    AppParameters.CURRENT_PROJECT.setShowGrid(showMapGrid);
+    manageMapsController.showGridValueChanged(showMapGrid);
+  }
+
   /**
    * Change primary content view. It is switching between map view and image view.
    * It is called when the view selection of the toolbar is changed.

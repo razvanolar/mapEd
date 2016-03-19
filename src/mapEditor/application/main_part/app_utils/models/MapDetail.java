@@ -26,6 +26,7 @@ public class MapDetail {
   private MapType type;
   private List<LayerModel> layers;
   private MapTilesInfo mapTilesInfo;
+  private boolean showGrid;
   private boolean selected;
 
   private DiskIndexedTilesModel diskIndexedTilesModel;
@@ -97,6 +98,10 @@ public class MapDetail {
     return mapTilesInfo;
   }
 
+  public boolean isShowGrid() {
+    return showGrid;
+  }
+
   public boolean isSelected() {
     return selected;
   }
@@ -166,6 +171,10 @@ public class MapDetail {
 
   public void setSelected(boolean selected) {
     this.selected = selected;
+  }
+
+  public void setShowGrid(boolean showGrid) {
+    this.showGrid = showGrid;
   }
 
   public void setDiskIndexedTilesModel(DiskIndexedTilesModel diskIndexedTilesModel) {

@@ -36,6 +36,7 @@ public class ProjectModel {
   private Map<TabKey, List<File>> openedTileTabs = new HashMap<>();
 
   private boolean is2DVisibilitySelected;
+  private boolean showGrid = SystemParameters.DEFAULT_SHOW_GRID_VALUE;
 
   public ProjectModel() {}
 
@@ -107,6 +108,10 @@ public class ProjectModel {
     return is2DVisibilitySelected;
   }
 
+  public boolean isShowGrid() {
+    return showGrid;
+  }
+
   public void setName(String name) {
     this.name = name;
   }
@@ -155,6 +160,10 @@ public class ProjectModel {
 
   public void setIs2DVisibilitySelected(boolean is2DVisibilitySelected) {
     this.is2DVisibilitySelected = is2DVisibilitySelected;
+  }
+
+  public void setShowGrid(boolean showGrid) {
+    this.showGrid = showGrid;
   }
 
   /**

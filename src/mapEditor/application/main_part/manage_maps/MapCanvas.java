@@ -351,27 +351,13 @@ public class MapCanvas extends Canvas {
    * @param x      - the x coordinate of the hovered cell
    * @param y      - the y coordinate of the hovered cell
    */
-  protected void drawGrid(GraphicsContext g, int x, int y, int startX, int startY, int stopX, int stopY/*,
-                          List<SelectedTilesUtil.TileDetails> secondaryPattern*/) {
-    //TODO: draw the secondary selection pattern on the grid
-    if (!gridEnabled)
-      return;
-    drawGrid(g, startX, startY, stopX, stopY);
+  protected void drawGrid(GraphicsContext g, int x, int y, int startX, int startY, int stopX, int stopY) {
+    // draw the whole grid only if it's enabled
+    if (gridEnabled)
+      drawGrid(g, startX, startY, stopX, stopY);
+
     g.setStroke(squareColor);
-
     g.strokeRect(x + 0.5, y + 0.5, CELL_WIDTH, CELL_HEIGHT);
-
-    /* draw the secondary pattern on the grid */
-//    if(secondaryPattern == null || secondaryPattern.isEmpty())
-//      return;
-//    for(SelectedTilesUtil.TileDetails tileDetail : secondaryPattern) {
-//      int sX = x + (tileDetail.X * CELL_WIDTH);
-//      int sY = y + (tileDetail.Y * CELL_HEIGHT);
-//      /* check boundaries */
-//      if(sX >= canvasX && sX < canvasX + getMapWidth() &&
-//              sY >= canvasY && sY < canvasY + getMapHeight())
-//        g.strokeRect(sX + 0.5, sY + 0.5, CELL_WIDTH, CELL_HEIGHT);
-//    }
   }
 
   /**
@@ -497,6 +483,8 @@ public class MapCanvas extends Canvas {
 
   public void setEnableGrid(boolean value) {
     gridEnabled = value;
+    if (mapDetail != null)
+      mapDetail.setShowGrid(value);
   }
 
   public void notifyPositionChange() {
