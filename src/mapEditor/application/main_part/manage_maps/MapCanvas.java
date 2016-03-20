@@ -33,6 +33,8 @@ public class MapCanvas extends Canvas {
 
   protected boolean gridEnabled = true;
   protected double pressedX, pressedY;
+  protected int hoveredCellX;
+  protected int hoveredCellY;
   /**
    * zoomStatus must be in [-10, 15]
    */
@@ -120,8 +122,6 @@ public class MapCanvas extends Canvas {
       return;
     pressedX = event.getX();
     pressedY = event.getY();
-
-//    System.out.println("pressedX : " + pressedX + " pressedY : " + pressedY);
   }
 
   /**
@@ -529,6 +529,14 @@ public class MapCanvas extends Canvas {
   public int getCanvasX() { return dragDetected ? lastValidCanvasX : canvasX; }
 
   public int getCanvasY() { return dragDetected ? lastValidCanvasY : canvasY; }
+
+  public int getHoveredCellX() {
+    return hoveredCellX;
+  }
+
+  public int getHoveredCellY() {
+    return hoveredCellY;
+  }
 
   public int getCellWidth() { return CELL_WIDTH; }
 

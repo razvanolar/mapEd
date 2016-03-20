@@ -47,7 +47,10 @@ public class MapEditorToolbarController implements Controller {
 
     // visibility listener
     view.getChange2DVisibility().selectedProperty().addListener((observable, oldValue, newValue) -> {
-      MapEditorController.getInstance().changeVisibilityState(newValue);
+      MapEditorController.getInstance().changeVisibilityState(newValue, false);
+    });
+    view.getChangeGridVisibility().selectedProperty().addListener((observable, oldValue, newValue) -> {
+      MapEditorController.getInstance().changeVisibilityState(false, newValue);
     });
 
     // show grid listener
@@ -97,6 +100,10 @@ public class MapEditorToolbarController implements Controller {
 
   public boolean is2DVisibilitySelected() {
     return view.getChange2DVisibility().isSelected();
+  }
+
+  public boolean isGridVisibilitySelected() {
+    return view.getChangeGridVisibility().isSelected();
   }
 
   public void showCreateMapDialog() {

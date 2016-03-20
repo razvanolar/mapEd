@@ -82,8 +82,8 @@ public class PrimaryMapView extends MapCanvas {
     if (!checkMouseBorders(x, y))
       return;
 
-    int hoveredCellX = (int) ((event.getX() - canvasX) / CELL_WIDTH) * CELL_WIDTH;
-    int hoveredCellY = (int) ((event.getY() - canvasY) / CELL_HEIGHT) * CELL_HEIGHT;
+    hoveredCellX = (int) ((event.getX() - canvasX) / CELL_WIDTH) * CELL_WIDTH;
+    hoveredCellY = (int) ((event.getY() - canvasY) / CELL_HEIGHT) * CELL_HEIGHT;
 
     if (lastMoveX == hoveredCellX && lastMoveY == hoveredCellY)
       return;

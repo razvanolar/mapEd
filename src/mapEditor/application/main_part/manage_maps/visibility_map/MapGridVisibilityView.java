@@ -6,13 +6,13 @@ import mapEditor.application.main_part.app_utils.constants.CssConstants;
 
 /**
  *
- * Created by razvanolar on 14.03.2016.
+ * Created by razvanolar on 19.03.2016.
  */
-public class MapVisibilityView implements MapVisibilityController.IMapVisibilityView {
+public class MapGridVisibilityView implements MapGridVisibilityController.IMapGridVisibilityView {
 
   private ScrollPane scrollPane;
 
-  public MapVisibilityView() {
+  public MapGridVisibilityView() {
     initGUI();
   }
 

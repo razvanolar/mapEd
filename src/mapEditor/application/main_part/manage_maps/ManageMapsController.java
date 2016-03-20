@@ -13,13 +13,15 @@ import mapEditor.application.main_part.app_utils.models.MapDetail;
 import mapEditor.application.main_part.app_utils.views.dialogs.Dialog;
 import mapEditor.application.main_part.manage_maps.manage_layers.LayersController;
 import mapEditor.application.main_part.manage_maps.manage_tiles.ManageTilesController;
-import mapEditor.application.main_part.manage_maps.visibility_map.MapVisibilityController;
-import mapEditor.application.main_part.manage_maps.visibility_map.MapVisibilityView;
+import mapEditor.application.main_part.manage_maps.visibility_map.Map2DVisibilityController;
+import mapEditor.application.main_part.manage_maps.visibility_map.Map2DVisibilityView;
 import mapEditor.application.main_part.manage_maps.primary_map.PrimaryMapController;
 import mapEditor.application.main_part.manage_maps.primary_map.PrimaryMapView;
 import mapEditor.application.main_part.manage_maps.utils.MapContentStateKeys;
 import mapEditor.application.main_part.manage_maps.utils.MapLayersListener;
 import mapEditor.application.main_part.manage_maps.utils.SelectedTileListener;
+import mapEditor.application.main_part.manage_maps.visibility_map.MapGridVisibilityController;
+import mapEditor.application.main_part.manage_maps.visibility_map.MapGridVisibilityView;
 import mapEditor.application.main_part.types.Controller;
 import mapEditor.application.main_part.types.View;
 import mapEditor.application.repo.SystemParameters;
@@ -67,13 +69,16 @@ public class ManageMapsController implements Controller, MapLayersListener, Sele
       createMap(defaultModel, false, false);
 
     addListeners();
-    change2DVisibilityState(MapEditorController.getInstance().is2DVisibilitySelected(), getSelectedTab());
+    change2DVisibilityState(MapEditorController.getInstance().is2DVisibilitySelected(),
+            MapEditorController.getInstance().isGridVisibilitySelected(),
+            getSelectedTab());
   }
 
   private void addListeners() {
     view.getMapsTabPane().getSelectionModel().selectedItemProperty().addListener((observable, oldItem, newItem) -> {
       if (newItem != null) {
         boolean is2DVisibilitySelected = MapEditorController.getInstance().is2DVisibilitySelected();
+        boolean isGridVisibilitySelected = MapEditorController.getInstance().isGridVisibilitySelected();
         MapCanvas mapCanvas = (MapCanvas) newItem.getUserData();
         MapCanvas visibilityCanvas = null;
 
@@ -84,7 +89,7 @@ public class ManageMapsController implements Controller, MapLayersListener, Sele
         mapCanvas.setDrawingTile(selectedTile);
 
         // change view according to selected visibility state
-        change2DVisibilityState(is2DVisibilitySelected, newItem);
+        change2DVisibilityState(is2DVisibilitySelected, isGridVisibilitySelected, newItem);
 
         // add scroll pane size change listeners
         ScrollPane scrollPane = (ScrollPane) newItem.getContent();
@@ -96,9 +101,9 @@ public class ManageMapsController implements Controller, MapLayersListener, Sele
 
         // bind canvas size properties with the scroll pane properties
         if (is2DVisibilitySelected) {
-          Object object = newItem.getProperties().get(MapContentStateKeys.VISIBILITY_CONTROLLER);
-          if (object != null && object instanceof MapVisibilityController) {
-            MapVisibilityController visibilityController = (MapVisibilityController) object;
+          Object object = newItem.getProperties().get(MapContentStateKeys.VISIBILITY_2D_CONTROLLER);
+          if (object != null && object instanceof Map2DVisibilityController) {
+            Map2DVisibilityController visibilityController = (Map2DVisibilityController) object;
             visibilityCanvas = visibilityController.getShadowMap();
             visibilityCanvas.widthProperty().bind(scrollPane.widthProperty());
             visibilityCanvas.heightProperty().bind(scrollPane.heightProperty());
@@ -126,9 +131,9 @@ public class ManageMapsController implements Controller, MapLayersListener, Sele
         mapView.getMapDetail().setSelected(false);
 
         // if there is a visibility map created, make sure to unbind that also
-        Object object = oldItem.getProperties().get(MapContentStateKeys.VISIBILITY_CONTROLLER);
-        if (object != null && object instanceof MapVisibilityController) {
-          ((MapVisibilityController) object).unbindMap();
+        Object object = oldItem.getProperties().get(MapContentStateKeys.VISIBILITY_2D_CONTROLLER);
+        if (object != null && object instanceof Map2DVisibilityController) {
+          ((Map2DVisibilityController) object).unbindMap();
         }
       }
     });
@@ -249,45 +254,65 @@ public class ManageMapsController implements Controller, MapLayersListener, Sele
     MapEditorController.getInstance().unmaskView();
   }
 
-  public void change2DVisibilityState(boolean is2DVisibilitySelected, Tab tab) {
+  public void change2DVisibilityState(boolean is2DVisibilitySelected, boolean isGridVisibilitySelected, Tab tab) {
     if (tab == null)
       tab = view.getMapsTabPane().getSelectionModel().getSelectedItem();
+    if (is2DVisibilitySelected && isGridVisibilitySelected) {
+      Dialog.showWarningDialog(null, "Both 2D and grid visibility state are selected!");
+      return;
+    }
     if (tab == null || tab.getUserData() == null || !(tab.getUserData() instanceof PrimaryMapView))
       return;
 
     PrimaryMapView mapView = (PrimaryMapView) tab.getUserData();
 
-    MapVisibilityController visibilityController = null;
-    Object object = tab.getProperties().get(MapContentStateKeys.VISIBILITY_CONTROLLER);
-    if (object != null && object instanceof MapVisibilityController)
-      visibilityController = (MapVisibilityController) object;
+    Map2DVisibilityController visibility2DController = null;
+    MapGridVisibilityController visibilityGridController = null;
+    Object visibilityController1 = tab.getProperties().get(MapContentStateKeys.VISIBILITY_2D_CONTROLLER);
+    Object visibilityController2 = tab.getProperties().get(MapContentStateKeys.VISIBILITY_GRID_CONTROLLER);
+    if (visibilityController1 != null && visibilityController1 instanceof Map2DVisibilityController)
+      visibility2DController = (Map2DVisibilityController) visibilityController1;
+    if (visibilityController2 != null && visibilityController2 instanceof MapGridVisibilityController)
+      visibilityGridController = (MapGridVisibilityController) visibilityController2;
 
     mapView.updateMapModelDetails();
     mapView.updateMapModelInfos();
 
     if (is2DVisibilitySelected) {
-      if (visibilityController == null) {
-        MapVisibilityController.IMapVisibilityView visibilityView = new MapVisibilityView();
-        visibilityController = new MapVisibilityController(visibilityView, mapView.getMapDetail().duplicate());
-        visibilityController.bind();
+      if (visibility2DController == null) {
+        Map2DVisibilityController.IMap2DVisibilityView visibilityView = new Map2DVisibilityView();
+        visibility2DController = new Map2DVisibilityController(visibilityView, mapView.getMapDetail().duplicate());
+        visibility2DController.bind();
 
         tab.setContent(visibilityView.asNode());
-        tab.getProperties().put(MapContentStateKeys.VISIBILITY_CONTROLLER, visibilityController);
+        tab.getProperties().put(MapContentStateKeys.VISIBILITY_2D_CONTROLLER, visibility2DController);
       } else {
-        visibilityController.setMapDetail(mapView.getMapDetail().duplicate());
-        tab.setContent(visibilityController.getView().asNode());
+        visibility2DController.setMapDetail(mapView.getMapDetail().duplicate());
+        tab.setContent(visibility2DController.getView().asNode());
       }
       mapView.widthProperty().unbind();
       mapView.heightProperty().unbind();
+    } else if (isGridVisibilitySelected) {
+      if (visibilityGridController == null) {
+        MapGridVisibilityController.IMapGridVisibilityView visibilityView = new MapGridVisibilityView();
+        visibilityGridController = new MapGridVisibilityController(visibilityView, mapView.getMapDetail().duplicate());
+        visibilityGridController.bind();
+
+        tab.setContent(visibilityView.asNode());
+        tab.getProperties().put(MapContentStateKeys.VISIBILITY_GRID_CONTROLLER, visibilityGridController);
+      } else {
+        visibilityGridController.setMapDetail(mapView.getMapDetail().duplicate());
+        tab.setContent(visibilityGridController.getView().asNode());
+      }
     } else {
-      object = tab.getProperties().get(MapContentStateKeys.MAP_SCROLL_PANE);
+      Object object = tab.getProperties().get(MapContentStateKeys.MAP_SCROLL_PANE);
       if (object != null && object instanceof ScrollPane) {
         ScrollPane scrollPane = (ScrollPane) object;
         tab.setContent(scrollPane);
         mapView.widthProperty().bind(scrollPane.widthProperty());
         mapView.heightProperty().bind(scrollPane.heightProperty());
-        if (visibilityController != null)
-          visibilityController.unbindMap();
+        if (visibility2DController != null)
+          visibility2DController.unbindMap();
         mapView.paint();
       }
     }
@@ -374,9 +399,9 @@ public class ManageMapsController implements Controller, MapLayersListener, Sele
       Tab tab = view.getMapsTabPane().getSelectionModel().getSelectedItem();
       if (tab == null)
         return;
-      Object object = tab.getProperties().get(MapContentStateKeys.VISIBILITY_CONTROLLER);
-      if (object != null && object instanceof MapVisibilityController) {
-        ((MapVisibilityController) object).update();
+      Object object = tab.getProperties().get(MapContentStateKeys.VISIBILITY_2D_CONTROLLER);
+      if (object != null && object instanceof Map2DVisibilityController) {
+        ((Map2DVisibilityController) object).update();
       }
     } else {
       PrimaryMapView selectedMap = getSelectedMap();

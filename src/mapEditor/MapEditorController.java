@@ -108,9 +108,9 @@ public class MapEditorController {
     createProjectController.bind();
   }
 
-  public void changeVisibilityState(boolean is2DVisibilitySelected) {
+  public void changeVisibilityState(boolean is2DVisibilitySelected, boolean isGridVisibilitySelected) {
     AppParameters.CURRENT_PROJECT.setIs2DVisibilitySelected(is2DVisibilitySelected);
-    manageMapsController.change2DVisibilityState(is2DVisibilitySelected, null);
+    manageMapsController.change2DVisibilityState(is2DVisibilitySelected, isGridVisibilitySelected, null);
   }
 
   public void showMapGrid(boolean showMapGrid) {
@@ -302,6 +302,10 @@ public class MapEditorController {
 
   public boolean is2DVisibilitySelected() {
     return toolbarController.is2DVisibilitySelected();
+  }
+
+  public boolean isGridVisibilitySelected() {
+    return toolbarController.isGridVisibilitySelected();
   }
 
   public ManageTilesController getManageTilesController() {

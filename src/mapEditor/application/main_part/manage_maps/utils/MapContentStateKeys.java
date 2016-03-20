@@ -7,5 +7,6 @@ package mapEditor.application.main_part.manage_maps.utils;
 public class MapContentStateKeys {
 
   public static final String MAP_SCROLL_PANE = "MAP_SCROLL_PANE";
-  public static final String VISIBILITY_CONTROLLER = "VISIBILITY_CONTROLLER";
+  public static final String VISIBILITY_2D_CONTROLLER = "VISIBILITY_2D_CONTROLLER";
+  public static final String VISIBILITY_GRID_CONTROLLER = "VISIBILITY_GRID_CONTROLLER";
 }

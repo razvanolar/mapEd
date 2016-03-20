@@ -24,15 +24,15 @@ import java.util.List;
  *
  * Created by razvanolar on 14.03.2016.
  */
-public class MapVisibilityController implements Controller {
+public class Map2DVisibilityController implements Controller {
 
   private ChangeListener<Number> sizeChangeListener;
 
-  public interface IMapVisibilityView extends View {
+  public interface IMap2DVisibilityView extends View {
     ScrollPane getScrollPane();
   }
 
-  private IMapVisibilityView view;
+  private IMap2DVisibilityView view;
   private MapVisibilityUtils utils;
   private MapDetail mapDetail;
   private ShadowMap shadowMap;
@@ -41,7 +41,7 @@ public class MapVisibilityController implements Controller {
   private List<Line> borderSegments;
   private Point lightPosition;
 
-  public MapVisibilityController(IMapVisibilityView view, MapDetail mapDetail) {
+  public Map2DVisibilityController(IMap2DVisibilityView view, MapDetail mapDetail) {
     this.view = view;
     this.mapDetail = mapDetail;
     this.lightPosition = new Point(0, 0);
@@ -59,18 +59,19 @@ public class MapVisibilityController implements Controller {
     MapStoredImagesLoader.createTilesContainerFromTilesInfo(shadowMap);
     mapDetail.setZoomStatus(0);
 
-    shadowMap.widthProperty().bind(view.getScrollPane().widthProperty());
-    shadowMap.heightProperty().bind(view.getScrollPane().heightProperty());
+    ScrollPane scrollPane = view.getScrollPane();
+    shadowMap.widthProperty().bind(scrollPane.widthProperty());
+    shadowMap.heightProperty().bind(scrollPane.heightProperty());
 
-    view.getScrollPane().setUserData(getSizeChangeListener());
-    view.getScrollPane().widthProperty().addListener(getSizeChangeListener());
-    view.getScrollPane().heightProperty().addListener(getSizeChangeListener());
+    scrollPane.setUserData(getSizeChangeListener());
+    scrollPane.widthProperty().addListener(getSizeChangeListener());
+    scrollPane.heightProperty().addListener(getSizeChangeListener());
 
     shadowMap.addEventHandler(MouseEvent.MOUSE_PRESSED, shadowMap::onMousePressed);
     shadowMap.addEventFilter(MouseEvent.MOUSE_RELEASED, shadowMap::onMouseReleased);
     shadowMap.addEventHandler(MouseEvent.MOUSE_DRAGGED, this::onMouseDragged);
 
-    view.getScrollPane().setContent(shadowMap);
+    scrollPane.setContent(shadowMap);
     addListeners();
     shadowMap.paint();
     computeObjectSegments();
@@ -193,7 +194,7 @@ public class MapVisibilityController implements Controller {
     initBorders();
   }
 
-  public IMapVisibilityView getView() {
+  public IMap2DVisibilityView getView() {
     return view;
   }
 
