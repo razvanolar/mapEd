@@ -65,6 +65,7 @@ public class MapEditorController {
     MapEditorToolbarController.IMapEditorToolbarView toolbarView = new MapEditorToolbarView();
     toolbarController = new MapEditorToolbarController(toolbarView,
             AppParameters.CURRENT_PROJECT.is2DVisibilitySelected(),
+            AppParameters.CURRENT_PROJECT.isGridVisibilitySelected(),
             AppParameters.CURRENT_PROJECT.isShowGrid());
     toolbarController.bind();
 
@@ -110,6 +111,7 @@ public class MapEditorController {
 
   public void changeVisibilityState(boolean is2DVisibilitySelected, boolean isGridVisibilitySelected) {
     AppParameters.CURRENT_PROJECT.setIs2DVisibilitySelected(is2DVisibilitySelected);
+    AppParameters.CURRENT_PROJECT.setIsGridVisibilitySelected(isGridVisibilitySelected);
     manageMapsController.change2DVisibilityState(is2DVisibilitySelected, isGridVisibilitySelected, null);
   }
 
