@@ -48,6 +48,7 @@ public class ManageMapsController implements Controller, MapLayersListener, Sele
   private MapDetail defaultModel;
 
   private ImageModel selectedTile;
+  private boolean blockTabListener;
 
   public ManageMapsController(IMangeMapsView view) {
     this.view = view;
@@ -76,6 +77,8 @@ public class ManageMapsController implements Controller, MapLayersListener, Sele
 
   private void addListeners() {
     view.getMapsTabPane().getSelectionModel().selectedItemProperty().addListener((observable, oldItem, newItem) -> {
+      if (blockTabListener)
+        return;
       if (newItem != null) {
         boolean is2DVisibilitySelected = MapEditorController.getInstance().is2DVisibilitySelected();
         boolean isGridVisibilitySelected = MapEditorController.getInstance().isGridVisibilitySelected();
@@ -159,26 +162,34 @@ public class ManageMapsController implements Controller, MapLayersListener, Sele
   }
 
   private void createMap(MapDetail mapDetail, boolean removeUntitled, boolean selectTab) {
-    mapDetail.setShowGrid(AppParameters.CURRENT_PROJECT.isShowGrid());
-    PrimaryMapView primaryMapView = new PrimaryMapView(mapDetail);
-    ScrollPane scrollPane = view.addMap(mapDetail.getName(), primaryMapView, selectTab);
-    PrimaryMapController controller = new PrimaryMapController(primaryMapView, scrollPane);
+    blockTabListener = true;
+    try {
+      mapDetail.setShowGrid(AppParameters.CURRENT_PROJECT.isShowGrid());
+      PrimaryMapView primaryMapView = new PrimaryMapView(mapDetail);
+      ScrollPane scrollPane = view.addMap(mapDetail.getName(), primaryMapView, selectTab);
+      PrimaryMapController controller = new PrimaryMapController(primaryMapView, scrollPane);
 
-    ChangeListener<Number> sizeChangeListener = (observable, oldValue, newValue) -> primaryMapView.paint();
+      ChangeListener<Number> sizeChangeListener = (observable, oldValue, newValue) -> primaryMapView.paint();
 
-    scrollPane.setUserData(sizeChangeListener);
-    scrollPane.widthProperty().addListener(sizeChangeListener);
-    scrollPane.heightProperty().addListener(sizeChangeListener);
+      scrollPane.setUserData(sizeChangeListener);
+      scrollPane.widthProperty().addListener(sizeChangeListener);
+      scrollPane.heightProperty().addListener(sizeChangeListener);
 
-    controller.bind();
+      controller.bind();
 
-    if (mapDetail != defaultModel)
-      AppParameters.CURRENT_PROJECT.addMapModel(mapDetail);
-    if (selectTab)
-      layersController.loadLayers(mapDetail.getLayers());
+      if (mapDetail != defaultModel)
+        AppParameters.CURRENT_PROJECT.addMapModel(mapDetail);
+      if (selectTab) {
+        layersController.loadLayers(mapDetail.getLayers());
+        mapDetail.setSelected(true);
+      }
 
-    if (removeUntitled)
-      removeUntitledTab();
+      if (removeUntitled)
+        removeUntitledTab();
+    } catch (Exception ex) {
+      Dialog.showConfirmDialog(null, "Unable to create map. Error message: " + ex.getMessage());
+    }
+    blockTabListener = false;
   }
 
   /**
@@ -219,9 +230,12 @@ public class ManageMapsController implements Controller, MapLayersListener, Sele
       MapEditorController.getInstance().maskView();
       MapDetail mapDetail = MapEditorController.getInstance().getRepoController().createMapModelFromFile(AppParameters.CURRENT_PROJECT.getHomePath(), file, null);
       MapEditorController.getInstance().unmaskView();
-      if (mapDetail != null)
+      if (mapDetail != null) {
         createMap(mapDetail, true, true);
-      else
+        change2DVisibilityState(AppParameters.CURRENT_PROJECT.is2DVisibilitySelected(),
+                AppParameters.CURRENT_PROJECT.isGridVisibilitySelected(),
+                getSelectedTab());
+      } else
         Dialog.showWarningDialog("ManageMapsController - Warning", "Map instance is null.");
     } catch (Exception ex) {
       ex.printStackTrace();

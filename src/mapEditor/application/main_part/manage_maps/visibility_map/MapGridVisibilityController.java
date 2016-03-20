@@ -143,6 +143,9 @@ public class MapGridVisibilityController implements Controller {
       }
     }
 
+    if (objectsMatrix[cellY][cellX])
+      return;
+
     for (int i=0; i<MapVisibilityConstants.RAYS+1; i+=MapVisibilityConstants.STEP) {
       double ax = MapVisibilityConstants.SIN_TABLE[i];
       double ay = MapVisibilityConstants.COS_TABLE[i];
