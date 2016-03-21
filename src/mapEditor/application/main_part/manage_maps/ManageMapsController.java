@@ -5,16 +5,21 @@ import javafx.collections.ListChangeListener;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.stage.Modality;
+import javafx.stage.StageStyle;
 import mapEditor.MapEditorController;
 import mapEditor.application.main_part.app_utils.AppParameters;
+import mapEditor.application.main_part.app_utils.inputs.StringValidator;
 import mapEditor.application.main_part.app_utils.models.ImageModel;
 import mapEditor.application.main_part.app_utils.models.LayerModel;
 import mapEditor.application.main_part.app_utils.models.MapDetail;
 import mapEditor.application.main_part.app_utils.views.dialogs.Dialog;
+import mapEditor.application.main_part.app_utils.views.dialogs.OkCancelDialog;
 import mapEditor.application.main_part.manage_maps.manage_layers.LayersController;
 import mapEditor.application.main_part.manage_maps.manage_tiles.ManageTilesController;
 import mapEditor.application.main_part.manage_maps.primary_map.context_menu.PrimaryMapContextMenuController;
 import mapEditor.application.main_part.manage_maps.primary_map.context_menu.PrimaryMapContextMenuView;
+import mapEditor.application.main_part.manage_maps.utils.RenameMapController;
 import mapEditor.application.main_part.manage_maps.utils.listeners.MapContextMenuListener;
 import mapEditor.application.main_part.manage_maps.visibility_map.Map2DVisibilityController;
 import mapEditor.application.main_part.manage_maps.visibility_map.Map2DVisibilityView;
@@ -476,6 +481,21 @@ public class ManageMapsController implements Controller, MapLayersListener, Sele
   }
 
   @Override
+  public void renameCurrentMap() {
+    MapDetail mapDetail = getSelectedMapDetail();
+
+    OkCancelDialog dialog = new OkCancelDialog("Rename Map", StageStyle.UTILITY, Modality.APPLICATION_MODAL, false, 5);
+    RenameMapController renameController = new RenameMapController(mapDetail.getName(), dialog.getOkButton());
+    renameController.bind();
+    dialog.getOkButton().setOnAction(event -> {
+      renameMap(mapDetail, renameController.getMapName());
+      dialog.close();
+    });
+    dialog.setContent(renameController.getView());
+    dialog.show();
+  }
+
+  @Override
   public void deleteCurrentMap() {
     if (Dialog.showYesNoDialog(null, "Are you sure you want to delete the map?")) {
       PrimaryMapView mapView = getSelectedMap();
@@ -485,6 +505,52 @@ public class ManageMapsController implements Controller, MapLayersListener, Sele
       boolean mapWasDeleted = MapEditorController.getInstance().deleteMap(mapFile);
       if (mapWasDeleted)
         removeMapTabByFile(mapFile);
+    }
+  }
+
+  /**
+   * Rename the specified map. After renaming, try to save the map details.
+   * @param mapDetail
+   * MapDetail - details of the map that is renamed.
+   * @param newName
+   * String - new map name.
+   */
+  private void renameMap(MapDetail mapDetail, String newName) {
+    try {
+      String fromName = mapDetail.getAbsolutePath() + mapDetail.getName();
+      String toName = mapDetail.getAbsolutePath() + newName;
+      newName = MapEditorController.getInstance().getRepoController().renameFile(fromName, toName);
+      if (newName == null) {
+        Dialog.showWarningDialog(null, "Unable to rename map file: " + fromName);
+        return;
+      }
+      String oldName = mapDetail.getName();
+      mapDetail.setName(newName);
+      String mapName = MapEditorController.getInstance().getRepoController().saveMap(AppParameters.CURRENT_PROJECT.getHomePath(),
+              mapDetail, null, true);
+      if (mapName == null) {
+        mapDetail.setName(oldName);
+        Dialog.showWarningDialog(null, "Unable to save map details after the map was renamed.");
+        return;
+      }
+      renameTabByMapDetail(mapDetail);
+    } catch (Exception ex) {
+      Dialog.showErrorDialog(null, "Error occurred when renaming the map. Error message: " + ex.getMessage());
+    }
+  }
+
+  private void renameTabByMapDetail(MapDetail mapDetail) {
+    if (mapDetail == null || StringValidator.isNullOrEmpty(mapDetail.getName()))
+      return;
+    for (Tab tab : view.getMapsTabPane().getTabs()) {
+      if (tab.getUserData() != null && tab.getUserData() instanceof PrimaryMapView) {
+        PrimaryMapView mapView = (PrimaryMapView) tab.getUserData();
+        MapDetail md = mapView.getMapDetail();
+        if (md.getName().equals(mapDetail.getName()) && md.getName().equals(mapDetail.getAbsolutePath()) || md == mapDetail) {
+          tab.setText(mapDetail.getName());
+          break;
+        }
+      }
     }
   }
 

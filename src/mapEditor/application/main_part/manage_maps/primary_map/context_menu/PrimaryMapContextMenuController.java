@@ -37,6 +37,8 @@ public class PrimaryMapContextMenuController implements Controller {
   private void addListeners() {
     view.getSaveMenuItem().setOnAction(event -> listener.saveCurrentMap());
 
+    view.getRenameMenuItem().setOnAction(event1 -> listener.renameCurrentMap());
+
     view.getDeleteMenuItem().setOnAction(event -> listener.deleteCurrentMap());
   }
 

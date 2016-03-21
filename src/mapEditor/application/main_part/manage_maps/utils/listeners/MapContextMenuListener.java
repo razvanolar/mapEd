@@ -7,5 +7,6 @@ package mapEditor.application.main_part.manage_maps.utils.listeners;
 public interface MapContextMenuListener {
 
   void saveCurrentMap();
+  void renameCurrentMap();
   void deleteCurrentMap();
 }

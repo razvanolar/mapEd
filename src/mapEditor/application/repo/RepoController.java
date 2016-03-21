@@ -293,7 +293,7 @@ public class RepoController {
    * @param overwrite
    * TRUE if you want to overwrite the map if already exist.
    * @return The name of the map that was saved on the disk (if a map with the same name already exist into that
-   *         directory, a new name will be computed with a higher order number)
+   *         directory and overwrite flag is TRUE, a new name will be computed with a higher order number)
    * @throws Exception
    */
   public String saveMap(String projectPath, MapDetail mapDetail, MapXMLConverter converter, boolean overwrite) throws Exception {
@@ -320,6 +320,39 @@ public class RepoController {
       System.out.println("*** RepoController - saveMap - Unable to save map. name: " + mapName +
       " path: " + mapAbsolutePath + " Error message: " + ex.getMessage());
       ex.printStackTrace();
+    }
+    return null;
+  }
+
+  /**
+   * Rename the file. From @renameFrom to @renameTo.
+   * @param renameFrom
+   * Old file name (Absolute file path).
+   * @param renameTo
+   * New file name (Absolute file path).
+   * @return The new file name; NULL otherwise
+   */
+  public String renameFile(String renameFrom, String renameTo) {
+    if (renameFrom == null || renameTo == null)
+      return null;
+
+    File fromFile = new File(renameFrom);
+    File toFile = new File(renameTo);
+
+    if (!fromFile.exists())
+      return null;
+    if (toFile.exists()) {
+      String absolutePath = toFile.getParentFile().getAbsolutePath();
+      absolutePath = absolutePath.endsWith("\\") ? absolutePath : absolutePath + "\\";
+      String name = getRepoUtil().checkNameOrGetAnAlternativeOne(absolutePath, toFile.getName());
+      toFile = new File(absolutePath + name);
+    }
+    try {
+      if (fromFile.renameTo(toFile))
+        return toFile.getName();
+    } catch (Exception ex) {
+      ex.printStackTrace();
+      System.out.println("*** RepoController - renameFile - Error message: " + ex.getMessage());
     }
     return null;
   }
