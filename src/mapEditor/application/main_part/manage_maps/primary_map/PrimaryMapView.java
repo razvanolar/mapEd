@@ -50,8 +50,8 @@ public class PrimaryMapView extends MapCanvas {
     super.handleMousePressEvent(event);
     if (event.isControlDown())
       return;
-
-    drawImagesOnMouseActions(event);
+    if (event.isPrimaryButtonDown())
+      drawImagesOnMouseActions(event);
   }
 
   public void onMouseReleasedEvent(MouseEvent event, boolean paintMap) {

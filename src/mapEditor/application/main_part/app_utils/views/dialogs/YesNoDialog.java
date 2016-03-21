@@ -1,5 +1,6 @@
 package mapEditor.application.main_part.app_utils.views.dialogs;
 
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -18,7 +19,7 @@ public class YesNoDialog {
 
   private static YesNoDialog INSTANCE;
 
-  private BorderPane mainConiner;
+  private BorderPane mainContainer;
   private Button yesButton;
   private Button noButton;
 
@@ -37,12 +38,17 @@ public class YesNoDialog {
   private void initGUI() {
     yesButton = new Button("Yes");
     noButton = new Button("No");
-    mainConiner = new BorderPane();
+    mainContainer = new BorderPane();
     HBox buttonsContainer = new HBox(5, yesButton, noButton);
 
     buttonsContainer.setAlignment(Pos.CENTER_RIGHT);
+    buttonsContainer.setPadding(new Insets(5));
 
-    mainConiner.setBottom(buttonsContainer);
+    yesButton.setPrefWidth(70);
+    noButton.setPrefWidth(70);
+    mainContainer.setBottom(buttonsContainer);
+    mainContainer.setMinHeight(90);
+    mainContainer.setMinWidth(350);
   }
 
   private void addListeners() {
@@ -61,14 +67,14 @@ public class YesNoDialog {
 
   private void setText(String text) {
     Text t = new Text(text);
-    mainConiner.setCenter(t);
+    mainContainer.setCenter(t);
   }
 
   public boolean showAndWait(String title, String message) {
     buttonType = Dialog.DialogButtonType.NO;
     setText(message);
     if (stage == null) {
-      Scene scene = new Scene(mainConiner);
+      Scene scene = new Scene(mainContainer, 360, 110);
       stage = new Stage(stageStyle);
       stage.initModality(modality);
       stage.setScene(scene);

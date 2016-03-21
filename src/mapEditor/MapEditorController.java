@@ -30,6 +30,8 @@ import mapEditor.application.main_part.status_bar.StatusBarView;
 import mapEditor.application.repo.RepoController;
 import mapEditor.application.repo.models.ProjectModel;
 
+import java.io.File;
+
 /**
  *
  * Created by razvanolar on 21.01.2016.
@@ -242,6 +244,19 @@ public class MapEditorController {
         System.out.println("MapEditorController - saveSelectedMap - Unable to save map: " + mapDetail.getName() + " Error message: " + ex.getMessage());
       }
     });
+  }
+
+  public boolean deleteMap(File file) {
+    try {
+      if (!repoController.deleteFile(file)) {
+        Dialog.showWarningDialog(null, "Unable to delete map file: " + file);
+      } else {
+        return true;
+      }
+    } catch (Exception ex) {
+      Dialog.showErrorDialog(null, "Error occurred while trying to delete the file: " + file);
+    }
+    return false;
   }
 
   public void changeToMapView() {

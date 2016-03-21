@@ -25,9 +25,7 @@ import mapEditor.application.repo.types.ProjectStatus;
 
 import javax.imageio.ImageIO;
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.InvalidPathException;
-import java.nio.file.StandardCopyOption;
+import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -306,6 +304,7 @@ public class RepoController {
     mapAbsolutePath = mapAbsolutePath.endsWith("\\") ? mapAbsolutePath : mapAbsolutePath + "\\";
     if (!overwrite) {
       mapName = getFileAlternativeNameIfExists(mapAbsolutePath, mapName);
+      mapDetail.setName(mapName);
       if (mapName == null)
         return null;
     }
@@ -323,6 +322,28 @@ public class RepoController {
       ex.printStackTrace();
     }
     return null;
+  }
+
+  /**
+   * Delete the specified file from the disk.
+   * @param file
+   * File to be deleted
+   * @return TRUE if the file was deleted successfully; FALSE otherwise
+   */
+  public boolean deleteFile(File file) {
+    if (file == null)
+      return false;
+    try {
+      Files.delete(file.toPath());
+      return true;
+    } catch (NoSuchFileException ex) {
+      ex.printStackTrace();
+      System.out.println("*** RepoController - deleteFile - NoSuchFileException - Unable to delete file. Error message: " + ex.getMessage());
+    } catch (IOException ex) {
+      ex.printStackTrace();
+      System.out.println("*** RepoController - deleteFile - IOException - Unable to delete file. Error message: " + ex.getMessage());
+    }
+    return false;
   }
 
   public boolean exportMapToHtml(String projectPath, File mapFile) throws Exception {
@@ -396,6 +417,7 @@ public class RepoController {
     String line;
     while ((line = reader.readLine()) != null)
       builder.append(line);
+    reader.close();
     return builder.toString();
   }
 

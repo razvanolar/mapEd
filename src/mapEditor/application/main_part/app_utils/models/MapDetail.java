@@ -36,7 +36,7 @@ public class MapDetail {
   public MapDetail(String name, String absolutePath, String relativePath, int rows, int columns,
                    Color backgroundColor, Color gridColor, Color squareColor, MapType type) {
     this.name = name;
-    this.absolutePath = absolutePath;
+    computeAbsolutePath(absolutePath);
     this.relativePath = relativePath;
     this.rows = rows;
     this.columns = columns;
@@ -122,7 +122,7 @@ public class MapDetail {
   }
 
   public void setAbsolutePath(String absolutePath) {
-    this.absolutePath = absolutePath;
+    computeAbsolutePath(absolutePath);
   }
 
   public void setRelativePath(String relativePath) {
@@ -221,5 +221,11 @@ public class MapDetail {
   @Override
   public String toString() {
     return name + " - " + absolutePath;
+  }
+
+  private void computeAbsolutePath(String path) {
+    absolutePath = path;
+    if (absolutePath != null && !absolutePath.endsWith("\\"))
+      absolutePath += "\\";
   }
 }

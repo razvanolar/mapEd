@@ -13,6 +13,9 @@ import mapEditor.application.main_part.app_utils.models.MapDetail;
 import mapEditor.application.main_part.app_utils.views.dialogs.Dialog;
 import mapEditor.application.main_part.manage_maps.manage_layers.LayersController;
 import mapEditor.application.main_part.manage_maps.manage_tiles.ManageTilesController;
+import mapEditor.application.main_part.manage_maps.primary_map.context_menu.PrimaryMapContextMenuController;
+import mapEditor.application.main_part.manage_maps.primary_map.context_menu.PrimaryMapContextMenuView;
+import mapEditor.application.main_part.manage_maps.utils.MapContextMenuListener;
 import mapEditor.application.main_part.manage_maps.visibility_map.Map2DVisibilityController;
 import mapEditor.application.main_part.manage_maps.visibility_map.Map2DVisibilityView;
 import mapEditor.application.main_part.manage_maps.primary_map.PrimaryMapController;
@@ -33,7 +36,7 @@ import java.util.List;
  *
  * Created by razvanolar on 21.01.2016.
  */
-public class ManageMapsController implements Controller, MapLayersListener, SelectedTileListener {
+public class ManageMapsController implements Controller, MapLayersListener, SelectedTileListener, MapContextMenuListener {
 
   public interface IMangeMapsView extends View {
     ScrollPane addMap(String title, PrimaryMapView mapView, boolean selectTab);
@@ -45,6 +48,7 @@ public class ManageMapsController implements Controller, MapLayersListener, Sele
   private IMangeMapsView view;
   private LayersController layersController;
   private ManageTilesController manageTilesController;
+  private PrimaryMapContextMenuController contextMenuController;
   private MapDetail defaultModel;
 
   private ImageModel selectedTile;
@@ -159,6 +163,9 @@ public class ManageMapsController implements Controller, MapLayersListener, Sele
 
     manageTilesController = new ManageTilesController(view.getManageTilesView(), this);
     manageTilesController.bind();
+
+    contextMenuController = new PrimaryMapContextMenuController(new PrimaryMapContextMenuView(), this);
+    contextMenuController.bind();
   }
 
   private void createMap(MapDetail mapDetail, boolean removeUntitled, boolean selectTab) {
@@ -167,7 +174,7 @@ public class ManageMapsController implements Controller, MapLayersListener, Sele
       mapDetail.setShowGrid(AppParameters.CURRENT_PROJECT.isShowGrid());
       PrimaryMapView primaryMapView = new PrimaryMapView(mapDetail);
       ScrollPane scrollPane = view.addMap(mapDetail.getName(), primaryMapView, selectTab);
-      PrimaryMapController controller = new PrimaryMapController(primaryMapView, scrollPane);
+      PrimaryMapController controller = new PrimaryMapController(primaryMapView, scrollPane, contextMenuController);
 
       ChangeListener<Number> sizeChangeListener = (observable, oldValue, newValue) -> primaryMapView.paint();
 
@@ -205,6 +212,37 @@ public class ManageMapsController implements Controller, MapLayersListener, Sele
       }
     if (untitledTab != null)
       view.getMapsTabPane().getTabs().remove(untitledTab);
+  }
+
+  /**
+   * Checks to see if there is a map with same absolute path as of the specified file, and deletes it.
+   * @param mapFile
+   * Map file
+   */
+  private void removeMapTabByFile(File mapFile) {
+    if (mapFile == null)
+      return;
+    String mapAbsPath = mapFile.getParentFile().getAbsolutePath();
+    String mapName = mapFile.getName();
+    mapAbsPath = !mapAbsPath.endsWith("\\") ? mapAbsPath + "\\" : mapAbsPath;
+
+    PrimaryMapView mapView;
+    Tab tabToDelete = null;
+    for (Tab tab : view.getMapsTabPane().getTabs()) {
+      if (tab.getUserData() != null && tab.getUserData() instanceof PrimaryMapView) {
+        mapView = (PrimaryMapView) tab.getUserData();
+        MapDetail mapDetail = mapView.getMapDetail();
+        if (mapDetail.getAbsolutePath() != null &&
+                mapDetail.getAbsolutePath().equalsIgnoreCase(mapAbsPath) &&
+                mapDetail.getName().equals(mapName)) {
+          tabToDelete = tab;
+          break;
+        }
+      }
+    }
+    if (tabToDelete != null) {
+      view.getMapsTabPane().getTabs().remove(tabToDelete);
+    }
   }
 
   /**
@@ -430,6 +468,24 @@ public class ManageMapsController implements Controller, MapLayersListener, Sele
     PrimaryMapView selectedMap = getSelectedMap();
     if (selectedMap != null)
       selectedMap.setDrawingTile(selectedTile);
+  }
+
+  @Override
+  public void saveCurrentMap() {
+    MapEditorController.getInstance().saveSelectedMap();
+  }
+
+  @Override
+  public void deleteCurrentMap() {
+    if (Dialog.showYesNoDialog(null, "Are you sure you want to delete the map?")) {
+      PrimaryMapView mapView = getSelectedMap();
+      if (mapView == null)
+        return;
+      File mapFile = new File(mapView.getMapDetail().getAbsolutePath() + mapView.getMapDetail().getName());
+      boolean mapWasDeleted = MapEditorController.getInstance().deleteMap(mapFile);
+      if (mapWasDeleted)
+        removeMapTabByFile(mapFile);
+    }
   }
 
   /**
