@@ -1,6 +1,7 @@
-package mapEditor.application.main_part.manage_maps.utils;
+package mapEditor.application.main_part.manage_maps.utils.listeners;
 
 import mapEditor.application.main_part.app_utils.models.LayerModel;
+import mapEditor.application.main_part.manage_maps.utils.SelectableLayerView;
 
 /**
  *

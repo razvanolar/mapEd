@@ -1,4 +1,6 @@
-package mapEditor.application.main_part.manage_maps.utils;
+package mapEditor.application.main_part.manage_maps.utils.listeners;
+
+import mapEditor.application.main_part.manage_maps.utils.SelectableTileView;
 
 /**
  *

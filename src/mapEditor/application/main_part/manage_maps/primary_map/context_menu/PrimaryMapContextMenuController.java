@@ -2,10 +2,7 @@ package mapEditor.application.main_part.manage_maps.primary_map.context_menu;
 
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyCodeCombination;
-import javafx.scene.input.KeyCombination;
-import mapEditor.application.main_part.manage_maps.utils.MapContextMenuListener;
+import mapEditor.application.main_part.manage_maps.utils.listeners.MapContextMenuListener;
 import mapEditor.application.main_part.types.Controller;
 
 /**

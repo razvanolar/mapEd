@@ -2,7 +2,7 @@ package mapEditor.application.main_part.manage_maps.manage_layers.create_edit_la
 
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
-import mapEditor.application.main_part.manage_maps.utils.SelectableLayerListener;
+import mapEditor.application.main_part.manage_maps.utils.listeners.SelectableLayerListener;
 import mapEditor.application.main_part.types.Controller;
 
 /**

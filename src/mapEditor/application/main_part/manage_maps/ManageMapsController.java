@@ -15,14 +15,14 @@ import mapEditor.application.main_part.manage_maps.manage_layers.LayersControlle
 import mapEditor.application.main_part.manage_maps.manage_tiles.ManageTilesController;
 import mapEditor.application.main_part.manage_maps.primary_map.context_menu.PrimaryMapContextMenuController;
 import mapEditor.application.main_part.manage_maps.primary_map.context_menu.PrimaryMapContextMenuView;
-import mapEditor.application.main_part.manage_maps.utils.MapContextMenuListener;
+import mapEditor.application.main_part.manage_maps.utils.listeners.MapContextMenuListener;
 import mapEditor.application.main_part.manage_maps.visibility_map.Map2DVisibilityController;
 import mapEditor.application.main_part.manage_maps.visibility_map.Map2DVisibilityView;
 import mapEditor.application.main_part.manage_maps.primary_map.PrimaryMapController;
 import mapEditor.application.main_part.manage_maps.primary_map.PrimaryMapView;
 import mapEditor.application.main_part.manage_maps.utils.MapContentStateKeys;
-import mapEditor.application.main_part.manage_maps.utils.MapLayersListener;
-import mapEditor.application.main_part.manage_maps.utils.SelectedTileListener;
+import mapEditor.application.main_part.manage_maps.utils.listeners.MapLayersListener;
+import mapEditor.application.main_part.manage_maps.utils.listeners.SelectedTileListener;
 import mapEditor.application.main_part.manage_maps.visibility_map.MapGridVisibilityController;
 import mapEditor.application.main_part.manage_maps.visibility_map.MapGridVisibilityView;
 import mapEditor.application.main_part.types.Controller;

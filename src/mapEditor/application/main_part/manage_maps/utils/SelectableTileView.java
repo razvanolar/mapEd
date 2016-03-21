@@ -10,6 +10,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 import mapEditor.application.main_part.app_utils.AppParameters;
 import mapEditor.application.main_part.app_utils.models.ImageModel;
+import mapEditor.application.main_part.manage_maps.utils.listeners.SelectableTileListener;
 
 /**
  *

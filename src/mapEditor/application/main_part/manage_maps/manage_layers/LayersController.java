@@ -12,8 +12,8 @@ import mapEditor.application.main_part.manage_maps.manage_layers.create_edit_lay
 import mapEditor.application.main_part.manage_maps.manage_layers.create_edit_layers.CreateEditLayersContextMenuView;
 import mapEditor.application.main_part.manage_maps.manage_layers.create_edit_layers.CreateEditLayersController;
 import mapEditor.application.main_part.manage_maps.manage_layers.create_edit_layers.CreateEditLayersView;
-import mapEditor.application.main_part.manage_maps.utils.MapLayersListener;
-import mapEditor.application.main_part.manage_maps.utils.SelectableLayerListener;
+import mapEditor.application.main_part.manage_maps.utils.listeners.MapLayersListener;
+import mapEditor.application.main_part.manage_maps.utils.listeners.SelectableLayerListener;
 import mapEditor.application.main_part.manage_maps.utils.SelectableLayerView;
 import mapEditor.application.main_part.types.Controller;
 import mapEditor.application.main_part.types.View;
