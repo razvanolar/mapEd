@@ -119,6 +119,7 @@ public class ProjectTreeController implements Controller, ProjectTreeContextMenu
       node.expandedProperty().addListener(treeItemListener);
       parent.getChildren().add(node);
     }
+    parent.getChildren().sort((o1, o2) -> o1.getValue().getName().compareTo(o2.getValue().getName()));
   }
 
   private ChangeListener<Boolean> createExpandListener() {
