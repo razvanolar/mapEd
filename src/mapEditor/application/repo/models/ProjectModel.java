@@ -37,6 +37,7 @@ public class ProjectModel {
 
   private boolean is2DVisibilitySelected;
   private boolean isGridVisibilitySelected;
+  private boolean fillArea;
   private boolean showGrid = SystemParameters.DEFAULT_SHOW_GRID_VALUE;
 
   public ProjectModel() {}
@@ -113,6 +114,10 @@ public class ProjectModel {
     return isGridVisibilitySelected;
   }
 
+  public boolean isFillArea() {
+    return fillArea;
+  }
+
   public boolean isShowGrid() {
     return showGrid;
   }
@@ -169,6 +174,10 @@ public class ProjectModel {
 
   public void setIsGridVisibilitySelected(boolean isGridVisibilitySelected) {
     this.isGridVisibilitySelected = isGridVisibilitySelected;
+  }
+
+  public void setFillArea(boolean fillArea) {
+    this.fillArea = fillArea;
   }
 
   public void setShowGrid(boolean showGrid) {

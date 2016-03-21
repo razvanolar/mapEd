@@ -29,6 +29,7 @@ public class ProjectXMLConverter {
 
     builder.append("\t<hex_counter value=\"").append(project.getHexValue()).append("\" />\n");
     builder.append("\t<light_visibility value=\"").append(project.is2DVisibilitySelected()).append("\" />\n");
+    builder.append("\t<fill_area value=\"").append(project.isFillArea()).append("\" />\n");
     builder.append("\t<grid_visibility value=\"").append(project.isGridVisibilitySelected()).append("\" />\n");
     builder.append("\t<show_grid value=\"").append(project.isShowGrid()).append("\" />\n");
 

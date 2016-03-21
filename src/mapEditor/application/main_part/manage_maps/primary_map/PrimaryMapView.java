@@ -20,6 +20,8 @@ import mapEditor.application.main_part.manage_maps.MapCanvas;
  */
 public class PrimaryMapView extends MapCanvas {
 
+  public static boolean FILL_AREA;
+
   public PrimaryMapView(MapDetail mapDetail) {
     super(mapDetail.getRows(), mapDetail.getColumns());
     this.mapDetail = mapDetail;

@@ -21,6 +21,7 @@ import mapEditor.application.main_part.manage_maps.ManageMapsView;
 import mapEditor.application.main_part.main_app_toolbars.main_toolbar.MapEditorToolbarController;
 import mapEditor.application.main_part.main_app_toolbars.main_toolbar.MapEditorToolbarView;
 import mapEditor.application.main_part.manage_maps.manage_tiles.ManageTilesController;
+import mapEditor.application.main_part.manage_maps.primary_map.PrimaryMapView;
 import mapEditor.application.main_part.menu_bar.MapEditorMenuBarController;
 import mapEditor.application.main_part.menu_bar.MapEditorMenuBarView;
 import mapEditor.application.main_part.project_tree.ProjectTreeController;
@@ -68,8 +69,10 @@ public class MapEditorController {
     toolbarController = new MapEditorToolbarController(toolbarView,
             AppParameters.CURRENT_PROJECT.is2DVisibilitySelected(),
             AppParameters.CURRENT_PROJECT.isGridVisibilitySelected(),
+            AppParameters.CURRENT_PROJECT.isFillArea(),
             AppParameters.CURRENT_PROJECT.isShowGrid());
     toolbarController.bind();
+    PrimaryMapView.FILL_AREA = AppParameters.CURRENT_PROJECT.isFillArea();
 
     /* init status bar */
     StatusBarController.IStatusBarView statusBarView = new StatusBarView();
@@ -115,6 +118,11 @@ public class MapEditorController {
     AppParameters.CURRENT_PROJECT.setIs2DVisibilitySelected(is2DVisibilitySelected);
     AppParameters.CURRENT_PROJECT.setIsGridVisibilitySelected(isGridVisibilitySelected);
     manageMapsController.change2DVisibilityState(is2DVisibilitySelected, isGridVisibilitySelected, null);
+  }
+
+  public void setFillAreaValue(boolean value) {
+    AppParameters.CURRENT_PROJECT.setFillArea(value);
+    PrimaryMapView.FILL_AREA = value;
   }
 
   public void showMapGrid(boolean showMapGrid) {

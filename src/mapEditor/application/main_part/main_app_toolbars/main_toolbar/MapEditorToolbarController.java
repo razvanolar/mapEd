@@ -24,6 +24,7 @@ public class MapEditorToolbarController implements Controller {
     Button getNewMapButton();
     ToggleButton getChange2DVisibility();
     ToggleButton getChangeGridVisibility();
+    ToggleButton getFillAreaButton();
     ToggleButton getShowGridButton();
     ToggleButton getMapEditorViewButton();
     ToggleButton getImageEditorViewButton();
@@ -31,10 +32,15 @@ public class MapEditorToolbarController implements Controller {
 
   private IMapEditorToolbarView view;
 
-  public MapEditorToolbarController(IMapEditorToolbarView view, boolean is2DVisibilitySelected, boolean isGridVisibilitySelected, boolean isShowGridSelected) {
+  public MapEditorToolbarController(IMapEditorToolbarView view,
+                                    boolean is2DVisibilitySelected,
+                                    boolean isGridVisibilitySelected,
+                                    boolean isFillArea,
+                                    boolean isShowGridSelected) {
     this.view = view;
     this.view.getChange2DVisibility().setSelected(is2DVisibilitySelected);
     this.view.getChangeGridVisibility().setSelected(isGridVisibilitySelected);
+    this.view.getFillAreaButton().setSelected(isFillArea);
     this.view.getShowGridButton().setSelected(isShowGridSelected);
   }
 
@@ -52,6 +58,11 @@ public class MapEditorToolbarController implements Controller {
     });
     view.getChangeGridVisibility().selectedProperty().addListener((observable, oldValue, newValue) -> {
       MapEditorController.getInstance().changeVisibilityState(false, newValue);
+    });
+
+    // fill area listener
+    view.getFillAreaButton().selectedProperty().addListener((observable, oldValue, newValue) -> {
+      MapEditorController.getInstance().setFillAreaValue(newValue);
     });
 
     // show grid listener

@@ -49,6 +49,9 @@ public class ProjectSAXHandler extends DefaultHandler {
       case "grid_visibility":
         project.setIsGridVisibilitySelected(Boolean.valueOf(attributes.getValue("value")));
         break;
+      case "fill_area":
+        project.setFillArea(Boolean.valueOf(attributes.getValue("value")));
+        break;
       case "show_grid":
         project.setShowGrid(Boolean.valueOf(attributes.getValue("value")));
         break;
