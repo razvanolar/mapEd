@@ -208,6 +208,10 @@ public class ProjectTreeContextMenuView implements ProjectTreeContextMenuControl
     useForDrawingMenuItem.setDisable(!value);
   }
 
+  public MenuItem getNewDirectoryMenuItem() {
+    return newDirectoryMenuItem;
+  }
+
   public MenuItem getOpenMapMenuItem() {
     return openMapMenuItem;
   }

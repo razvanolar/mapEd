@@ -96,13 +96,7 @@ public class OkCancelDialog implements DialogListener {
     });
   }
 
-  public void setContent(Node content) {
-    if (mainContainerPadding > 0)
-      mainContainer.setPadding(new Insets(mainContainerPadding));
-    mainContainer.setCenter(content);
-  }
-
-  public void show() {
+  private void initStateComponents() {
     addListeners();
     if (scene == null) {
       scene = new Scene(mainContainer);
@@ -119,7 +113,22 @@ public class OkCancelDialog implements DialogListener {
       if (owner != null)
         stage.initOwner(owner);
     }
+  }
+
+  public void setContent(Node content) {
+    if (mainContainerPadding > 0)
+      mainContainer.setPadding(new Insets(mainContainerPadding));
+    mainContainer.setCenter(content);
+  }
+
+  public void show() {
+    initStateComponents();
     stage.show();
+  }
+
+  public void showAndWait() {
+    initStateComponents();
+    stage.showAndWait();
   }
 
   public void close() {

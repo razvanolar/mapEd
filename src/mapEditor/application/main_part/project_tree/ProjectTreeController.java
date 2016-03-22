@@ -11,11 +11,13 @@ import mapEditor.MapEditorController;
 import mapEditor.application.main_part.app_utils.AppParameters;
 import mapEditor.application.main_part.app_utils.inputs.FileExtensionUtil;
 import mapEditor.application.main_part.app_utils.inputs.ImageProvider;
+import mapEditor.application.main_part.app_utils.inputs.StringValidator;
 import mapEditor.application.main_part.app_utils.models.ImageModel;
 import mapEditor.application.main_part.app_utils.models.LazyTreeItem;
 import mapEditor.application.main_part.app_utils.models.TreeItemType;
 import mapEditor.application.main_part.app_utils.views.dialogs.Dialog;
 import mapEditor.application.main_part.app_utils.views.dialogs.OkCancelDialog;
+import mapEditor.application.main_part.app_utils.views.dialogs.SimpleInputDialog;
 import mapEditor.application.main_part.manage_images.manage_tile_sets.ManageTileSetsController;
 import mapEditor.application.main_part.manage_images.manage_tiles.ManageEditEditTilesView;
 import mapEditor.application.main_part.manage_images.manage_tiles.ManageEditTilesController;
@@ -164,8 +166,26 @@ public class ProjectTreeController implements Controller, ProjectTreeContextMenu
   }
 
   @Override
+  public void createNewDirectory() {
+    TreeItem<File> item = getSelectedItem();
+    if (item == null || item.getValue() == null || !item.getValue().isDirectory())
+      return;
+    SimpleInputDialog inputDialog = new SimpleInputDialog("Create New Directory", "Name");
+    String directoryName = inputDialog.showAndWait();
+    if (!StringValidator.isValidFileName(directoryName))
+      return;
+    try {
+      boolean created = MapEditorController.getInstance().getRepoController().createDirectory(item.getValue(), directoryName);
+      if (!created)
+        Dialog.showWarningDialog(null, "Unable to create specified directory!");
+    } catch (Exception ex) {
+      Dialog.showErrorDialog(null, "Unable to create specified directory. Error Message: " + ex.getMessage());
+    }
+  }
+
+  @Override
   public void openMap() {
-    TreeItem<File> item = view.getTree().getSelectionModel().getSelectedItem();
+    TreeItem<File> item = getSelectedItem();
     if (item == null || item.getValue() == null || !FileExtensionUtil.isMapFile(item.getValue().getName()))
       return;
     if (!MapEditorController.getInstance().isMapView())
@@ -175,7 +195,7 @@ public class ProjectTreeController implements Controller, ProjectTreeContextMenu
 
   @Override
   public void openInImageEditor() {
-    TreeItem<File> item = view.getTree().getSelectionModel().getSelectedItem();
+    TreeItem<File> item = getSelectedItem();
     if (item == null || item.getValue() == null || !FileExtensionUtil.isImageFile(item.getValue().getName()) || !(item instanceof LazyTreeItem))
       return;
     LazyTreeItem selectedItem = (LazyTreeItem) item;
@@ -244,7 +264,7 @@ public class ProjectTreeController implements Controller, ProjectTreeContextMenu
 
   @Override
   public void openTilesInImageEditor() {
-    TreeItem<File> item = view.getTree().getSelectionModel().getSelectedItem();
+    TreeItem<File> item = getSelectedItem();
     if (item == null || item.getValue() == null || !(item instanceof LazyTreeItem))
       return;
     LazyTreeItem selectedItem = (LazyTreeItem) item;
@@ -270,8 +290,15 @@ public class ProjectTreeController implements Controller, ProjectTreeContextMenu
   }
 
   @Override
+  public void deleteFile() {
+    TreeItem<File> item = getSelectedItem();
+    if (item == null || item.getValue() == null)
+      return;
+  }
+
+  @Override
   public void exportMapToHtml() {
-    TreeItem<File> item = view.getTree().getSelectionModel().getSelectedItem();
+    TreeItem<File> item = getSelectedItem();
     if (item == null || item.getValue() == null || !FileExtensionUtil.isMapFile(item.getValue().getName()))
       return;
     manageMapsController.exportMapToHtml(item.getValue());
@@ -296,5 +323,9 @@ public class ProjectTreeController implements Controller, ProjectTreeContextMenu
     while (parent != null && !parent.getType().isSystemType())
       parent = (LazyTreeItem) parent.getParent();
     return parent;
+  }
+
+  private TreeItem<File> getSelectedItem() {
+    return view.getTree().getSelectionModel().getSelectedItem();
   }
 }

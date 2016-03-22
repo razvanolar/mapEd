@@ -325,6 +325,33 @@ public class RepoController {
   }
 
   /**
+   * Create a new directory named after directoryName parameter at the specified parent location.
+   * If a directory with the same name already exists, the new directory will have a higher order number.
+   * @param parent
+   * Parent directory file
+   * @param directoryName
+   * Directory to be created.
+   * @return TRUE if the directory was created successfully; FALSE otherwise
+   * @throws Exception
+   */
+  public boolean createDirectory(File parent, String directoryName) throws Exception {
+    if (parent == null || !parent.isDirectory() || directoryName == null)
+      return false;
+    try {
+      directoryName = getRepoUtil().checkNameOrGetAnAlternativeOne(parent.getAbsolutePath(), directoryName);
+      String parentPath = parent.getAbsolutePath();
+      parentPath = parentPath.endsWith("\\") ? parentPath : parentPath + "\\";
+      File file = new File(parentPath + directoryName);
+      return file.mkdir();
+    } catch (Exception ex) {
+      ex.printStackTrace();
+      ex.printStackTrace();
+      System.out.println("*** RepoController - createDirectory - Unable to create directory. Dir name: " + directoryName + " , Parent path: " + parent.getAbsolutePath());
+      throw ex;
+    }
+  }
+
+  /**
    * Rename the file. From @renameFrom to @renameTo.
    * @param renameFrom
    * Old file name (Absolute file path).

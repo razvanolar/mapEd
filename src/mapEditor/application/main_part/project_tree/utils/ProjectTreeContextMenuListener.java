@@ -6,9 +6,11 @@ package mapEditor.application.main_part.project_tree.utils;
  */
 public interface ProjectTreeContextMenuListener {
 
+  void createNewDirectory();
   void openMap();
   void openInImageEditor();
   void openTilesInNewTab();
   void openTilesInImageEditor();
+  void deleteFile();
   void exportMapToHtml();
 }

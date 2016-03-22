@@ -15,6 +15,7 @@ public class ProjectTreeContextMenuController implements Controller {
 
   public interface IProjectTreeContextMenuView {
     void setState(TreeItemType treeItemType, TreeItemType parentItemType);
+    MenuItem getNewDirectoryMenuItem();
     MenuItem getOpenMapMenuItem();
     MenuItem getOpenInImageEditorMenuItem();
     MenuItem getOpenTilesInNewTabMenuItem();
@@ -40,6 +41,8 @@ public class ProjectTreeContextMenuController implements Controller {
   }
 
   private void addListeners() {
+    view.getNewDirectoryMenuItem().setOnAction(event -> listener.createNewDirectory());
+
     view.getOpenMapMenuItem().setOnAction(event -> listener.openMap());
 
     view.getOpenInImageEditorMenuItem().setOnAction(event -> listener.openInImageEditor());
