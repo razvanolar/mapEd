@@ -11,7 +11,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
 import javafx.stage.Window;
 import mapEditor.application.main_part.app_utils.constants.CssConstants;
-import mapEditor.application.main_part.app_utils.inputs.ImagesLoader;
+import mapEditor.application.main_part.app_utils.inputs.FilesLoader;
 import mapEditor.application.main_part.app_utils.models.ImageModel;
 import mapEditor.application.main_part.app_utils.views.canvas.FitImageCanvas;
 
@@ -69,7 +69,7 @@ public class TabImageLoadView {
   }
 
   private void addListeners() {
-    browseImageButton.setOnAction(event -> ImagesLoader.getInstance().loadImageModel(imageModel -> {
+    browseImageButton.setOnAction(event -> FilesLoader.getInstance().loadImageModel(imageModel -> {
       imagePathTextField.setText(imageModel.getPath());
       this.imageModel = imageModel;
       initFitImageCanvas();

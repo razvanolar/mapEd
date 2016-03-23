@@ -1,3 +1,4 @@
+
 package mapEditor.application.main_part.app_utils.inputs;
 
 import javafx.scene.image.Image;

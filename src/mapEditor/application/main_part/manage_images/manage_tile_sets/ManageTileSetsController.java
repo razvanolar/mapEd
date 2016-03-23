@@ -9,7 +9,7 @@ import javafx.stage.Modality;
 import javafx.stage.StageStyle;
 import mapEditor.MapEditorController;
 import mapEditor.application.main_part.app_utils.AppParameters;
-import mapEditor.application.main_part.app_utils.inputs.ImagesLoader;
+import mapEditor.application.main_part.app_utils.inputs.FilesLoader;
 import mapEditor.application.main_part.app_utils.inputs.StringValidator;
 import mapEditor.application.main_part.app_utils.models.ImageModel;
 import mapEditor.application.main_part.app_utils.models.KnownFileExtensions;
@@ -304,7 +304,7 @@ public class ManageTileSetsController implements Controller, ManageImagesListene
   }
 
   private void loadCanvasImage(ImageCanvas canvas) {
-    ImagesLoader.getInstance().loadImageModel(param -> {
+    FilesLoader.getInstance().loadImageModel(param -> {
       if (param == null)
         return null;
       canvas.setImage(param.getImage());

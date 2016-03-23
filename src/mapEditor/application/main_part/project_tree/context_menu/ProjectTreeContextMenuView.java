@@ -212,6 +212,10 @@ public class ProjectTreeContextMenuView implements ProjectTreeContextMenuControl
     return newDirectoryMenuItem;
   }
 
+  public MenuItem getNewCharactersMenuItem() {
+    return newCharactersMenuItem;
+  }
+
   public MenuItem getOpenMapMenuItem() {
     return openMapMenuItem;
   }
