@@ -3,7 +3,6 @@ package mapEditor.application.main_part.manage_images.manage_tile_sets.utils;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
-import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.*;
@@ -24,14 +23,12 @@ public class TabContentView implements View {
   private SplitPane splitPane;
   private ScrollPane canvasContainer;
   private BorderPane borderPane;
+  private BorderPane croppedTilesContainer;
   private VBox tilesPane;
-  private Button upButton;
-  private Button downButton;
-  private Button clearButton;
-  private ToggleButton simpleViewButton;
 
   private Canvas canvas;
   private CroppedTilesPathView pathView;
+  private boolean simpleView;
 
   public TabContentView(Canvas canvas, CroppedTilesPathView pathView) {
     this.canvas = canvas;
@@ -44,24 +41,8 @@ public class TabContentView implements View {
     borderPane = new BorderPane(canvasContainer);
     tilesPane = new VBox(7);
     ScrollPane scrollPane = new ScrollPane(tilesPane);
-    BorderPane croppedTilesContainer = new BorderPane(scrollPane);
+    croppedTilesContainer = new BorderPane(scrollPane);
     splitPane = new SplitPane(borderPane, croppedTilesContainer);
-    upButton = new Button("Up");
-    downButton = new Button("Down");
-    clearButton = new Button("Clear");
-    simpleViewButton = new ToggleButton("Simple");
-    ToolBar verticalToolBar = new ToolBar(new Group(upButton),
-            new Group(downButton),
-            new Group(clearButton),
-            new Group(simpleViewButton));
-
-    upButton.setRotate(-90);
-    downButton.setRotate(-90);
-    clearButton.setRotate(-90);
-    simpleViewButton.setRotate(-90);
-
-    verticalToolBar.setOrientation(Orientation.VERTICAL);
-    croppedTilesContainer.setLeft(verticalToolBar);
 
     splitPane.setOrientation(Orientation.VERTICAL);
     splitPane.setDividerPositions(0.8);
@@ -75,9 +56,6 @@ public class TabContentView implements View {
     scrollPane.setMinHeight(0);
     scrollPane.setFitToWidth(true);
     tilesPane.setPadding(new Insets(5));
-
-    //TODO: set the button based on a parameter from user preferences
-    simpleViewButton.setSelected(true);
   }
 
   public void addDetailedTileForm(Region node) {
@@ -111,6 +89,10 @@ public class TabContentView implements View {
     borderPane.setBottom(toolBar);
   }
 
+  public void setVerticalToolBar(ToolBar verticalToolBar) {
+    croppedTilesContainer.setLeft(verticalToolBar);
+  }
+
   public ScrollPane getCanvasContainer() {
     return canvasContainer;
   }
@@ -119,20 +101,20 @@ public class TabContentView implements View {
     return canvas;
   }
 
-  public ToggleButton getSimpleViewButton() {
-    return simpleViewButton;
-  }
-
-  public boolean isSimpleView() {
-    return simpleViewButton.isSelected();
-  }
-
   public CroppedTilesPathView getPathView() {
     return pathView;
   }
 
   public boolean isEmptyTilesPane() {
     return tilesPane.getChildren().isEmpty();
+  }
+
+  public boolean isSimpleView() {
+    return simpleView;
+  }
+
+  public void setSimpleView(boolean simpleView) {
+    this.simpleView = simpleView;
   }
 
   @Override

@@ -1,6 +1,7 @@
 package mapEditor.application.main_part.manage_images.manage_tile_sets;
 
 import javafx.geometry.Orientation;
+import javafx.scene.Group;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
@@ -20,7 +21,6 @@ public class ManageTileSetsView implements ManageTileSetsController.IManageTileS
   private TabPane tabPane;
   private Button addNewTabButton;
   private Button removeTabButton;
-  private Button renameTabButton;
   private Button saveCroppedTilesButton;
   private Button settingsButton;
   private Button cropSelectionButton;
@@ -29,6 +29,8 @@ public class ManageTileSetsView implements ManageTileSetsController.IManageTileS
   private ManageConfigurationController.IManageConfigurationView manageConfigurationView;
 
   private ToolBar tabsToolbar;
+  private ToolBar verticalToolBar;
+  private ToggleButton simpleViewButton;
 
   public ManageTileSetsView() {
     initGUI();
@@ -37,7 +39,6 @@ public class ManageTileSetsView implements ManageTileSetsController.IManageTileS
   private void initGUI() {
     addNewTabButton = new Button("Add Tab");
     removeTabButton = new Button("Remove Tab");
-    renameTabButton = new Button("Rename Tab");
     saveCroppedTilesButton = new Button("Save Tiles");
     settingsButton = new Button("Settings");
     cropSelectionButton = new Button("Crop Selection");
@@ -50,8 +51,22 @@ public class ManageTileSetsView implements ManageTileSetsController.IManageTileS
     ScrollPane rightScrollPane = new ScrollPane(manageConfigurationView.asNode());
     BorderPane rightPane = new BorderPane(rightScrollPane);
     mainSplitPane = new SplitPane(tabPane, rightPane);
+    Button upButton = new Button("Up");
+    Button downButton = new Button("Down");
+    Button clearButton = new Button("Clear");
+    simpleViewButton = new ToggleButton("Simple");
+    verticalToolBar = new ToolBar(new Group(upButton),
+            new Group(downButton),
+            new Group(clearButton),
+            new Group(simpleViewButton));
+    verticalToolBar.setOrientation(Orientation.VERTICAL);
 
-    tabsToolbar.getItems().addAll(addNewTabButton, removeTabButton, renameTabButton, saveCroppedTilesButton,
+    upButton.setRotate(-90);
+    downButton.setRotate(-90);
+    clearButton.setRotate(-90);
+    simpleViewButton.setRotate(-90);
+
+    tabsToolbar.getItems().addAll(addNewTabButton, removeTabButton, saveCroppedTilesButton,
             new FillToolItem(), cropSelectionButton, saveTileSetButton);
     configurationToolbar.getItems().addAll(resetConfigurationButton, settingsButton);
 
@@ -91,6 +106,10 @@ public class ManageTileSetsView implements ManageTileSetsController.IManageTileS
     return content.getCanvasContainer();
   }
 
+  public boolean isSimpleView() {
+    return simpleViewButton.isSelected();
+  }
+
   public TabPane getTabPane() {
     return tabPane;
   }
@@ -101,10 +120,6 @@ public class ManageTileSetsView implements ManageTileSetsController.IManageTileS
 
   public Button getRemoveTabButton() {
     return removeTabButton;
-  }
-
-  public Button getRenameTabButton() {
-    return renameTabButton;
   }
 
   public Button getSaveCroppedTilesButton() {
@@ -129,6 +144,14 @@ public class ManageTileSetsView implements ManageTileSetsController.IManageTileS
 
   public ToolBar getTabsToolbar() {
     return tabsToolbar;
+  }
+
+  public ToolBar getVerticalToolBar() {
+    return verticalToolBar;
+  }
+
+  public ToggleButton getSimpleViewButton() {
+    return simpleViewButton;
   }
 
   public ManageConfigurationController.IManageConfigurationView getManageConfigurationView() {
