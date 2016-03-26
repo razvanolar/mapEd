@@ -28,7 +28,6 @@ public class MapEditorToolbarController implements Controller {
     ToggleButton getShowGridButton();
     ToggleButton getMapEditorViewButton();
     ToggleButton getImageEditorViewButton();
-    ToggleButton getTestCharactersButton();
   }
 
   private IMapEditorToolbarView view;

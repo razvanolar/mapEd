@@ -19,7 +19,6 @@ public class MapEditorToolbarView implements MapEditorToolbarController.IMapEdit
   private ToggleButton showGridButton;
   private ToggleButton mapEditorViewButton;
   private ToggleButton imageEditorViewButton;
-  private ToggleButton testCharactersButton;
 
   public MapEditorToolbarView() {
     initGUI();
@@ -33,14 +32,13 @@ public class MapEditorToolbarView implements MapEditorToolbarController.IMapEdit
     showGridButton = new ToggleButton("Show Grid");
     mapEditorViewButton = new ToggleButton("Maps Editor");
     imageEditorViewButton = new ToggleButton("Images Editor");
-    testCharactersButton = new ToggleButton("Test Characters");
     toolBar = new ToolBar();
 
     mapEditorViewButton.setSelected(true);
 //    imageEditorViewButton.setSelected(true);
     ToggleGroup editorsGroup = new ToggleGroup();
     ToggleGroup visibilityGroup = new ToggleGroup();
-    editorsGroup.getToggles().addAll(mapEditorViewButton, imageEditorViewButton, testCharactersButton);
+    editorsGroup.getToggles().addAll(mapEditorViewButton, imageEditorViewButton);
     visibilityGroup.getToggles().addAll(change2DVisibility, changeGridVisibility);
 
     toolBar.getItems().addAll(newMapButton,
@@ -52,8 +50,7 @@ public class MapEditorToolbarView implements MapEditorToolbarController.IMapEdit
             showGridButton,
             new FillToolItem(),
             mapEditorViewButton,
-            imageEditorViewButton,
-            testCharactersButton);
+            imageEditorViewButton);
   }
 
   public Button getNewMapButton() {
@@ -82,10 +79,6 @@ public class MapEditorToolbarView implements MapEditorToolbarController.IMapEdit
 
   public ToggleButton getImageEditorViewButton() {
     return imageEditorViewButton;
-  }
-
-  public ToggleButton getTestCharactersButton() {
-    return testCharactersButton;
   }
 
   @Override

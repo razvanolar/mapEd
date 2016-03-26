@@ -73,8 +73,8 @@ public class TabContentView implements View {
 
     scrollPane.getStyleClass().add(CssConstants.TAB_CONTENT_VIEW_TILES_PANE);
     scrollPane.setMinHeight(0);
+    scrollPane.setFitToWidth(true);
     tilesPane.setPadding(new Insets(5));
-    tilesPane.prefWidthProperty().bind(scrollPane.widthProperty());
 
     //TODO: set the button based on a parameter from user preferences
     simpleViewButton.setSelected(true);
