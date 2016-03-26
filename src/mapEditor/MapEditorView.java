@@ -97,6 +97,7 @@ public class MapEditorView extends Application {
     mainContainer.setCenter(centerSplitPane);
     stackPane = new StackPane(mainContainer);
     primaryScene = new Scene(stackPane, 700, 400);
+    centerSplitPane.prefWidthProperty().bind(primaryScene.widthProperty());
     String cssPath = CssConstants.getDefaultTheme();
     if (cssPath != null)
       primaryScene.getStylesheets().add(cssPath);

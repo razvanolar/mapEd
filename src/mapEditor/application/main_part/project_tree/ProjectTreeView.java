@@ -66,6 +66,10 @@ public class ProjectTreeView implements ProjectTreeController.IProjectTreeView {
     return tree;
   }
 
+  public BorderPane getContainer() {
+    return mainContainer;
+  }
+
   @Override
   public Region asNode() {
     return mainContainer;

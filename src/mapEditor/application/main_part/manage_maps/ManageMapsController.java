@@ -48,6 +48,8 @@ public class ManageMapsController implements Controller, MapLayersListener, Sele
     TabPane getMapsTabPane();
     LayersController.ILayersView getLayersView();
     ManageTilesController.IManageTilesView getManageTilesView();
+    double getDividerPosition();
+    void setDividerPosition(double value);
   }
 
   private IMangeMapsView view;
@@ -59,8 +61,9 @@ public class ManageMapsController implements Controller, MapLayersListener, Sele
   private ImageModel selectedTile;
   private boolean blockTabListener;
 
-  public ManageMapsController(IMangeMapsView view) {
+  public ManageMapsController(IMangeMapsView view, double dividerPosition) {
     this.view = view;
+//    this.view.setDividerPosition(dividerPosition);
   }
 
   @Override
@@ -601,6 +604,10 @@ public class ManageMapsController implements Controller, MapLayersListener, Sele
 
   public View getView() {
     return view;
+  }
+
+  public double getDividerPosition() {
+    return view.getDividerPosition();
   }
 
   public ManageTilesController getManageTilesController() {

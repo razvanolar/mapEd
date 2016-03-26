@@ -6,6 +6,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.image.Image;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Region;
 import javafx.stage.Modality;
 import javafx.stage.StageStyle;
 import mapEditor.MapEditorController;
@@ -54,6 +56,7 @@ public class ProjectTreeController implements Controller, ProjectTreeContextMenu
   public interface IProjectTreeView extends View {
     TreeItem<File> getRoot();
     TreeView<File> getTree();
+    BorderPane getContainer();
   }
 
   private IProjectTreeView view;
@@ -81,6 +84,10 @@ public class ProjectTreeController implements Controller, ProjectTreeContextMenu
 
     view.getTree().getSelectionModel().selectedItemProperty().addListener((observable, oldItem, newItem) -> {
       contextMenuController.setSelectedItem(newItem != null ? (LazyTreeItem) newItem : null);
+    });
+
+    view.getContainer().widthProperty().addListener((observable, oldValue, newValue) -> {
+      MapEditorController.getInstance().dividerPositionChanged();
     });
   }
 
@@ -390,5 +397,10 @@ public class ProjectTreeController implements Controller, ProjectTreeContextMenu
 
   private TreeItem<File> getSelectedItem() {
     return view.getTree().getSelectionModel().getSelectedItem();
+  }
+
+
+  public Region getViewNode() {
+    return view.asNode();
   }
 }

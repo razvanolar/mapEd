@@ -51,6 +51,9 @@ public class MapEditorController {
   private ManageMapsController manageMapsController;
   private ManageTileSetsController manageTileSetsController;
   private ProjectTreeController projectTreeController;
+  private ProjectVerticalToolbarController projectVerticalToolbarController;
+
+  private double lastProjectTreeDividerPosition = -1;
 
   public static MapEditorController getInstance() {
     if (INSTANCE == null)
@@ -59,6 +62,7 @@ public class MapEditorController {
   }
 
   public void initPrimaryView() {
+    lastProjectTreeDividerPosition = AppParameters.CURRENT_PROJECT.getProjectTreeDividerPosition();
     /* init menu bar */
     MapEditorMenuBarController.IMapEditorMenuBarView menuBarView = new MapEditorMenuBarView();
     MapEditorMenuBarController menuBarController = new MapEditorMenuBarController(menuBarView);
@@ -83,12 +87,12 @@ public class MapEditorController {
 
     /* init left side toolbar : project toolbar */
     ProjectVerticalToolbarController.IProjectVerticalToolbarView projectVerticalToolbarView = new ProjectVerticalToolbarView();
-    ProjectVerticalToolbarController projectVerticalToolbarController = new ProjectVerticalToolbarController(projectVerticalToolbarView);
+    projectVerticalToolbarController = new ProjectVerticalToolbarController(projectVerticalToolbarView, AppParameters.CURRENT_PROJECT.isShowProjectTree());
     projectVerticalToolbarController.bind();
     mainContainer.setLeft(projectVerticalToolbarView.asNode());
 
     // use it when construct the project tree view; now it's only for testing
-    setProjectTreeView();
+    setProjectTreeView(AppParameters.CURRENT_PROJECT.isShowProjectTree());
 
     changeView();
 
@@ -144,7 +148,7 @@ public class MapEditorController {
   private void setMapView() {
     if (manageMapsController == null) {
       ManageMapsController.IMangeMapsView mapContentView = new ManageMapsView();
-      manageMapsController = new ManageMapsController(mapContentView);
+      manageMapsController = new ManageMapsController(mapContentView, AppParameters.CURRENT_PROJECT.getMapViewDividerPosition());
       manageMapsController.bind();
       projectTreeController.setManageMapsController(manageMapsController);
     }
@@ -161,26 +165,41 @@ public class MapEditorController {
     setContentView(manageTileSetsController.getView().asNode());
   }
 
-  private void setProjectTreeView() {
-    ProjectTreeController.IProjectTreeView projectTreeView = new ProjectTreeView();
-    projectTreeController = new ProjectTreeController(projectTreeView);
-    projectTreeController.bind();
+  public void setProjectTreeView(boolean showTreeView) {
+    if (projectTreeController == null) {
+      ProjectTreeController.IProjectTreeView projectTreeView = new ProjectTreeView();
+      projectTreeController = new ProjectTreeController(projectTreeView);
+      projectTreeController.bind();
+    }
+    Region node = projectTreeController.getViewNode();
+    SplitPane.setResizableWithParent(node, false);
 
-    SplitPane.setResizableWithParent(projectTreeView.asNode(), false);
-    if (!centerSplitPane.getItems().isEmpty()) {
-      centerSplitPane.getItems().remove(0);
-      centerSplitPane.getItems().add(0, projectTreeView.asNode());
-    } else
-      centerSplitPane.getItems().add(projectTreeView.asNode());
-    centerSplitPane.setDividerPositions(0.4);
+    if (showTreeView) {
+      centerSplitPane.getItems().add(0, node);
+      if (lastProjectTreeDividerPosition < 0)
+        centerSplitPane.setDividerPositions(0.4);
+      else
+        centerSplitPane.setDividerPositions(lastProjectTreeDividerPosition);
+    } else {
+      double[] dividers = centerSplitPane.getDividerPositions();
+      if (dividers != null && dividers.length > 0)
+        lastProjectTreeDividerPosition = dividers[0];
+      if (!centerSplitPane.getItems().isEmpty())
+        centerSplitPane.getItems().remove(0);
+    }
+    AppParameters.CURRENT_PROJECT.setShowProjectTree(showTreeView);
+    AppParameters.CURRENT_PROJECT.setProjectTreeDividerPosition(lastProjectTreeDividerPosition);
   }
 
   private void setContentView(Region contentView) {
     double[] dividerPositions = centerSplitPane.getDividerPositions();
-    if (centerSplitPane.getItems().size() == 2) {
+    if (centerSplitPane.getItems().size() == 2 && projectVerticalToolbarController.isShowProject()) {
       centerSplitPane.getItems().remove(1);
       centerSplitPane.getItems().add(contentView);
+    } else if (centerSplitPane.getItems().size() == 1 && projectVerticalToolbarController.isShowProject()) {
+      centerSplitPane.getItems().add(1, contentView);
     } else {
+      centerSplitPane.getItems().clear();
       centerSplitPane.getItems().add(contentView);
     }
 
@@ -233,6 +252,8 @@ public class MapEditorController {
   public void saveCurrentProjectState() {
     manageMapsController.updateMapModelsForExistingTabs();
     AppParameters.CURRENT_PROJECT.setIs2DVisibilitySelected(is2DVisibilitySelected());
+    AppParameters.CURRENT_PROJECT.setProjectTreeDividerPosition(lastProjectTreeDividerPosition);
+    AppParameters.CURRENT_PROJECT.setMapViewDividerPosition(manageMapsController.getDividerPosition());
     repoController.saveProject(AppParameters.CURRENT_PROJECT);
   }
 
@@ -265,6 +286,12 @@ public class MapEditorController {
       Dialog.showErrorDialog(null, "Error occurred while trying to delete the file: " + file);
     }
     return false;
+  }
+
+  public void dividerPositionChanged() {
+    double[] dividerPositions = centerSplitPane.getDividerPositions();
+    if (dividerPositions != null && dividerPositions.length > 0)
+      lastProjectTreeDividerPosition = dividerPositions[0];
   }
 
   public void changeToMapView() {

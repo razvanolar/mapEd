@@ -55,6 +55,15 @@ public class ProjectSAXHandler extends DefaultHandler {
       case "show_grid":
         project.setShowGrid(Boolean.valueOf(attributes.getValue("value")));
         break;
+      case "show_project_tree":
+        project.setShowProjectTree(Boolean.valueOf(attributes.getValue("value")));
+        break;
+      case "project_tree_divider_position":
+        project.setProjectTreeDividerPosition(Double.parseDouble(attributes.getValue("value")));
+        break;
+      case "map_view_divider_position":
+        project.setMapViewDividerPosition(Double.parseDouble(attributes.getValue("value")));
+        break;
       case "maps":
         project.setCellSize(Integer.parseInt(attributes.getValue("cellSize")));
         project.setMapType(MapType.valueOf(attributes.getValue("type")));

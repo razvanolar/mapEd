@@ -52,6 +52,7 @@ public class SystemParameters {
   public static final MessageKey MESSAGE_KEY = new MessageKey();
 
   public static final boolean DEFAULT_SHOW_GRID_VALUE = true;
+  public static final boolean DEFAULT_SHOW_PROJECT_TREE_VALUE = true;
 
   public static List<Thread> watchers = new ArrayList<>();
   public static Thread appListenerThread;

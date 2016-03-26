@@ -24,6 +24,7 @@ public class ImageCanvas extends Canvas implements StyleListener {
   private int imageX, imageY;
   private int pressedX, pressedY;
   private int pressedImageX, pressedImageY;
+  private boolean allowMultipleSelection;
   /* represent cell coordinates of the image matrix */
   private int squareCellX, squareCellY;
 
@@ -233,6 +234,14 @@ public class ImageCanvas extends Canvas implements StyleListener {
 
   public int getCanvasHeight() {
     return (int) getHeight();
+  }
+
+  public boolean isAllowMultipleSelection() {
+    return allowMultipleSelection;
+  }
+
+  public void setAllowMultipleSelection(boolean allowMultipleSelection) {
+    this.allowMultipleSelection = allowMultipleSelection;
   }
 
   public Image getImage() {

@@ -84,6 +84,17 @@ public class ManageMapsView implements ManageMapsController.IMangeMapsView {
     return manageTilesView;
   }
 
+  public double getDividerPosition() {
+    double[] dividerPositions = splitPane.getDividerPositions();
+    if (dividerPositions != null && dividerPositions.length > 0)
+      return dividerPositions[0];
+    return -1;
+  }
+
+  public void setDividerPosition(double value) {
+    splitPane.setDividerPositions(value);
+  }
+
   public Region asNode() {
     return splitPane;
   }

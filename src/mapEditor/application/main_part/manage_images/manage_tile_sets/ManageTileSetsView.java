@@ -39,7 +39,7 @@ public class ManageTileSetsView implements ManageTileSetsController.IManageTileS
   private void initGUI() {
     addNewTabButton = new Button("Add Tab");
     removeTabButton = new Button("Remove Tab");
-    saveCroppedTilesButton = new Button("Save Tiles");
+    saveCroppedTilesButton = new Button("Save Results");
     settingsButton = new Button("Settings");
     cropSelectionButton = new Button("Crop Selection");
     saveTileSetButton = new Button("Save Tile Set");
@@ -66,8 +66,8 @@ public class ManageTileSetsView implements ManageTileSetsController.IManageTileS
     clearButton.setRotate(-90);
     simpleViewButton.setRotate(-90);
 
-    tabsToolbar.getItems().addAll(addNewTabButton, removeTabButton, saveCroppedTilesButton,
-            new FillToolItem(), cropSelectionButton, saveTileSetButton);
+    tabsToolbar.getItems().addAll(addNewTabButton, removeTabButton, new FillToolItem(),
+            cropSelectionButton, saveCroppedTilesButton, saveTileSetButton);
     configurationToolbar.getItems().addAll(resetConfigurationButton, settingsButton);
 
     rightPane.setBottom(configurationToolbar);

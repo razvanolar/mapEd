@@ -39,6 +39,10 @@ public class ProjectModel {
   private boolean isGridVisibilitySelected;
   private boolean fillArea;
   private boolean showGrid = SystemParameters.DEFAULT_SHOW_GRID_VALUE;
+  private boolean showProjectTree = SystemParameters.DEFAULT_SHOW_PROJECT_TREE_VALUE;
+
+  private double projectTreeDividerPosition = .4;
+  private double mapViewDividerPosition = .7;
 
   public ProjectModel() {}
 
@@ -122,6 +126,18 @@ public class ProjectModel {
     return showGrid;
   }
 
+  public boolean isShowProjectTree() {
+    return showProjectTree;
+  }
+
+  public double getProjectTreeDividerPosition() {
+    return projectTreeDividerPosition;
+  }
+
+  public double getMapViewDividerPosition() {
+    return mapViewDividerPosition;
+  }
+
   public void setName(String name) {
     this.name = name;
   }
@@ -182,6 +198,18 @@ public class ProjectModel {
 
   public void setShowGrid(boolean showGrid) {
     this.showGrid = showGrid;
+  }
+
+  public void setShowProjectTree(boolean showProjectTree) {
+    this.showProjectTree = showProjectTree;
+  }
+
+  public void setProjectTreeDividerPosition(double projectTreeDividerPosition) {
+    this.projectTreeDividerPosition = projectTreeDividerPosition;
+  }
+
+  public void setMapViewDividerPosition(double mapViewDividerPosition) {
+    this.mapViewDividerPosition = mapViewDividerPosition;
   }
 
   /**

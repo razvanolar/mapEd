@@ -35,6 +35,10 @@ public class ProjectVerticalToolbarView implements ProjectVerticalToolbarControl
     toolBar.getItems().addAll(group1, group2);
   }
 
+  public ToggleButton getProjectButton() {
+    return projectButton;
+  }
+
   @Override
   public Region asNode() {
     return toolBar;

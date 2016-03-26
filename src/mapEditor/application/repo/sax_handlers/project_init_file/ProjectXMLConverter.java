@@ -32,6 +32,10 @@ public class ProjectXMLConverter {
     builder.append("\t<fill_area value=\"").append(project.isFillArea()).append("\" />\n");
     builder.append("\t<grid_visibility value=\"").append(project.isGridVisibilitySelected()).append("\" />\n");
     builder.append("\t<show_grid value=\"").append(project.isShowGrid()).append("\" />\n");
+//    builder.append("\t<show_project_tree value=\"").append(project.isShowProjectTree()).append("\" />\n\n");
+
+//    builder.append("\t<project_tree_divider_position value=\"").append(project.getProjectTreeDividerPosition()).append("\" />\n");
+//    builder.append("\t<map_view_divider_position value=\"").append(project.getMapViewDividerPosition()).append("\" />\n");
 
     // convert opened maps
     convertMapDetails(builder, project);
