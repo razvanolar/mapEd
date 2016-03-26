@@ -1,4 +1,4 @@
-package mapEditor.application.main_part.manage_characters.views;
+package mapEditor.application.main_part.manage_images.manage_tile_sets.utils.load_views;
 
 import javafx.geometry.Insets;
 import javafx.scene.control.ScrollPane;
@@ -10,12 +10,12 @@ import javafx.scene.text.Text;
  *
  * Created by razvanolar on 22.03.2016.
  */
-public class LoadCharactersView implements LoadCharactersController.ILoadCharactersView {
+public class LoadTileSetsView implements LoadTileSetsController.ILoadTileSetsView {
 
   private ScrollPane mainContainer;
   private VBox fieldsContainer;
 
-  public LoadCharactersView() {
+  public LoadTileSetsView() {
     initGUI();
   }
 

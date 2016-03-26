@@ -19,8 +19,8 @@ import mapEditor.application.main_part.app_utils.models.TreeItemType;
 import mapEditor.application.main_part.app_utils.views.dialogs.Dialog;
 import mapEditor.application.main_part.app_utils.views.dialogs.OkCancelDialog;
 import mapEditor.application.main_part.app_utils.views.dialogs.SimpleInputDialog;
-import mapEditor.application.main_part.manage_characters.views.LoadCharactersController;
-import mapEditor.application.main_part.manage_characters.views.LoadCharactersView;
+import mapEditor.application.main_part.manage_images.manage_tile_sets.utils.load_views.LoadTileSetsController;
+import mapEditor.application.main_part.manage_images.manage_tile_sets.utils.load_views.LoadTileSetsView;
 import mapEditor.application.main_part.manage_images.manage_tile_sets.ManageTileSetsController;
 import mapEditor.application.main_part.manage_images.manage_tiles.ManageEditEditTilesView;
 import mapEditor.application.main_part.manage_images.manage_tiles.ManageEditTilesController;
@@ -189,13 +189,13 @@ public class ProjectTreeController implements Controller, ProjectTreeContextMenu
   }
 
   @Override
-  public void loadNewCharacters() {
+  public void loadNewTileSets() {
     TreeItem<File> item = getSelectedItem();
     if (item == null || item.getValue() == null || !(item instanceof LazyTreeItem))
       return;
     LazyTreeItem lazyTreeItem = (LazyTreeItem) item;
-    TreeItemType type = getSystemItemType(lazyTreeItem);
-    if (type == null || type != TreeItemType.PROJECT_CHARACTERS_FOLDER)
+    LazyTreeItem type = getSystemTreeItemForNode(lazyTreeItem);
+    if (type == null || type.getType() != TreeItemType.PROJECT_TILE_SETS_FOLDER || type.getValue() == null)
       return;
 
     Button loadButton = new Button("Load Characters");
@@ -203,25 +203,26 @@ public class ProjectTreeController implements Controller, ProjectTreeContextMenu
     dialog.setAdditionButton(loadButton);
     dialog.setShowAdditionalButton(true);
 
-    File characterFolder = lazyTreeItem.getValue();
-    File parent = characterFolder.getParentFile();
-    String path = characterFolder.getAbsolutePath().replace(parent.getAbsolutePath(), "");
+    File root = type.getValue();
+    File parentOfRoot = root.getParentFile();
+    File selectedFolder = lazyTreeItem.getValue();
+    String path = selectedFolder.getAbsolutePath().replace(parentOfRoot.getAbsolutePath(), "");
 
-    LoadCharactersController.ILoadCharactersView loadCharactersView = new LoadCharactersView();
-    LoadCharactersController loadCharactersController = new LoadCharactersController(loadCharactersView, dialog.getStage(), loadButton, dialog.getOkButton(), path);
-    loadCharactersController.bind();
+    LoadTileSetsController.ILoadTileSetsView loadTileSetsView = new LoadTileSetsView();
+    LoadTileSetsController loadTileSetsController = new LoadTileSetsController(loadTileSetsView, dialog.getStage(), loadButton, dialog.getOkButton(), path);
+    loadTileSetsController.bind();
 
     dialog.getOkButton().setOnAction(event -> {
-      Map<File, String> filesMap = loadCharactersController.getFilesMap();
+      Map<File, String> filesMap = loadTileSetsController.getFilesMap();
       if (filesMap != null && !filesMap.isEmpty()) {
         MapEditorController.getInstance().maskView();
         RepoController repo = MapEditorController.getInstance().getRepoController();
         for (File file : filesMap.keySet()) {
           String name = filesMap.get(file);
           try {
-            repo.copyToPath(file.getAbsolutePath(), characterFolder.getAbsolutePath(), name, false);
+            repo.copyToPath(file.getAbsolutePath(), selectedFolder.getAbsolutePath(), name, false);
           } catch (Exception ex) {
-            System.out.println("*** ProjectTreeController - loadNewCharacters - Failed to load character file. File: "
+            System.out.println("*** ProjectTreeController - loadNewTileSets - Failed to load tile set files. File: "
                 + file.getAbsolutePath() + " Error Message: " + ex.getMessage());
           }
         }
@@ -230,7 +231,7 @@ public class ProjectTreeController implements Controller, ProjectTreeContextMenu
       dialog.close();
     });
 
-    dialog.setContent(loadCharactersView.asNode());
+    dialog.setContent(loadTileSetsView.asNode());
     dialog.show();
   }
 
@@ -376,15 +377,15 @@ public class ProjectTreeController implements Controller, ProjectTreeContextMenu
     return parent;
   }
 
-  private TreeItemType getSystemItemType(LazyTreeItem item) {
+  private LazyTreeItem getSystemTreeItemForNode(LazyTreeItem item) {
     if (item == null)
       return null;
     if (item.getType().isSystemType())
-      return item.getType();
+      return item;
     LazyTreeItem parent = getRootForFile(item);
     if (parent == null || !parent.getType().isSystemType())
       return null;
-    return parent.getType();
+    return parent;
   }
 
   private TreeItem<File> getSelectedItem() {

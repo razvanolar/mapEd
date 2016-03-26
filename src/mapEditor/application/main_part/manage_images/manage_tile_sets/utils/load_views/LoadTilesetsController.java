@@ -1,4 +1,4 @@
-package mapEditor.application.main_part.manage_characters.views;
+package mapEditor.application.main_part.manage_images.manage_tile_sets.utils.load_views;
 
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
@@ -20,24 +20,24 @@ import java.util.Map;
  *
  * Created by razvanolar on 22.03.2016.
  */
-public class LoadCharactersController implements Controller, SelectableCharacterFieldListener {
+public class LoadTileSetsController implements Controller, SelectableTileSetFieldListener {
 
-  public interface ILoadCharactersView extends View {
+  public interface ILoadTileSetsView extends View {
     void addField(Region node);
     void removeField(Region node);
     void setPath(String path);
   }
 
-  private ILoadCharactersView view;
+  private ILoadTileSetsView view;
   private Window parentWindow;
   private Button loadButton;
   private Button completeSelectionButton;
   private String relativePath;
 
-  private List<SelectableCharacterFieldView> fields;
+  private List<SelectableTilesetFieldView> fields;
 
-  public LoadCharactersController(ILoadCharactersView view, Window parentWindow, Button loadButton,
-                                  Button completeSelectionButton, String relativePath) {
+  public LoadTileSetsController(ILoadTileSetsView view, Window parentWindow, Button loadButton,
+                                Button completeSelectionButton, String relativePath) {
     this.view = view;
     this.parentWindow = parentWindow;
     this.loadButton = loadButton;
@@ -62,7 +62,7 @@ public class LoadCharactersController implements Controller, SelectableCharacter
         if (checkIfFileExists(file))
           continue;
         Image image = ImageProvider.getImage(file);
-        SelectableCharacterFieldView field = new SelectableCharacterFieldView(file, image, this);
+        SelectableTilesetFieldView field = new SelectableTilesetFieldView(file, image, this);
         view.addField(field.asNode());
         fields.add(field);
       }
@@ -72,7 +72,7 @@ public class LoadCharactersController implements Controller, SelectableCharacter
   }
 
   private boolean isValidSelection() {
-    for (SelectableCharacterFieldView field : fields) {
+    for (SelectableTilesetFieldView field : fields) {
       if (!FileExtensionUtil.isImageFile(field.getName()))
         return false;
     }
@@ -82,7 +82,7 @@ public class LoadCharactersController implements Controller, SelectableCharacter
   private boolean checkIfFileExists(File file) {
     if (file == null)
       return false;
-    for (SelectableCharacterFieldView field : fields) {
+    for (SelectableTilesetFieldView field : fields) {
       if (field.getFile().equals(file))
         return true;
     }
@@ -90,7 +90,7 @@ public class LoadCharactersController implements Controller, SelectableCharacter
   }
 
   @Override
-  public void deleteField(SelectableCharacterFieldView field) {
+  public void deleteField(SelectableTilesetFieldView field) {
     view.removeField(field.asNode());
     fields.remove(field);
   }
@@ -102,7 +102,7 @@ public class LoadCharactersController implements Controller, SelectableCharacter
 
   public Map<File, String> getFilesMap() {
     Map<File, String> filesMap = new HashMap<>();
-    for (SelectableCharacterFieldView field : fields) {
+    for (SelectableTilesetFieldView field : fields) {
       filesMap.put(field.getFile(), field.getName());
     }
     return filesMap;

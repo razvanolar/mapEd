@@ -7,7 +7,7 @@ package mapEditor.application.main_part.project_tree.utils;
 public interface ProjectTreeContextMenuListener {
 
   void createNewDirectory();
-  void loadNewCharacters();
+  void loadNewTileSets();
   void openMap();
   void openInImageEditor();
   void openTilesInNewTab();

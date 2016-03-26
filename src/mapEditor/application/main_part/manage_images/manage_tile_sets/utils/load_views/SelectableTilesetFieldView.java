@@ -1,4 +1,4 @@
-package mapEditor.application.main_part.manage_characters.views;
+package mapEditor.application.main_part.manage_images.manage_tile_sets.utils.load_views;
 
 import javafx.beans.value.ChangeListener;
 import javafx.event.ActionEvent;
@@ -20,7 +20,7 @@ import java.io.File;
  *
  * Created by razvanolar on 22.03.2016.
  */
-public class SelectableCharacterFieldView implements View {
+public class SelectableTilesetFieldView implements View {
 
   private static EventHandler<ActionEvent> deleteHandler;
   private static ChangeListener<String> textListener;
@@ -28,10 +28,10 @@ public class SelectableCharacterFieldView implements View {
   private HBox container;
   private File file;
   private Image image;
-  private SelectableCharacterFieldListener listener;
+  private SelectableTileSetFieldListener listener;
   private TextField textField;
 
-  public SelectableCharacterFieldView(File file, Image image, SelectableCharacterFieldListener listener) {
+  public SelectableTilesetFieldView(File file, Image image, SelectableTileSetFieldListener listener) {
     this.file = file;
     this.image = image;
     this.listener = listener;
@@ -78,9 +78,9 @@ public class SelectableCharacterFieldView implements View {
         if (!(event.getSource() instanceof Button))
           return;
         Button deleteButton = (Button) event.getSource();
-        if (deleteButton.getUserData() == null || !(deleteButton.getUserData() instanceof SelectableCharacterFieldView))
+        if (deleteButton.getUserData() == null || !(deleteButton.getUserData() instanceof SelectableTilesetFieldView))
           return;
-        listener.deleteField((SelectableCharacterFieldView) deleteButton.getUserData());
+        listener.deleteField((SelectableTilesetFieldView) deleteButton.getUserData());
       };
     }
     return deleteHandler;
