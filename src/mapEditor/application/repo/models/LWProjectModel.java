@@ -44,4 +44,9 @@ public class LWProjectModel {
   public void setStatus(ProjectStatus status) {
     this.status = status;
   }
+
+  @Override
+  public String toString() {
+    return lastAccessedTime + " : " + name + " " + status;
+  }
 }

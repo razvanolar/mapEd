@@ -62,7 +62,8 @@ public class MapEditorView extends Application {
 
   @Override
   public void stop() throws Exception {
-    MapEditorController.getInstance().saveCurrentProjectState();
+    if (AppParameters.CURRENT_PROJECT != null)
+      MapEditorController.getInstance().saveCurrentProjectState();
 
     for (Thread thread : SystemParameters.watchers) {
       thread.interrupt();
@@ -168,7 +169,8 @@ public class MapEditorView extends Application {
       SystemParameters.appListenerThread.start();
       launch(args);
     } catch (Exception ex) {
-      System.out.println("*** Unable to open the app. Exception message : " + ex.getMessage());
+      System.out.println("*** MapEditorView encountered an error. Exception message : " + ex.getMessage());
+      ex.printStackTrace();
     }
   }
 }

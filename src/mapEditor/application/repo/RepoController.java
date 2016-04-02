@@ -28,6 +28,7 @@ import java.io.*;
 import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -77,7 +78,13 @@ public class RepoController {
     if (projects == null)
       return;
     try {
-      Collections.sort(projects, (o1, o2) -> (int) (o2.getLastAccessedTime() - o1.getLastAccessedTime()));
+      Collections.sort(projects, (o1, o2) -> {
+        long t1 = o1.getLastAccessedTime();
+        long t2 = o2.getLastAccessedTime();
+        if (t1 == t2)
+          return 0;
+        return t1 - t2 > 0 ? -1 : 1;
+      });
       KnownProjectsXMLConverter converter = new KnownProjectsXMLConverter();
       String result = converter.convertLWProjectsToXML(projects);
       PrintWriter writer = new PrintWriter(new FileWriter(SystemParameters.KNOWN_PROJECTS_FILE_PATH, false));
