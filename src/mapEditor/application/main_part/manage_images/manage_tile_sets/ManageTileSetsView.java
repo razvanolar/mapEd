@@ -20,7 +20,7 @@ public class ManageTileSetsView implements ManageTileSetsController.IManageTileS
   private SplitPane mainSplitPane;
   private TabPane tabPane;
   private Button addNewTabButton;
-  private Button removeTabButton;
+  private Button playCharactersButton;
   private Button saveCroppedTilesButton;
   private Button settingsButton;
   private Button cropSelectionButton;
@@ -31,6 +31,7 @@ public class ManageTileSetsView implements ManageTileSetsController.IManageTileS
   private ToolBar tabsToolbar;
   private ToolBar verticalToolBar;
   private ToggleButton simpleViewButton;
+  private ToggleButton gridSelectionButton;
 
   public ManageTileSetsView() {
     initGUI();
@@ -38,12 +39,13 @@ public class ManageTileSetsView implements ManageTileSetsController.IManageTileS
 
   private void initGUI() {
     addNewTabButton = new Button("Add Tab");
-    removeTabButton = new Button("Remove Tab");
+    playCharactersButton = new Button("Play Selection");
     saveCroppedTilesButton = new Button("Save Results");
     settingsButton = new Button("Settings");
     cropSelectionButton = new Button("Crop Selection");
     saveTileSetButton = new Button("Save Tile Set");
     resetConfigurationButton = new Button("Reset");
+    gridSelectionButton = new ToggleButton("Grid Selection");
     manageConfigurationView = new ManageConfigurationView();
     tabPane = new TabPane();
     tabsToolbar = new ToolBar();
@@ -66,9 +68,9 @@ public class ManageTileSetsView implements ManageTileSetsController.IManageTileS
     clearButton.setRotate(-90);
     simpleViewButton.setRotate(-90);
 
-    tabsToolbar.getItems().addAll(addNewTabButton, removeTabButton, new FillToolItem(),
+    tabsToolbar.getItems().addAll(addNewTabButton, new Separator(Orientation.HORIZONTAL), playCharactersButton, new FillToolItem(),
             cropSelectionButton, saveCroppedTilesButton, saveTileSetButton);
-    configurationToolbar.getItems().addAll(resetConfigurationButton, settingsButton);
+    configurationToolbar.getItems().addAll(resetConfigurationButton, settingsButton, gridSelectionButton);
 
     rightPane.setBottom(configurationToolbar);
 
@@ -118,8 +120,8 @@ public class ManageTileSetsView implements ManageTileSetsController.IManageTileS
     return addNewTabButton;
   }
 
-  public Button getRemoveTabButton() {
-    return removeTabButton;
+  public Button getPlayCharactersButton() {
+    return playCharactersButton;
   }
 
   public Button getSaveCroppedTilesButton() {
@@ -152,6 +154,10 @@ public class ManageTileSetsView implements ManageTileSetsController.IManageTileS
 
   public ToggleButton getSimpleViewButton() {
     return simpleViewButton;
+  }
+
+  public ToggleButton getGridSelectionButton() {
+    return gridSelectionButton;
   }
 
   public ManageConfigurationController.IManageConfigurationView getManageConfigurationView() {

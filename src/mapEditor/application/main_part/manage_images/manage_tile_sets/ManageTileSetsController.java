@@ -7,6 +7,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Modality;
 import javafx.stage.StageStyle;
+import javafx.stage.WindowEvent;
 import mapEditor.MapEditorController;
 import mapEditor.application.main_part.app_utils.AppParameters;
 import mapEditor.application.main_part.app_utils.inputs.FilesLoader;
@@ -19,6 +20,8 @@ import mapEditor.application.main_part.app_utils.views.TabImageLoadView;
 import mapEditor.application.main_part.app_utils.views.dialogs.Dialog;
 import mapEditor.application.main_part.app_utils.views.dialogs.OkCancelDialog;
 import mapEditor.application.main_part.app_utils.views.others.SystemFilesView;
+import mapEditor.application.main_part.manage_images.manage_tile_sets.characters_player_view.CharactersPlayerController;
+import mapEditor.application.main_part.manage_images.manage_tile_sets.characters_player_view.CharactersPlayerView;
 import mapEditor.application.main_part.manage_images.manage_tile_sets.configurations.ManageConfigurationController;
 import mapEditor.application.main_part.manage_images.manage_tile_sets.cropped_tiles.detailed_view.CroppedTilesDetailedController;
 import mapEditor.application.main_part.manage_images.manage_tile_sets.cropped_tiles.detailed_view.CroppedTileDetailedDetailedView;
@@ -62,7 +65,7 @@ public class ManageTileSetsController implements Controller, ManageImagesListene
     boolean isSimpleView();
     TabPane getTabPane();
     Button getAddNewTabButton();
-    Button getRemoveTabButton();
+    Button getPlayCharactersButton();
     Button getSaveCroppedTilesButton();
     Button getSettingsButton();
     Button getCropSelectionButton();
@@ -71,6 +74,7 @@ public class ManageTileSetsController implements Controller, ManageImagesListene
     ToolBar getTabsToolbar();
     ToolBar getVerticalToolBar();
     ToggleButton getSimpleViewButton();
+    ToggleButton getGridSelectionButton();
     ManageConfigurationController.IManageConfigurationView getManageConfigurationView();
     void setState(IManageConfigurationViewState state);
   }
@@ -114,6 +118,7 @@ public class ManageTileSetsController implements Controller, ManageImagesListene
           view.setState(IManageConfigurationViewState.NO_IMAGE_SELECTED);
         }
         configurationController.setListener(currentCanvas);
+        currentCanvas.setGridSelection(view.getGridSelectionButton().isSelected());
         currentCanvas.paint();
         currentTabContent.setToolBar(view.getTabsToolbar());
         currentTabContent.setVerticalToolBar(view.getVerticalToolBar());
@@ -156,7 +161,7 @@ public class ManageTileSetsController implements Controller, ManageImagesListene
     view.getCropSelectionButton().setOnAction(event -> {
       if (currentCanvas == null || currentTabContent == null)
         return;
-      currentCanvas.cropSelectedTile(param -> {
+      currentCanvas.cropSelection(param -> {
         if (param != null) {
           ImageModel image = new ImageModel(param, AppParameters.CURRENT_PROJECT.getTilesFile().getAbsolutePath(), "");
           addCroppedImage(image);
@@ -167,6 +172,39 @@ public class ManageTileSetsController implements Controller, ManageImagesListene
 
     view.getSimpleViewButton().selectedProperty().addListener((observable, oldValue, newValue) -> {
       onChangeTilesView(newValue);
+    });
+
+    view.getGridSelectionButton().selectedProperty().addListener((observable, oldValue, newValue) -> {
+      if (currentCanvas != null) {
+        currentCanvas.setGridSelection(newValue);
+        currentCanvas.paint();
+      }
+    });
+
+    view.getPlayCharactersButton().setOnAction(event -> {
+      if (currentCanvas == null || currentCanvas.getImage() == null)
+        return;
+      currentCanvas.cropSelectedMatrix(param -> {
+        if (param == null || param.getRows() <= 0 || param.getColumns() <= 0)
+          return null;
+
+        OkCancelDialog dialog = new OkCancelDialog("Test Characters", StageStyle.UTILITY, Modality.APPLICATION_MODAL, true);
+        final CharactersPlayerController.ICharacterPlayerView[] characterPlayerView = {new CharactersPlayerView()};
+        final CharactersPlayerController[] charactersPlayerController = {new CharactersPlayerController(characterPlayerView[0],
+                param,
+                configurationController.getSquareStrokeColor(),
+                configurationController.getSquareFillColor())};
+        charactersPlayerController[0].bind();
+        dialog.setContent(characterPlayerView[0].asNode());
+        dialog.getStage().addEventHandler(WindowEvent.WINDOW_HIDING, event1 -> {
+          charactersPlayerController[0].closeAnimation();
+          charactersPlayerController[0] = null;
+          characterPlayerView[0] = null;
+        });
+        dialog.show();
+
+        return null;
+      });
     });
   }
 

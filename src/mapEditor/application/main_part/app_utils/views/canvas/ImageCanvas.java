@@ -7,11 +7,13 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.util.Callback;
 import mapEditor.application.main_part.app_utils.AppParameters;
+import mapEditor.application.main_part.app_utils.models.ImageMatrix;
 
 /**
  *
@@ -19,21 +21,24 @@ import mapEditor.application.main_part.app_utils.AppParameters;
  */
 public class ImageCanvas extends Canvas implements StyleListener {
 
-  private Image image;
+  protected Image image;
   private Color textColor = Color.DARKSLATEBLUE;
-  private int imageX, imageY;
-  private int pressedX, pressedY;
-  private int pressedImageX, pressedImageY;
-  private boolean allowMultipleSelection;
+  protected int imageX, imageY;
+  protected int pressedX, pressedY;
+  protected int pressedImageX, pressedImageY;
+  protected boolean allowMultipleSelection = true;
+  protected boolean gridSelection = true;
   /* represent cell coordinates of the image matrix */
-  private int squareCellX, squareCellY;
+  protected int squareCellX, squareCellY;
+  protected int completeSelectionCellX = -1;
+  protected int completeSelectionCellY = -1;
 
   private ColorAdjust colorAdjustEffect;
   private Color backgroundColor = new Color(0, 0, 0, 0);
   private Color squareBorderColor = Color.YELLOW;
   private Color squareFillColor = new Color(0, 0, 0, 0);
 
-  private int CELL_SIZE = AppParameters.CURRENT_PROJECT.getCellSize();
+  protected int CELL_SIZE = AppParameters.CURRENT_PROJECT.getCellSize();
   private SnapshotParameters snapshotParameters;
 
   public ImageCanvas(Image image) {
@@ -48,18 +53,30 @@ public class ImageCanvas extends Canvas implements StyleListener {
       pressedY = (int) event.getY();
       pressedImageX = imageX;
       pressedImageY = imageY;
-      if (!event.isControlDown() && isInImageBounds(pressedX, pressedY)) {
+
+      if (event.isShiftDown() && isInImageBounds(pressedX, pressedY)) {
+        completeSelectionCellX = (pressedX - imageX) / CELL_SIZE;
+        completeSelectionCellY = (pressedY - imageY) / CELL_SIZE;
+        if (squareCellX != completeSelectionCellX || squareCellY != completeSelectionCellY)
+          paint();
+      } else if (!event.isControlDown() && isInImageBounds(pressedX, pressedY)) {
         int lastSquareCellX = squareCellX;
         int lastSquareCellY = squareCellY;
         squareCellX = (pressedX - imageX) / CELL_SIZE;
         squareCellY = (pressedY - imageY) / CELL_SIZE;
+        completeSelectionCellX = -1;
+        completeSelectionCellY = -1;
         /* repaint only if coordinates were changed */
         if (lastSquareCellX != squareCellX || lastSquareCellY != squareCellY)
           paint();
       }
+      mousePressed();
     });
 
     this.setOnMouseDragged(event -> {
+      if (event.isShiftDown())
+        return;
+
       int lastImageX = imageX;
       int lastImageY = imageY;
       imageX = ((int) event.getX() - pressedX) + pressedImageX;
@@ -116,14 +133,40 @@ public class ImageCanvas extends Canvas implements StyleListener {
 
     g.setEffect(null);
 
+    paintSelection(g);
+  }
+
+  protected void paintSelection(GraphicsContext g) {
     /* calculate square coordinates */
     g.setStroke(squareBorderColor);
     g.setFill(squareFillColor);
     g.setLineWidth(2);
-    int squareX = imageX + squareCellX * CELL_SIZE - 1;
-    int squareY = imageY + squareCellY * CELL_SIZE - 1;
-    g.fillRect(squareX, squareY, CELL_SIZE + 2, CELL_SIZE + 2);
-    g.strokeRect(squareX, squareY, CELL_SIZE + 2, CELL_SIZE + 2);
+    if (!allowMultipleSelection || completeSelectionCellX == -1 || completeSelectionCellY == -1) {  // draw only one square
+      int squareX = imageX + squareCellX * CELL_SIZE - 1;
+      int squareY = imageY + squareCellY * CELL_SIZE - 1;
+      g.fillRect(squareX, squareY, CELL_SIZE + 2, CELL_SIZE + 2);
+      g.strokeRect(squareX, squareY, CELL_SIZE + 2, CELL_SIZE + 2);
+    } else if (completeSelectionCellX >= 0 && completeSelectionCellY >= 0) {  // draw full selection
+      int minX = Math.min(squareCellX, completeSelectionCellX);
+      int minY = Math.min(squareCellY, completeSelectionCellY);
+      int marginX = imageX + minX * CELL_SIZE;
+      int marginY = imageY + minY * CELL_SIZE;
+      int diffX = Math.abs(completeSelectionCellX - squareCellX);
+      int diffY = Math.abs(completeSelectionCellY - squareCellY);
+      if (gridSelection) {
+        for (int i = 0; i <= diffX; i++) {
+          for (int j = 0; j <= diffY; j++) {
+            int squareX = marginX + i * CELL_SIZE - 1;
+            int squareY = marginY + j * CELL_SIZE - 1;
+            g.fillRect(squareX, squareY, CELL_SIZE + 2, CELL_SIZE + 2);
+            g.strokeRect(squareX, squareY, CELL_SIZE + 2, CELL_SIZE + 2);
+          }
+        }
+      } else {
+        g.fillRect(marginX - 1, marginY - 1, (diffX + 1) * CELL_SIZE + 2, (diffY + 1) * CELL_SIZE + 2);
+        g.strokeRect(marginX - 1, marginY - 1, (diffX + 1) * CELL_SIZE + 2, (diffY + 1) * CELL_SIZE + 2);
+      }
+    }
   }
 
   private void paintNoImageText(GraphicsContext g, int canvasWidth, int canvasHeight) {
@@ -153,23 +196,75 @@ public class ImageCanvas extends Canvas implements StyleListener {
     }, snapshotParameters, null);
   }
 
-  public void cropSelectedTile(Callback<Image, Void> callback) {
+  public void cropSelection(Callback<Image, Void> callback) {
     if (image == null)
       return;
 
     if (snapshotParameters == null)
       snapshotParameters = new SnapshotParameters();
 
+    int minCellX = squareCellX;
+    int minCellY = squareCellY;
+    int diffX = 0;
+    int diffY = 0;
+
+    if (completeSelectionCellX >= 0 && completeSelectionCellX <= image.getWidth() &&
+            completeSelectionCellY >=0 && completeSelectionCellY <= image.getHeight()) {
+      minCellX = Math.min(completeSelectionCellX, squareCellX);
+      minCellY = Math.min(completeSelectionCellY, squareCellY);
+      diffX = Math.abs(completeSelectionCellX - squareCellX);
+      diffY = Math.abs(completeSelectionCellY - squareCellY);
+    }
+
     snapshotParameters.setFill(Color.TRANSPARENT);
-    snapshotParameters.setViewport(new Rectangle2D(imageX + squareCellX * CELL_SIZE,
-            imageY + squareCellY * CELL_SIZE,
-            CELL_SIZE,
-            CELL_SIZE));
+    snapshotParameters.setViewport(new Rectangle2D(imageX + minCellX * CELL_SIZE,
+            imageY + minCellY * CELL_SIZE,
+            (diffX + 1) * CELL_SIZE,
+            (diffY + 1) * CELL_SIZE));
 
     snapshot(param -> {
       callback.call(param.getImage());
       return null;
     }, snapshotParameters, null);
+  }
+
+  public void cropSelectedMatrix(Callback<ImageMatrix, Void> callback) {
+    if (image == null)
+      return;
+
+    int minCellX = squareCellX;
+    int minCellY = squareCellY;
+    int diffX = 0;
+    int diffY = 0;
+
+    if (completeSelectionCellX >= 0 && completeSelectionCellX <= image.getWidth() &&
+            completeSelectionCellY >=0 && completeSelectionCellY <= image.getHeight()) {
+      minCellX = Math.min(completeSelectionCellX, squareCellX);
+      minCellY = Math.min(completeSelectionCellY, squareCellY);
+      diffX = Math.abs(completeSelectionCellX - squareCellX);
+      diffY = Math.abs(completeSelectionCellY - squareCellY);
+    }
+
+    ImageView imageView = new ImageView(image);
+    if (snapshotParameters == null)
+      snapshotParameters = new SnapshotParameters();
+    snapshotParameters.setFill(Color.TRANSPARENT);
+
+    Image[][] images = new Image[diffY + 1][diffX + 1];
+    for (int i=0; i<=diffX; i++) {
+      for (int j=0; j<diffY; j++) {
+        Rectangle2D rectangle2D = new Rectangle2D(minCellX + i * CELL_SIZE, minCellY + j * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+        snapshotParameters.setViewport(rectangle2D);
+        WritableImage snapshot = imageView.snapshot(snapshotParameters, null);
+        images[j][i] = snapshot;
+      }
+    }
+    snapshotParameters.setViewport(new Rectangle2D(minCellX * CELL_SIZE,
+            minCellY * CELL_SIZE,
+            (diffX + 1) * CELL_SIZE,
+            (diffY + 1) * CELL_SIZE));
+    Image image = imageView.snapshot(snapshotParameters, null);
+    callback.call(new ImageMatrix(images, image));
   }
 
   /**
@@ -244,6 +339,10 @@ public class ImageCanvas extends Canvas implements StyleListener {
     this.allowMultipleSelection = allowMultipleSelection;
   }
 
+  public void setGridSelection(boolean gridSelection) {
+    this.gridSelection = gridSelection;
+  }
+
   public Image getImage() {
     return image;
   }
@@ -253,6 +352,8 @@ public class ImageCanvas extends Canvas implements StyleListener {
     if (image != null)
       colorAdjustEffect = new ColorAdjust();
   }
+
+  protected void mousePressed() {}
 
   @Override
   public ColorAdjust getColorAdjust() {

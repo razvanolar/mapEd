@@ -202,4 +202,12 @@ public class ManageConfigurationController implements Controller {
     view.getSquareFillTransparencySlider().setValue(color.getOpacity());
     view.getSquareFillColorPicker().setValue(color);
   }
+
+  public Color getSquareStrokeColor() {
+    return view.getSquareStrokeColorPicker().getValue();
+  }
+
+  public Color getSquareFillColor() {
+    return view.getSquareFillColorPicker().getValue();
+  }
 }
