@@ -191,9 +191,9 @@ public class ManageTileSetsController implements Controller, ManageImagesListene
         OkCancelDialog dialog = new OkCancelDialog("Test Characters", StageStyle.UTILITY, Modality.APPLICATION_MODAL, true);
         final CharactersPlayerController.ICharacterPlayerView[] characterPlayerView = {new CharactersPlayerView()};
         final CharactersPlayerController[] charactersPlayerController = {new CharactersPlayerController(characterPlayerView[0],
-                param,
-                configurationController.getSquareStrokeColor(),
-                configurationController.getSquareFillColor())};
+                param, configurationController.getSquareStrokeColor(), configurationController.getSquareFillColor(),
+                currentCanvas.getNumberOfSelectedColumns(), currentCanvas.getNumberOfSelectedRows(),
+                currentCanvas.getCellWidth(), currentCanvas.getCellHeight())};
         charactersPlayerController[0].bind();
         dialog.setContent(characterPlayerView[0].asNode());
         dialog.getStage().addEventHandler(WindowEvent.WINDOW_HIDING, event1 -> {
@@ -392,8 +392,8 @@ public class ManageTileSetsController implements Controller, ManageImagesListene
       canvas.setImage(param.getImage());
       canvas.setUserData(param);
       canvas.paint();
-      configurationController.setListener(canvas);
       configurationController.setViewState(IManageConfigurationViewState.FULL_SELECTION);
+      configurationController.setListener(canvas);
       canvasWasChanged();
       return null;
     }, null);

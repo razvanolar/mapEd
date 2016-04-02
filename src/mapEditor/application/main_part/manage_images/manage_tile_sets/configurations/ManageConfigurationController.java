@@ -3,8 +3,11 @@ package mapEditor.application.main_part.manage_images.manage_tile_sets.configura
 import javafx.beans.value.ChangeListener;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Slider;
+import javafx.scene.control.Spinner;
+import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.paint.Color;
+import mapEditor.application.main_part.app_utils.AppParameters;
 import mapEditor.application.main_part.app_utils.views.canvas.StyleListener;
 import mapEditor.application.main_part.manage_images.manage_tile_sets.ManageTileSetsController;
 import mapEditor.application.main_part.types.Controller;
@@ -27,20 +30,23 @@ public class ManageConfigurationController implements Controller {
     Slider getCanvasGreenColorSlider();
     Slider getCanvasTransparencyColorSlider();
     ColorPicker getCanvasBackgroundColorPicker();
-    Slider getSquareStrokeRedColorSlider();
-    Slider getSquareStrokeGreenColorSlider();
-    Slider getSquareStrokeBlueColorSlider();
-    Slider getSquareStrokeTransparencySlider();
-    ColorPicker getSquareStrokeColorPicker();
-    Slider getSquareFillRedColorSlider();
-    Slider getSquareFillGreenColorSlider();
-    Slider getSquareFillBlueColorSlider();
-    Slider getSquareFillTransparencySlider();
-    ColorPicker getSquareFillColorPicker();
+    Slider getSelectionStrokeRedColorSlider();
+    Slider getSelectionStrokeGreenColorSlider();
+    Slider getSelectionStrokeBlueColorSlider();
+    Slider getSelectionStrokeTransparencySlider();
+    ColorPicker getSelectionStrokeColorPicker();
+    Slider getSelectionFillRedColorSlider();
+    Slider getSelectionFillGreenColorSlider();
+    Slider getSelectionFillBlueColorSlider();
+    Slider getSelectionFillTransparencySlider();
+    ColorPicker getSelectionFillColorPicker();
+    Spinner<Integer> getSelectionWidthSpinner();
+    Spinner<Integer> getSelectionHeightSpinner();
   }
 
   private IManageConfigurationView view;
   private StyleListener listener;
+  private ManageTileSetsController.IManageConfigurationViewState state;
 
   public ManageConfigurationController(IManageConfigurationView view) {
     this.view = view;
@@ -95,38 +101,49 @@ public class ManageConfigurationController implements Controller {
       }
     });
 
-    /* square style listeners */
+    /* selection color listeners */
     ChangeListener<Number> squareBorderListener = (observable2, oldValue2, newValue2) -> {
       Color color = createSquareBorderColorBasedOnSliderValues();
-      view.getSquareStrokeColorPicker().setValue(color);
+      view.getSelectionStrokeColorPicker().setValue(color);
       if (listener != null)
         listener.setSquareBorderColor(color);
     };
     ChangeListener<Number> squareFillListener = (observable2, oldValue2, newValue2) -> {
       Color color = createSquareFillColorBasedOnSliderValues();
-      view.getSquareFillColorPicker().setValue(color);
+      view.getSelectionFillColorPicker().setValue(color);
       if (listener != null)
         listener.setSquareFillColor(color);
     };
-    view.getSquareStrokeRedColorSlider().valueProperty().addListener(squareBorderListener);
-    view.getSquareStrokeGreenColorSlider().valueProperty().addListener(squareBorderListener);
-    view.getSquareStrokeBlueColorSlider().valueProperty().addListener(squareBorderListener);
-    view.getSquareStrokeTransparencySlider().valueProperty().addListener(squareBorderListener);
-    view.getSquareFillRedColorSlider().valueProperty().addListener(squareFillListener);
-    view.getSquareFillGreenColorSlider().valueProperty().addListener(squareFillListener);
-    view.getSquareFillBlueColorSlider().valueProperty().addListener(squareFillListener);
-    view.getSquareFillTransparencySlider().valueProperty().addListener(squareFillListener);
-    view.getSquareStrokeColorPicker().valueProperty().addListener((observable, oldColor, newColor) -> {
+    view.getSelectionStrokeRedColorSlider().valueProperty().addListener(squareBorderListener);
+    view.getSelectionStrokeGreenColorSlider().valueProperty().addListener(squareBorderListener);
+    view.getSelectionStrokeBlueColorSlider().valueProperty().addListener(squareBorderListener);
+    view.getSelectionStrokeTransparencySlider().valueProperty().addListener(squareBorderListener);
+    view.getSelectionFillRedColorSlider().valueProperty().addListener(squareFillListener);
+    view.getSelectionFillGreenColorSlider().valueProperty().addListener(squareFillListener);
+    view.getSelectionFillBlueColorSlider().valueProperty().addListener(squareFillListener);
+    view.getSelectionFillTransparencySlider().valueProperty().addListener(squareFillListener);
+    view.getSelectionStrokeColorPicker().valueProperty().addListener((observable, oldColor, newColor) -> {
       if (newColor != null && listener != null) {
         setCanvasSquareBorderColorValues(newColor);
         listener.setSquareBorderColor(newColor);
       }
     });
-    view.getSquareFillColorPicker().valueProperty().addListener((observable, oldColor, newColor) -> {
+    view.getSelectionFillColorPicker().valueProperty().addListener((observable, oldColor, newColor) -> {
       if (newColor != null && listener != null) {
         setCanvasSquareFillColorValues(newColor);
         listener.setSquareFillColor(newColor);
       }
+    });
+
+    /* selection size listeners */
+    view.getSelectionWidthSpinner().valueProperty().addListener((observable, oldValue, newValue) -> {
+      if (listener != null)
+        listener.setSelectionWidth(newValue);
+    });
+
+    view.getSelectionHeightSpinner().valueProperty().addListener((observable, oldValue, newValue) -> {
+      if (listener != null)
+        listener.setSelectionHeight(newValue);
     });
   }
 
@@ -138,20 +155,21 @@ public class ManageConfigurationController implements Controller {
   }
 
   private Color createSquareBorderColorBasedOnSliderValues() {
-    return new Color(view.getSquareStrokeRedColorSlider().getValue(),
-            view.getSquareStrokeGreenColorSlider().getValue(),
-            view.getSquareStrokeBlueColorSlider().getValue(),
-            view.getSquareStrokeTransparencySlider().getValue());
+    return new Color(view.getSelectionStrokeRedColorSlider().getValue(),
+            view.getSelectionStrokeGreenColorSlider().getValue(),
+            view.getSelectionStrokeBlueColorSlider().getValue(),
+            view.getSelectionStrokeTransparencySlider().getValue());
   }
 
   private Color createSquareFillColorBasedOnSliderValues() {
-    return new Color(view.getSquareFillRedColorSlider().getValue(),
-            view.getSquareFillGreenColorSlider().getValue(),
-            view.getSquareFillBlueColorSlider().getValue(),
-            view.getSquareFillTransparencySlider().getValue());
+    return new Color(view.getSelectionFillRedColorSlider().getValue(),
+            view.getSelectionFillGreenColorSlider().getValue(),
+            view.getSelectionFillBlueColorSlider().getValue(),
+            view.getSelectionFillTransparencySlider().getValue());
   }
 
   public void setViewState(ManageTileSetsController.IManageConfigurationViewState state) {
+    this.state = state;
     view.setState(state);
   }
 
@@ -177,6 +195,14 @@ public class ManageConfigurationController implements Controller {
 
     if (listener.getSquareFillColor() != null)
       setCanvasSquareFillColorValues(listener.getSquareFillColor());
+
+    if (state == ManageTileSetsController.IManageConfigurationViewState.FULL_SELECTION) {
+      int cellSize = AppParameters.CURRENT_PROJECT.getCellSize();
+      SpinnerValueFactory.IntegerSpinnerValueFactory widthFactory = (SpinnerValueFactory.IntegerSpinnerValueFactory) view.getSelectionWidthSpinner().getValueFactory();
+      SpinnerValueFactory.IntegerSpinnerValueFactory heightFactory = (SpinnerValueFactory.IntegerSpinnerValueFactory) view.getSelectionHeightSpinner().getValueFactory();
+      widthFactory.setMax(listener.getColumns() > 0 ? listener.getColumns() * cellSize : cellSize);
+      heightFactory.setMax(listener.getRows() > 0 ? listener.getRows() * cellSize : cellSize);
+    }
   }
 
   private void setCanvasColorSlidersValue(Color color) {
@@ -188,26 +214,26 @@ public class ManageConfigurationController implements Controller {
   }
 
   private void setCanvasSquareBorderColorValues(Color color) {
-    view.getSquareStrokeRedColorSlider().setValue(color.getRed());
-    view.getSquareStrokeGreenColorSlider().setValue(color.getGreen());
-    view.getSquareStrokeBlueColorSlider().setValue(color.getBlue());
-    view.getSquareStrokeTransparencySlider().setValue(color.getOpacity());
-    view.getSquareStrokeColorPicker().setValue(color);
+    view.getSelectionStrokeRedColorSlider().setValue(color.getRed());
+    view.getSelectionStrokeGreenColorSlider().setValue(color.getGreen());
+    view.getSelectionStrokeBlueColorSlider().setValue(color.getBlue());
+    view.getSelectionStrokeTransparencySlider().setValue(color.getOpacity());
+    view.getSelectionStrokeColorPicker().setValue(color);
   }
 
   private void setCanvasSquareFillColorValues(Color color) {
-    view.getSquareFillRedColorSlider().setValue(color.getRed());
-    view.getSquareFillGreenColorSlider().setValue(color.getGreen());
-    view.getSquareFillBlueColorSlider().setValue(color.getBlue());
-    view.getSquareFillTransparencySlider().setValue(color.getOpacity());
-    view.getSquareFillColorPicker().setValue(color);
+    view.getSelectionFillRedColorSlider().setValue(color.getRed());
+    view.getSelectionFillGreenColorSlider().setValue(color.getGreen());
+    view.getSelectionFillBlueColorSlider().setValue(color.getBlue());
+    view.getSelectionFillTransparencySlider().setValue(color.getOpacity());
+    view.getSelectionFillColorPicker().setValue(color);
   }
 
   public Color getSquareStrokeColor() {
-    return view.getSquareStrokeColorPicker().getValue();
+    return view.getSelectionStrokeColorPicker().getValue();
   }
 
   public Color getSquareFillColor() {
-    return view.getSquareFillColorPicker().getValue();
+    return view.getSelectionFillColorPicker().getValue();
   }
 }

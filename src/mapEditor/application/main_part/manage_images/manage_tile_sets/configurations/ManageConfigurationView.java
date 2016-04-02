@@ -4,12 +4,14 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Slider;
+import javafx.scene.control.Spinner;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
+import mapEditor.application.main_part.app_utils.AppParameters;
 import mapEditor.application.main_part.app_utils.constants.CssConstants;
 import mapEditor.application.main_part.manage_images.manage_tile_sets.ManageTileSetsController;
 
@@ -43,11 +45,16 @@ public class ManageConfigurationView implements ManageConfigurationController.IM
   private Slider squareFillTransparencySlider;
   private ColorPicker squareFillColorPicker;
 
+  private Spinner<Integer> selectionWidthSpinner;
+  private Spinner<Integer> selectionHeightSpinner;
+
   public ManageConfigurationView() {
     initGUI();
   }
 
   private void initGUI() {
+    int cellSize = AppParameters.CURRENT_PROJECT.getCellSize();
+
     imageHueSlider = new Slider(-1, 1, 0);
     imageBrightnessSlider = new Slider(-1, 1, 0);
     imageContrastSlider = new Slider(-1, 1, 0);
@@ -67,10 +74,13 @@ public class ManageConfigurationView implements ManageConfigurationController.IM
     squareFillBlueColorSlider = new Slider(0, 1, 0);
     squareFillTransparencySlider = new Slider(0, 1, 0);
     squareFillColorPicker = new ColorPicker(new Color(0, 0, 0, 0));
+    selectionWidthSpinner = new Spinner<>(cellSize, cellSize, cellSize, 1);
+    selectionHeightSpinner = new Spinner<>(cellSize, cellSize, cellSize, 1);
     mainContainer = new VBox(3);
     GridPane colorAdjustContainer = new GridPane();
     GridPane canvasColorContainer = new GridPane();
-    GridPane squareColorsContainer = new GridPane();
+    GridPane selectionColorsContainer = new GridPane();
+    GridPane selectionSizeContainer = new GridPane();
 
     colorAdjustContainer.setAlignment(Pos.CENTER_LEFT);
     colorAdjustContainer.setVgap(5);
@@ -100,30 +110,39 @@ public class ManageConfigurationView implements ManageConfigurationController.IM
     canvasColorContainer.add(new Text("Background Color : "), 0, 4);
     canvasColorContainer.add(canvasBackgroundColorPicker, 1, 4);
 
-    squareColorsContainer.setAlignment(Pos.CENTER_LEFT);
-    squareColorsContainer.setVgap(5);
-    squareColorsContainer.setHgap(5);
-    squareColorsContainer.setMinWidth(290);
-    squareColorsContainer.add(new Text("Border Red Value : "), 0, 0);
-    squareColorsContainer.add(squareStrokeRedColorSlider, 1, 0);
-    squareColorsContainer.add(new Text("Border Green Value : "), 0, 1);
-    squareColorsContainer.add(squareStrokeGreenColorSlider, 1, 1);
-    squareColorsContainer.add(new Text("Border Blue Value : "), 0, 2);
-    squareColorsContainer.add(squareStrokeBlueColorSlider, 1, 2);
-    squareColorsContainer.add(new Text("Border Transparency : "), 0, 3);
-    squareColorsContainer.add(squareStrokeTransparencySlider, 1, 3);
-    squareColorsContainer.add(new Text("Border Color : "), 0, 4);
-    squareColorsContainer.add(squareStrokeColorPicker, 1, 4);
-    squareColorsContainer.add(new Text("Fill Red Value : "), 0, 5);
-    squareColorsContainer.add(squareFillRedColorSlider, 1, 5);
-    squareColorsContainer.add(new Text("Fill Green Value : "), 0, 6);
-    squareColorsContainer.add(squareFillGreenColorSlider, 1, 6);
-    squareColorsContainer.add(new Text("Fill Blue Value : "), 0, 7);
-    squareColorsContainer.add(squareFillBlueColorSlider, 1, 7);
-    squareColorsContainer.add(new Text("Fill Transparency : "), 0, 8);
-    squareColorsContainer.add(squareFillTransparencySlider, 1, 8);
-    squareColorsContainer.add(new Text("Fill Color : "), 0, 9);
-    squareColorsContainer.add(squareFillColorPicker, 1, 9);
+    selectionColorsContainer.setAlignment(Pos.CENTER_LEFT);
+    selectionColorsContainer.setVgap(5);
+    selectionColorsContainer.setHgap(5);
+    selectionColorsContainer.setMinWidth(290);
+    selectionColorsContainer.add(new Text("Border Red Value : "), 0, 0);
+    selectionColorsContainer.add(squareStrokeRedColorSlider, 1, 0);
+    selectionColorsContainer.add(new Text("Border Green Value : "), 0, 1);
+    selectionColorsContainer.add(squareStrokeGreenColorSlider, 1, 1);
+    selectionColorsContainer.add(new Text("Border Blue Value : "), 0, 2);
+    selectionColorsContainer.add(squareStrokeBlueColorSlider, 1, 2);
+    selectionColorsContainer.add(new Text("Border Transparency : "), 0, 3);
+    selectionColorsContainer.add(squareStrokeTransparencySlider, 1, 3);
+    selectionColorsContainer.add(new Text("Border Color : "), 0, 4);
+    selectionColorsContainer.add(squareStrokeColorPicker, 1, 4);
+    selectionColorsContainer.add(new Text("Fill Red Value : "), 0, 5);
+    selectionColorsContainer.add(squareFillRedColorSlider, 1, 5);
+    selectionColorsContainer.add(new Text("Fill Green Value : "), 0, 6);
+    selectionColorsContainer.add(squareFillGreenColorSlider, 1, 6);
+    selectionColorsContainer.add(new Text("Fill Blue Value : "), 0, 7);
+    selectionColorsContainer.add(squareFillBlueColorSlider, 1, 7);
+    selectionColorsContainer.add(new Text("Fill Transparency : "), 0, 8);
+    selectionColorsContainer.add(squareFillTransparencySlider, 1, 8);
+    selectionColorsContainer.add(new Text("Fill Color : "), 0, 9);
+    selectionColorsContainer.add(squareFillColorPicker, 1, 9);
+
+    selectionSizeContainer.setAlignment(Pos.CENTER_LEFT);
+    selectionSizeContainer.setHgap(5);
+    selectionSizeContainer.setVgap(5);
+    selectionColorsContainer.setMinWidth(290);
+    selectionSizeContainer.add(new Text("Width Value : "), 0, 0);
+    selectionSizeContainer.add(selectionWidthSpinner, 1, 0);
+    selectionSizeContainer.add(new Text("Height Value : "), 0, 1);
+    selectionSizeContainer.add(selectionHeightSpinner, 1, 1);
 
     canvasBackgroundColorPicker.setMaxWidth(Double.MAX_VALUE);
     squareStrokeColorPicker.setMaxWidth(Double.MAX_VALUE);
@@ -136,7 +155,9 @@ public class ManageConfigurationView implements ManageConfigurationController.IM
             createTitleLabelContainer("Canvas Background Color"),
             canvasColorContainer,
             createTitleLabelContainer("Selection Colors"),
-            squareColorsContainer);
+            selectionColorsContainer,
+            createTitleLabelContainer("Selection Size"),
+            selectionSizeContainer);
 
     setState(ManageTileSetsController.IManageConfigurationViewState.NO_TAB_SELECTED);
   }
@@ -154,19 +175,22 @@ public class ManageConfigurationView implements ManageConfigurationController.IM
         setEnableImageColorAdjust(false);
         setEnableCanvasBackgroundColorFields(false);
         setEnableSquareBorderColorFields(false);
-        setEnableSquareFillColorFields(false);
+        setEnableSelectionFillColorFields(false);
+        setEnableSelectionSizeFields(false);
         break;
       case NO_IMAGE_SELECTED:
         setEnableImageColorAdjust(false);
         setEnableCanvasBackgroundColorFields(true);
         setEnableSquareBorderColorFields(false);
-        setEnableSquareFillColorFields(false);
+        setEnableSelectionFillColorFields(false);
+        setEnableSelectionSizeFields(false);
         break;
       case FULL_SELECTION:
         setEnableImageColorAdjust(true);
         setEnableCanvasBackgroundColorFields(true);
         setEnableSquareBorderColorFields(true);
-        setEnableSquareFillColorFields(true);
+        setEnableSelectionFillColorFields(true);
+        setEnableSelectionSizeFields(true);
         break;
     }
   }
@@ -194,12 +218,17 @@ public class ManageConfigurationView implements ManageConfigurationController.IM
     squareStrokeColorPicker.setDisable(!value);
   }
 
-  private void setEnableSquareFillColorFields(boolean value) {
+  private void setEnableSelectionFillColorFields(boolean value) {
     squareFillRedColorSlider.setDisable(!value);
     squareFillGreenColorSlider.setDisable(!value);
     squareFillBlueColorSlider.setDisable(!value);
     squareFillTransparencySlider.setDisable(!value);
     squareFillColorPicker.setDisable(!value);
+  }
+
+  private void setEnableSelectionSizeFields(boolean value) {
+    selectionWidthSpinner.setDisable(!value);
+    selectionHeightSpinner.setDisable(!value);
   }
 
   public Slider getImageHueSlider() {
@@ -238,44 +267,52 @@ public class ManageConfigurationView implements ManageConfigurationController.IM
     return canvasBackgroundColorPicker;
   }
 
-  public Slider getSquareStrokeRedColorSlider() {
+  public Slider getSelectionStrokeRedColorSlider() {
     return squareStrokeRedColorSlider;
   }
 
-  public Slider getSquareStrokeGreenColorSlider() {
+  public Slider getSelectionStrokeGreenColorSlider() {
     return squareStrokeGreenColorSlider;
   }
 
-  public Slider getSquareStrokeBlueColorSlider() {
+  public Slider getSelectionStrokeBlueColorSlider() {
     return squareStrokeBlueColorSlider;
   }
 
-  public Slider getSquareStrokeTransparencySlider() {
+  public Slider getSelectionStrokeTransparencySlider() {
     return squareStrokeTransparencySlider;
   }
 
-  public ColorPicker getSquareStrokeColorPicker() {
+  public ColorPicker getSelectionStrokeColorPicker() {
     return squareStrokeColorPicker;
   }
 
-  public Slider getSquareFillRedColorSlider() {
+  public Slider getSelectionFillRedColorSlider() {
     return squareFillRedColorSlider;
   }
 
-  public Slider getSquareFillGreenColorSlider() {
+  public Slider getSelectionFillGreenColorSlider() {
     return squareFillGreenColorSlider;
   }
 
-  public Slider getSquareFillBlueColorSlider() {
+  public Slider getSelectionFillBlueColorSlider() {
     return squareFillBlueColorSlider;
   }
 
-  public Slider getSquareFillTransparencySlider() {
+  public Slider getSelectionFillTransparencySlider() {
     return squareFillTransparencySlider;
   }
 
-  public ColorPicker getSquareFillColorPicker() {
+  public ColorPicker getSelectionFillColorPicker() {
     return squareFillColorPicker;
+  }
+
+  public Spinner<Integer> getSelectionWidthSpinner() {
+    return selectionWidthSpinner;
+  }
+
+  public Spinner<Integer> getSelectionHeightSpinner() {
+    return selectionHeightSpinner;
   }
 
   @Override

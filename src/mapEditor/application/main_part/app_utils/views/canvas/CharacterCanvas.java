@@ -16,11 +16,14 @@ public class CharacterCanvas extends ImageCanvas {
   private Color fillColor;
   private CharacterPlayerListener listener;
 
-  public CharacterCanvas(Image image, boolean isHorizontal, Color strokeColor, Color fillColor, CharacterPlayerListener listener) {
+  public CharacterCanvas(Image image, boolean isHorizontal, Color strokeColor, Color fillColor, int cellWidth, int cellHeight,
+                         CharacterPlayerListener listener) {
     super(image);
     this.isHorizontal = isHorizontal;
     this.strokeColor = strokeColor;
     this.fillColor = fillColor;
+    this.CELL_WIDTH = cellWidth;
+    this.CELL_HEIGHT = cellHeight;
     this.listener = listener;
   }
 
@@ -29,11 +32,11 @@ public class CharacterCanvas extends ImageCanvas {
     g.setStroke(strokeColor);
     g.setFill(fillColor);
     if (isHorizontal) {
-      g.fillRect(imageX, imageY + squareCellY * CELL_SIZE, image.getWidth(), CELL_SIZE);
-      g.strokeRect(imageX, imageY + squareCellY * CELL_SIZE, image.getWidth(), CELL_SIZE);
+      g.fillRect(imageX, imageY + squareCellY * CELL_HEIGHT, image.getWidth(), CELL_HEIGHT);
+      g.strokeRect(imageX, imageY + squareCellY * CELL_HEIGHT, image.getWidth(), CELL_HEIGHT);
     } else {
-      g.fillRect(imageX + squareCellX * CELL_SIZE, imageY, CELL_SIZE, image.getHeight());
-      g.strokeRect(imageX + squareCellX * CELL_SIZE, imageY, CELL_SIZE, image.getHeight());
+      g.fillRect(imageX + squareCellX * CELL_WIDTH, imageY, CELL_WIDTH, image.getHeight());
+      g.strokeRect(imageX + squareCellX * CELL_WIDTH, imageY, CELL_WIDTH, image.getHeight());
     }
   }
 

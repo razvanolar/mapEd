@@ -38,7 +38,8 @@ public class ImageCanvas extends Canvas implements StyleListener {
   private Color squareBorderColor = Color.YELLOW;
   private Color squareFillColor = new Color(0, 0, 0, 0);
 
-  protected int CELL_SIZE = AppParameters.CURRENT_PROJECT.getCellSize();
+  protected int CELL_WIDTH = AppParameters.CURRENT_PROJECT.getCellSize();
+  protected int CELL_HEIGHT = AppParameters.CURRENT_PROJECT.getCellSize();
   private SnapshotParameters snapshotParameters;
 
   public ImageCanvas(Image image) {
@@ -55,15 +56,15 @@ public class ImageCanvas extends Canvas implements StyleListener {
       pressedImageY = imageY;
 
       if (event.isShiftDown() && isInImageBounds(pressedX, pressedY)) {
-        completeSelectionCellX = (pressedX - imageX) / CELL_SIZE;
-        completeSelectionCellY = (pressedY - imageY) / CELL_SIZE;
+        completeSelectionCellX = (pressedX - imageX) / CELL_WIDTH;
+        completeSelectionCellY = (pressedY - imageY) / CELL_HEIGHT;
         if (squareCellX != completeSelectionCellX || squareCellY != completeSelectionCellY)
           paint();
       } else if (!event.isControlDown() && isInImageBounds(pressedX, pressedY)) {
         int lastSquareCellX = squareCellX;
         int lastSquareCellY = squareCellY;
-        squareCellX = (pressedX - imageX) / CELL_SIZE;
-        squareCellY = (pressedY - imageY) / CELL_SIZE;
+        squareCellX = (pressedX - imageX) / CELL_WIDTH;
+        squareCellY = (pressedY - imageY) / CELL_HEIGHT;
         completeSelectionCellX = -1;
         completeSelectionCellY = -1;
         /* repaint only if coordinates were changed */
@@ -122,12 +123,12 @@ public class ImageCanvas extends Canvas implements StyleListener {
     if (imageWidth < width)
       imageX = (width - imageWidth) / 2;
     else if (!isHorizontalDraggableToLeft())
-      imageX = (width - CELL_SIZE) - imageWidth;
+      imageX = (width - CELL_WIDTH) - imageWidth;
 
     if (imageHeight < height)
       imageY = (height - imageHeight) / 2;
     else if (!isVerticalDraggableToTop())
-      imageY = (height - CELL_SIZE) - imageHeight;
+      imageY = (height - CELL_HEIGHT) - imageHeight;
 
     g.drawImage(image, imageX, imageY, imageWidth, imageHeight);
 
@@ -142,29 +143,29 @@ public class ImageCanvas extends Canvas implements StyleListener {
     g.setFill(squareFillColor);
     g.setLineWidth(2);
     if (!allowMultipleSelection || completeSelectionCellX == -1 || completeSelectionCellY == -1) {  // draw only one square
-      int squareX = imageX + squareCellX * CELL_SIZE - 1;
-      int squareY = imageY + squareCellY * CELL_SIZE - 1;
-      g.fillRect(squareX, squareY, CELL_SIZE + 2, CELL_SIZE + 2);
-      g.strokeRect(squareX, squareY, CELL_SIZE + 2, CELL_SIZE + 2);
+      int squareX = imageX + squareCellX * CELL_WIDTH - 1;
+      int squareY = imageY + squareCellY * CELL_HEIGHT - 1;
+      g.fillRect(squareX, squareY, CELL_WIDTH + 2, CELL_HEIGHT + 2);
+      g.strokeRect(squareX, squareY, CELL_WIDTH + 2, CELL_HEIGHT + 2);
     } else if (completeSelectionCellX >= 0 && completeSelectionCellY >= 0) {  // draw full selection
       int minX = Math.min(squareCellX, completeSelectionCellX);
       int minY = Math.min(squareCellY, completeSelectionCellY);
-      int marginX = imageX + minX * CELL_SIZE;
-      int marginY = imageY + minY * CELL_SIZE;
+      int marginX = imageX + minX * CELL_WIDTH;
+      int marginY = imageY + minY * CELL_HEIGHT;
       int diffX = Math.abs(completeSelectionCellX - squareCellX);
       int diffY = Math.abs(completeSelectionCellY - squareCellY);
       if (gridSelection) {
         for (int i = 0; i <= diffX; i++) {
           for (int j = 0; j <= diffY; j++) {
-            int squareX = marginX + i * CELL_SIZE - 1;
-            int squareY = marginY + j * CELL_SIZE - 1;
-            g.fillRect(squareX, squareY, CELL_SIZE + 2, CELL_SIZE + 2);
-            g.strokeRect(squareX, squareY, CELL_SIZE + 2, CELL_SIZE + 2);
+            int squareX = marginX + i * CELL_WIDTH - 1;
+            int squareY = marginY + j * CELL_HEIGHT - 1;
+            g.fillRect(squareX, squareY, CELL_WIDTH + 2, CELL_HEIGHT + 2);
+            g.strokeRect(squareX, squareY, CELL_WIDTH + 2, CELL_HEIGHT + 2);
           }
         }
       } else {
-        g.fillRect(marginX - 1, marginY - 1, (diffX + 1) * CELL_SIZE + 2, (diffY + 1) * CELL_SIZE + 2);
-        g.strokeRect(marginX - 1, marginY - 1, (diffX + 1) * CELL_SIZE + 2, (diffY + 1) * CELL_SIZE + 2);
+        g.fillRect(marginX - 1, marginY - 1, (diffX + 1) * CELL_WIDTH + 2, (diffY + 1) * CELL_HEIGHT + 2);
+        g.strokeRect(marginX - 1, marginY - 1, (diffX + 1) * CELL_WIDTH + 2, (diffY + 1) * CELL_HEIGHT + 2);
       }
     }
   }
@@ -217,10 +218,10 @@ public class ImageCanvas extends Canvas implements StyleListener {
     }
 
     snapshotParameters.setFill(Color.TRANSPARENT);
-    snapshotParameters.setViewport(new Rectangle2D(imageX + minCellX * CELL_SIZE,
-            imageY + minCellY * CELL_SIZE,
-            (diffX + 1) * CELL_SIZE,
-            (diffY + 1) * CELL_SIZE));
+    snapshotParameters.setViewport(new Rectangle2D(imageX + minCellX * CELL_WIDTH,
+            imageY + minCellY * CELL_HEIGHT,
+            (diffX + 1) * CELL_WIDTH,
+            (diffY + 1) * CELL_HEIGHT));
 
     snapshot(param -> {
       callback.call(param.getImage());
@@ -253,16 +254,16 @@ public class ImageCanvas extends Canvas implements StyleListener {
     Image[][] images = new Image[diffY + 1][diffX + 1];
     for (int i=0; i<=diffX; i++) {
       for (int j=0; j<diffY; j++) {
-        Rectangle2D rectangle2D = new Rectangle2D(minCellX + i * CELL_SIZE, minCellY + j * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+        Rectangle2D rectangle2D = new Rectangle2D(minCellX + i * CELL_WIDTH, minCellY + j * CELL_HEIGHT, CELL_WIDTH, CELL_HEIGHT);
         snapshotParameters.setViewport(rectangle2D);
         WritableImage snapshot = imageView.snapshot(snapshotParameters, null);
         images[j][i] = snapshot;
       }
     }
-    snapshotParameters.setViewport(new Rectangle2D(minCellX * CELL_SIZE,
-            minCellY * CELL_SIZE,
-            (diffX + 1) * CELL_SIZE,
-            (diffY + 1) * CELL_SIZE));
+    snapshotParameters.setViewport(new Rectangle2D(minCellX * CELL_WIDTH,
+            minCellY * CELL_HEIGHT,
+            (diffX + 1) * CELL_WIDTH,
+            (diffY + 1) * CELL_HEIGHT));
     Image image = imageView.snapshot(snapshotParameters, null);
     callback.call(new ImageMatrix(images, image));
   }
@@ -287,14 +288,14 @@ public class ImageCanvas extends Canvas implements StyleListener {
    * From right to left
    */
   private boolean isHorizontalDraggableToLeft() {
-    return isHorizontalDraggable() && (getImageWidth() - getCanvasWidth() - Math.abs(imageX)) > -CELL_SIZE;
+    return isHorizontalDraggable() && (getImageWidth() - getCanvasWidth() - Math.abs(imageX)) > -CELL_WIDTH;
   }
 
   /**
    * From left to right
    */
   private boolean isHorizontalDraggableToRight() {
-    return isHorizontalDraggable() && imageX < CELL_SIZE;
+    return isHorizontalDraggable() && imageX < CELL_WIDTH;
   }
 
   private boolean isVerticalDraggable() {
@@ -305,14 +306,21 @@ public class ImageCanvas extends Canvas implements StyleListener {
    * From bottom to top
    */
   private boolean isVerticalDraggableToTop() {
-    return isVerticalDraggable() && (getImageHeight() - getCanvasHeight() - Math.abs(imageY)) > -CELL_SIZE;
+    return isVerticalDraggable() && (getImageHeight() - getCanvasHeight() - Math.abs(imageY)) > -CELL_HEIGHT;
+  }
+
+  private void resetSelectionArguments() {
+    squareCellX = 0;
+    squareCellY = 0;
+    completeSelectionCellX = -1;
+    completeSelectionCellY = -1;
   }
 
   /**
    * From top to bottom
    */
   private boolean isVerticalDraggableToBottom() {
-    return isVerticalDraggable() && imageY < CELL_SIZE;
+    return isVerticalDraggable() && imageY < CELL_HEIGHT;
   }
 
   public int getImageWidth() {
@@ -331,14 +339,6 @@ public class ImageCanvas extends Canvas implements StyleListener {
     return (int) getHeight();
   }
 
-  public boolean isAllowMultipleSelection() {
-    return allowMultipleSelection;
-  }
-
-  public void setAllowMultipleSelection(boolean allowMultipleSelection) {
-    this.allowMultipleSelection = allowMultipleSelection;
-  }
-
   public void setGridSelection(boolean gridSelection) {
     this.gridSelection = gridSelection;
   }
@@ -351,6 +351,34 @@ public class ImageCanvas extends Canvas implements StyleListener {
     this.image = image;
     if (image != null)
       colorAdjustEffect = new ColorAdjust();
+  }
+
+  public int getCellWidth() {
+    return CELL_WIDTH;
+  }
+
+  public void setCellWidth(int CELL_WIDTH) {
+    this.CELL_WIDTH = CELL_WIDTH;
+    resetSelectionArguments();
+    paint();
+  }
+
+  public int getCellHeight() {
+    return CELL_HEIGHT;
+  }
+
+  public void setCellHeight(int CELL_HEIGHT) {
+    this.CELL_HEIGHT = CELL_HEIGHT;
+    resetSelectionArguments();
+    paint();
+  }
+
+  public int getNumberOfSelectedColumns() {
+    return completeSelectionCellX == -1 ? 1 : Math.max(squareCellX, completeSelectionCellX) - Math.min(squareCellX, completeSelectionCellX) + 1;
+  }
+
+  public int getNumberOfSelectedRows() {
+    return completeSelectionCellY == -1 ? 1 : Math.max(squareCellY, completeSelectionCellY) - Math.min(squareCellY, completeSelectionCellY) + 1;
   }
 
   protected void mousePressed() {}
@@ -376,6 +404,16 @@ public class ImageCanvas extends Canvas implements StyleListener {
   }
 
   @Override
+  public int getRows() {
+    return image != null ? (int) image.getHeight() / AppParameters.CURRENT_PROJECT.getCellSize() : -1;
+  }
+
+  @Override
+  public int getColumns() {
+    return image != null ? (int) image.getWidth() / AppParameters.CURRENT_PROJECT.getCellSize() : -1;
+  }
+
+  @Override
   public void setBackgroundColor(Color color) {
     backgroundColor = color;
     paint();
@@ -391,6 +429,16 @@ public class ImageCanvas extends Canvas implements StyleListener {
   public void setSquareFillColor(Color color) {
     squareFillColor = color;
     paint();
+  }
+
+  @Override
+  public void setSelectionWidth(int value) {
+    setCellWidth(value);
+  }
+
+  @Override
+  public void setSelectionHeight(int value) {
+    setCellHeight(value);
   }
 
   @Override

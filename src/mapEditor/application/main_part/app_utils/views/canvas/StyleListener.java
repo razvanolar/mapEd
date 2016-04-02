@@ -13,8 +13,12 @@ public interface StyleListener {
   Color getBackgroundColor();
   Color getSquareBorderColor();
   Color getSquareFillColor();
+  int getRows();
+  int getColumns();
   void setBackgroundColor(Color color);
   void setSquareBorderColor(Color color);
   void setSquareFillColor(Color color);
+  void setSelectionWidth(int value);
+  void setSelectionHeight(int value);
   void paintContent();
 }
