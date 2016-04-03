@@ -48,6 +48,9 @@ public class ManageConfigurationController implements Controller {
   private StyleListener listener;
   private ManageTileSetsController.IManageConfigurationViewState state;
 
+  private boolean stopSelectionWidthEvent;
+  private boolean stopSelectionHeightEvent;
+
   public ManageConfigurationController(IManageConfigurationView view) {
     this.view = view;
   }
@@ -137,11 +140,20 @@ public class ManageConfigurationController implements Controller {
 
     /* selection size listeners */
     view.getSelectionWidthSpinner().valueProperty().addListener((observable, oldValue, newValue) -> {
+      if (stopSelectionWidthEvent) {
+        stopSelectionWidthEvent = false;
+        return;
+      }
+
       if (listener != null)
         listener.setSelectionWidth(newValue);
     });
 
     view.getSelectionHeightSpinner().valueProperty().addListener((observable, oldValue, newValue) -> {
+      if (stopSelectionHeightEvent) {
+        stopSelectionHeightEvent = true;
+        return;
+      }
       if (listener != null)
         listener.setSelectionHeight(newValue);
     });
@@ -198,10 +210,14 @@ public class ManageConfigurationController implements Controller {
 
     if (state == ManageTileSetsController.IManageConfigurationViewState.FULL_SELECTION) {
       int cellSize = AppParameters.CURRENT_PROJECT.getCellSize();
+      stopSelectionWidthEvent = true;
+      stopSelectionHeightEvent = true;
       SpinnerValueFactory.IntegerSpinnerValueFactory widthFactory = (SpinnerValueFactory.IntegerSpinnerValueFactory) view.getSelectionWidthSpinner().getValueFactory();
       SpinnerValueFactory.IntegerSpinnerValueFactory heightFactory = (SpinnerValueFactory.IntegerSpinnerValueFactory) view.getSelectionHeightSpinner().getValueFactory();
       widthFactory.setMax(listener.getColumns() > 0 ? listener.getColumns() * cellSize : cellSize);
+      widthFactory.setValue(listener.getCellWidth());
       heightFactory.setMax(listener.getRows() > 0 ? listener.getRows() * cellSize : cellSize);
+      heightFactory.setValue(listener.getCellHeight());
     }
   }
 

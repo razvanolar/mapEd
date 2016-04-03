@@ -15,6 +15,8 @@ public interface StyleListener {
   Color getSquareFillColor();
   int getRows();
   int getColumns();
+  int getCellWidth();
+  int getCellHeight();
   void setBackgroundColor(Color color);
   void setSquareBorderColor(Color color);
   void setSquareFillColor(Color color);
