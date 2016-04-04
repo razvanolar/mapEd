@@ -33,7 +33,10 @@ public class OkCancelDialog implements DialogListener {
   private Window owner;
   private boolean isResizable;
   private boolean isAlwaysOnTop;
+  private boolean setSize;
   private int mainContainerPadding;
+  private int width = -1;
+  private int height = -1;
 
   /**
    * Used to customize the default dialog UI and add a new functionality to the dialog.
@@ -56,6 +59,13 @@ public class OkCancelDialog implements DialogListener {
     this.modality = modality != null ? modality : this.modality;
     this.isResizable = isResizable;
     initGUI();
+  }
+
+  public OkCancelDialog(String title, StageStyle stageStyle, Modality modality, boolean isResizable, int width, int height) {
+    this(title, stageStyle, modality, isResizable);
+    this.width = width;
+    this.height = height;
+    this.setSize = true;
   }
 
   public OkCancelDialog(String title, StageStyle stageStyle, Modality modality, boolean isResizable, int containerPadding) {
@@ -112,6 +122,11 @@ public class OkCancelDialog implements DialogListener {
       stage.setAlwaysOnTop(isAlwaysOnTop);
       if (owner != null)
         stage.initOwner(owner);
+    }
+
+    if (setSize && width > -1 && height > -1) {
+      stage.setWidth(width);
+      stage.setHeight(height);
     }
   }
 

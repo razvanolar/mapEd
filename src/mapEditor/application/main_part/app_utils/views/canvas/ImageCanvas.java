@@ -8,6 +8,7 @@ import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -40,7 +41,7 @@ public class ImageCanvas extends Canvas implements StyleListener {
 
   protected int CELL_WIDTH = AppParameters.CURRENT_PROJECT.getCellSize();
   protected int CELL_HEIGHT = AppParameters.CURRENT_PROJECT.getCellSize();
-  private SnapshotParameters snapshotParameters;
+  protected SnapshotParameters snapshotParameters;
 
   public ImageCanvas(Image image) {
     this.image = image;
@@ -49,30 +50,7 @@ public class ImageCanvas extends Canvas implements StyleListener {
   }
 
   private void addListeners() {
-    this.setOnMousePressed(event -> {
-      pressedX = (int) event.getX();
-      pressedY = (int) event.getY();
-      pressedImageX = imageX;
-      pressedImageY = imageY;
-
-      if (event.isShiftDown() && isInImageBounds(pressedX, pressedY)) {
-        completeSelectionCellX = (pressedX - imageX) / CELL_WIDTH;
-        completeSelectionCellY = (pressedY - imageY) / CELL_HEIGHT;
-        if (squareCellX != completeSelectionCellX || squareCellY != completeSelectionCellY)
-          paint();
-      } else if (!event.isControlDown() && isInImageBounds(pressedX, pressedY)) {
-        int lastSquareCellX = squareCellX;
-        int lastSquareCellY = squareCellY;
-        squareCellX = (pressedX - imageX) / CELL_WIDTH;
-        squareCellY = (pressedY - imageY) / CELL_HEIGHT;
-        completeSelectionCellX = -1;
-        completeSelectionCellY = -1;
-        /* repaint only if coordinates were changed */
-        if (lastSquareCellX != squareCellX || lastSquareCellY != squareCellY)
-          paint();
-      }
-      mousePressed();
-    });
+    this.setOnMousePressed(this::onMouserPressed);
 
     this.setOnMouseDragged(event -> {
       if (event.isShiftDown())
@@ -99,6 +77,31 @@ public class ImageCanvas extends Canvas implements StyleListener {
 
       paint();
     });
+  }
+
+  protected void onMouserPressed(MouseEvent event) {
+    pressedX = (int) event.getX();
+    pressedY = (int) event.getY();
+    pressedImageX = imageX;
+    pressedImageY = imageY;
+
+    if (event.isShiftDown() && isInImageBounds(pressedX, pressedY)) {
+      completeSelectionCellX = (pressedX - imageX) / CELL_WIDTH;
+      completeSelectionCellY = (pressedY - imageY) / CELL_HEIGHT;
+      if (squareCellX != completeSelectionCellX || squareCellY != completeSelectionCellY)
+        paint();
+    } else if (!event.isControlDown() && isInImageBounds(pressedX, pressedY)) {
+      int lastSquareCellX = squareCellX;
+      int lastSquareCellY = squareCellY;
+      squareCellX = (pressedX - imageX) / CELL_WIDTH;
+      squareCellY = (pressedY - imageY) / CELL_HEIGHT;
+      completeSelectionCellX = -1;
+      completeSelectionCellY = -1;
+      /* repaint only if coordinates were changed */
+      if (lastSquareCellX != squareCellX || lastSquareCellY != squareCellY)
+        paint();
+    }
+    mousePressed();
   }
 
   public void paint() {
@@ -268,6 +271,14 @@ public class ImageCanvas extends Canvas implements StyleListener {
     callback.call(new ImageMatrix(images, image));
   }
 
+  public Image cropCell(int x, int y) {
+    if (snapshotParameters == null)
+      snapshotParameters = new SnapshotParameters();
+    snapshotParameters.setViewport(new Rectangle2D(x * CELL_WIDTH, y * CELL_HEIGHT, CELL_WIDTH, CELL_HEIGHT));
+    ImageView imageView = new ImageView(image);
+    return imageView.snapshot(snapshotParameters, null);
+  }
+
   /**
    * Check to see if x and y coordinates are in the image bounds.
    * In other words, if the image is rendered over those coordinates.
@@ -276,7 +287,7 @@ public class ImageCanvas extends Canvas implements StyleListener {
    * @return true  - if x and y are in image bounds
    *         false - otherwise
    */
-  private boolean isInImageBounds(int x, int y) {
+  protected boolean isInImageBounds(int x, int y) {
     return (x > imageX && x < imageX + getImageWidth()) && (y > imageY && y < imageY + getImageHeight());
   }
 
@@ -347,6 +358,21 @@ public class ImageCanvas extends Canvas implements StyleListener {
     return image;
   }
 
+  public Image getUpdatedImage() {
+    if (image == null)
+      return null;
+    ImageView imageView = new ImageView(image);
+    if (colorAdjustEffect != null)
+      imageView.setEffect(colorAdjustEffect);
+
+    if (snapshotParameters == null)
+      snapshotParameters = new SnapshotParameters();
+    snapshotParameters.setViewport(new Rectangle2D(0, 0, image.getWidth(), image.getHeight()));
+    snapshotParameters.setFill(backgroundColor);
+
+    return imageView.snapshot(snapshotParameters, null);
+  }
+
   public void setImage(Image image) {
     this.image = image;
     if (image != null)
@@ -379,6 +405,22 @@ public class ImageCanvas extends Canvas implements StyleListener {
 
   public int getNumberOfSelectedRows() {
     return completeSelectionCellY == -1 ? 1 : Math.max(squareCellY, completeSelectionCellY) - Math.min(squareCellY, completeSelectionCellY) + 1;
+  }
+
+  public int getSquareCellX() {
+    return squareCellX;
+  }
+
+  public int getSquareCellY() {
+    return squareCellY;
+  }
+
+  public int getCompleteSelectionCellX() {
+    return completeSelectionCellX;
+  }
+
+  public int getCompleteSelectionCellY() {
+    return completeSelectionCellY;
   }
 
   protected void mousePressed() {}

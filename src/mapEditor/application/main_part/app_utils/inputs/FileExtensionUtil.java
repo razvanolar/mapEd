@@ -47,6 +47,10 @@ public class FileExtensionUtil {
     return !StringValidator.isNullOrEmpty(name) && getFileExtension(name) == KnownFileExtensions.MAP;
   }
 
+  public static boolean isBrushFile(String name) {
+    return !StringValidator.isNullOrEmpty(name) && getFileExtension(name) == KnownFileExtensions.BRUSH;
+  }
+
   public static boolean hasExtension(String name) {
     return !StringValidator.isNullOrEmpty(name) && !StringValidator.isNullOrEmpty(getStringExtension(name));
   }

@@ -23,6 +23,8 @@ import mapEditor.application.main_part.app_utils.views.others.SystemFilesView;
 import mapEditor.application.main_part.manage_images.manage_tile_sets.characters_player_view.CharactersPlayerController;
 import mapEditor.application.main_part.manage_images.manage_tile_sets.characters_player_view.CharactersPlayerView;
 import mapEditor.application.main_part.manage_images.manage_tile_sets.configurations.ManageConfigurationController;
+import mapEditor.application.main_part.manage_images.manage_tile_sets.create_brush.CreateBrushController;
+import mapEditor.application.main_part.manage_images.manage_tile_sets.create_brush.CreateBrushView;
 import mapEditor.application.main_part.manage_images.manage_tile_sets.cropped_tiles.detailed_view.CroppedTilesDetailedController;
 import mapEditor.application.main_part.manage_images.manage_tile_sets.cropped_tiles.detailed_view.CroppedTileDetailedDetailedView;
 import mapEditor.application.main_part.manage_images.manage_tile_sets.cropped_tiles.CroppedTilesPathView;
@@ -66,6 +68,7 @@ public class ManageTileSetsController implements Controller, ManageImagesListene
     TabPane getTabPane();
     Button getAddNewTabButton();
     Button getPlayCharactersButton();
+    Button getBrushButton();
     Button getSaveCroppedTilesButton();
     Button getSettingsButton();
     Button getCropSelectionButton();
@@ -206,6 +209,22 @@ public class ManageTileSetsController implements Controller, ManageImagesListene
         return null;
       });
     });
+
+    view.getBrushButton().setOnAction(event -> onBrushSelection());
+  }
+
+  private void onBrushSelection() {
+    if (currentCanvas == null || currentCanvas.getImage() == null)
+      return;
+
+    OkCancelDialog dialog = new OkCancelDialog("Create Brush", StageStyle.UTILITY, Modality.APPLICATION_MODAL, true, 800, 600);
+
+    CreateBrushController.ICreateBrushView brushView = new CreateBrushView();
+    CreateBrushController brushController = new CreateBrushController(brushView, currentCanvas.getUpdatedImage(), dialog.getOkButton(), dialog.getStage());
+    brushController.bind();
+
+    dialog.setContent(brushView.asNode());
+    dialog.show();
   }
 
   private void onChangeTilesView(boolean newValue) {
