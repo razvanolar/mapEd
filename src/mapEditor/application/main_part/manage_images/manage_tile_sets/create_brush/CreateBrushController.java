@@ -3,15 +3,21 @@ package mapEditor.application.main_part.manage_images.manage_tile_sets.create_br
 import javafx.beans.value.ChangeListener;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Region;
+import javafx.stage.Modality;
+import javafx.stage.StageStyle;
 import javafx.stage.Window;
+import mapEditor.application.main_part.app_utils.AppParameters;
 import mapEditor.application.main_part.app_utils.constants.CssConstants;
 import mapEditor.application.main_part.app_utils.inputs.FileExtensionUtil;
 import mapEditor.application.main_part.app_utils.inputs.StringValidator;
 import mapEditor.application.main_part.app_utils.models.brush.LWBrushModel;
 import mapEditor.application.main_part.app_utils.views.canvas.BrushCanvas;
 import mapEditor.application.main_part.app_utils.views.dialogs.Dialog;
+import mapEditor.application.main_part.app_utils.views.dialogs.OkCancelDialog;
+import mapEditor.application.main_part.app_utils.views.others.SystemFilesView;
 import mapEditor.application.main_part.manage_images.manage_tile_sets.utils.CreateBrushListener;
 import mapEditor.application.main_part.manage_images.manage_tile_sets.utils.create_views.SelectableCreateBrushView;
 import mapEditor.application.main_part.types.Controller;
@@ -30,6 +36,8 @@ public class CreateBrushController implements Controller, CreateBrushListener {
 
   public interface ICreateBrushView extends View {
     Button getAddBrushButton();
+    TextField getPathTextField();
+    Button getPathButton();
     void addBrushView(Region region);
     void removeBrushView(Region region);
     void addCanvasContainer(Region region);
@@ -66,6 +74,7 @@ public class CreateBrushController implements Controller, CreateBrushListener {
     scrollPane.heightProperty().addListener(listener);
 
     view.addCanvasContainer(scrollPane);
+    view.getPathTextField().setText(AppParameters.CURRENT_PROJECT.getBrushesFile().getAbsolutePath());
 
     completeSelectionNode.setDisable(true);
     addListeners();
@@ -83,6 +92,27 @@ public class CreateBrushController implements Controller, CreateBrushListener {
       view.addBrushView(selectableCreateBrushView.asNode());
       brushViews.add(selectableCreateBrushView);
       completeSelectionNode.setDisable(true);
+    });
+
+    view.getPathTextField().textProperty().addListener((observable, oldValue, newValue) -> {
+      completeSelectionNode.setDisable(!isValidSelection());
+    });
+
+    view.getPathButton().setOnAction(event -> {
+      OkCancelDialog dialog = new OkCancelDialog("Select Brushes Path", StageStyle.UTILITY, Modality.APPLICATION_MODAL, true, true, parent);
+
+      SystemFilesView filesView = new SystemFilesView(dialog.getOkButton(), AppParameters.CURRENT_PROJECT.getBrushesFile(), true, null);
+      dialog.getOkButton().setOnAction(event1 -> {
+        String selectedPath = filesView.getSelectedPath();
+        if (StringValidator.isValidBrushesPath(selectedPath)) {
+          view.getPathTextField().setText(selectedPath);
+          completeSelectionNode.setDisable(!isValidSelection());
+        }
+        dialog.close();
+      });
+
+      dialog.setContent(filesView.asNode());
+      dialog.show();
     });
   }
 
@@ -114,8 +144,21 @@ public class CreateBrushController implements Controller, CreateBrushListener {
     return new LWBrushModel(primaryImage, images, previewImage);
   }
 
-  private boolean isValidBrushName(LWBrushModel brushModel) {
-    return brushModel != null && (FileExtensionUtil.isBrushFile(brushModel.getName()) || StringValidator.isValidFileName(brushModel.getName()));
+  private boolean brushNameAreValid() {
+    for (SelectableCreateBrushView view : brushViews) {
+      LWBrushModel brushModel = view.getBrushModel();
+      if (!(brushModel != null && (FileExtensionUtil.isBrushFile(brushModel.getName()) || StringValidator.isValidFileName(brushModel.getName()))))
+        return false;
+    }
+    return true;
+  }
+
+  public boolean isValidSelection() {
+    return StringValidator.isValidBrushesPath(view.getPathTextField().getText()) && brushNameAreValid();
+  }
+
+  public String getSelectedPath() {
+    return view.getPathTextField().getText();
   }
 
   @Override
@@ -126,6 +169,6 @@ public class CreateBrushController implements Controller, CreateBrushListener {
 
   @Override
   public void brushNameChanged(SelectableCreateBrushView selectableCreateBrushView) {
-    completeSelectionNode.setDisable(!isValidBrushName(selectableCreateBrushView.getBrushModel()));
+    completeSelectionNode.setDisable(!isValidSelection());
   }
 }

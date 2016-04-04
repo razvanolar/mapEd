@@ -35,4 +35,16 @@ public class StringValidator {
   public static boolean isValidTilesPath(String path) {
     return !isNullOrEmpty(path) && path.contains(AppParameters.CURRENT_PROJECT.getTilesFile().getAbsolutePath());
   }
+
+  /**
+   * Checks to see if the provided path is a valid brushes path.
+   * A valid brushes path is the project tiles directory and any of its sub-directories.
+   * So, the path parameter must contain the project brushes path to be valid.
+   * @param path
+   * directory path
+   * @return true if its a valid brushes path; false otherwise
+   */
+  public static boolean isValidBrushesPath(String path) {
+    return !isNullOrEmpty(path) && path.contains(AppParameters.CURRENT_PROJECT.getBrushesFile().getAbsolutePath());
+  }
 }

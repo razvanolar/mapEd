@@ -50,6 +50,14 @@ public class CreateBrushView implements CreateBrushController.ICreateBrushView {
     return addBrushButton;
   }
 
+  public TextField getPathTextField() {
+    return pathTextField;
+  }
+
+  public Button getPathButton() {
+    return pathButton;
+  }
+
   public void addBrushView(Region region) {
     fieldsContainer.getChildren().add(region);
   }

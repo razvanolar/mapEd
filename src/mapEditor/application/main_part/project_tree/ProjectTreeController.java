@@ -98,6 +98,7 @@ public class ProjectTreeController implements Controller, ProjectTreeContextMenu
     LazyTreeItem tilesGroupItem = new LazyTreeItem(project.getTileGroupsFile(), true, TreeItemType.PROJECT_TILES_GROUP_FOLDER);
     LazyTreeItem tileSetsItem = new LazyTreeItem(project.getTileSetsFile(), true, TreeItemType.PROJECT_TILE_SETS_FOLDER);
     LazyTreeItem tilesItem = new LazyTreeItem(project.getTilesFile(), true, TreeItemType.PROJECT_TILES_FOLDER);
+    LazyTreeItem brushesItem = new LazyTreeItem(project.getBrushesFile(), true, TreeItemType.PROJECT_BRUSHES_FOLDER);
     LazyTreeItem charactersItem = new LazyTreeItem(project.getCharactersFile(), true, TreeItemType.PROJECT_CHARACTERS_FOLDER);
     LazyTreeItem mapsItem = new LazyTreeItem(project.getMapsFile(), true, TreeItemType.PROJECT_MAPS_FOLDER);
 
@@ -106,13 +107,14 @@ public class ProjectTreeController implements Controller, ProjectTreeContextMenu
             mapsItem);
     view.getTree().getSelectionModel().select(tilesGroupItem);
     contextMenuController.setSelectedItem(tilesGroupItem);
-    tilesGroupItem.getChildren().addAll(tileSetsItem, tilesItem);
+    tilesGroupItem.getChildren().addAll(tileSetsItem, tilesItem, brushesItem);
     tilesGroupItem.setExpanded(true);
     tilesGroupItem.setWasExpanded(true);
 
     tilesGroupItem.expandedProperty().addListener(treeItemListener);
     tileSetsItem.expandedProperty().addListener(treeItemListener);
     tilesItem.expandedProperty().addListener(treeItemListener);
+    brushesItem.expandedProperty().addListener(treeItemListener);
     charactersItem.expandedProperty().addListener(treeItemListener);
     mapsItem.expandedProperty().addListener(treeItemListener);
 

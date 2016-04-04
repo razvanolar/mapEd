@@ -124,6 +124,9 @@ public class ProjectTreeContextMenuView implements ProjectTreeContextMenuControl
             newTileSetsMenuItem.setDisable(true);
             newMapMenuItem.setDisable(true);
             break;
+          case PROJECT_BRUSHES_FOLDER:
+
+            break;
           case PROJECT_CHARACTERS_FOLDER:
             newTileSetsMenuItem.setDisable(true);
             newTilesMenuItem.setDisable(true);
@@ -155,6 +158,15 @@ public class ProjectTreeContextMenuView implements ProjectTreeContextMenuControl
         renameMenuItem.setDisable(true);
         deleteMenuItem.setDisable(true);
         newTileSetsMenuItem.setDisable(true);
+        newMapMenuItem.setDisable(true);
+        enableOpenMenuItems(false);
+        break;
+      case PROJECT_BRUSHES_FOLDER:
+        openTilesMenu.setDisable(true);
+        renameMenuItem.setDisable(true);
+        deleteMenuItem.setDisable(true);
+        newTileSetsMenuItem.setDisable(true);
+        newTilesMenuItem.setDisable(true);
         newMapMenuItem.setDisable(true);
         enableOpenMenuItems(false);
         break;
