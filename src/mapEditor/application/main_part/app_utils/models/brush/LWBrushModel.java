@@ -1,9 +1,6 @@
 package mapEditor.application.main_part.app_utils.models.brush;
 
 import javafx.scene.image.Image;
-import mapEditor.application.main_part.app_utils.models.KnownFileExtensions;
-
-import java.util.List;
 
 /**
  *
@@ -11,29 +8,42 @@ import java.util.List;
  */
 public class LWBrushModel {
 
-  private Image primaryImage;
-  private List<Image> otherImages;
-  private List<Image> cornerImages;
+  private Image[][] primaryMatrix;
+  private Image[][] secondaryMatrix;
   private Image previewImage;
   private String name;
 
-  public LWBrushModel(Image primaryImage, List<Image> otherImages, List<Image> cornerImages, Image previewImage) {
-    this.primaryImage = primaryImage;
-    this.otherImages = otherImages;
-    this.cornerImages = cornerImages;
+  private int primaryImageX;
+  private int primaryImageY;
+
+  public LWBrushModel(Image[][] primaryMatrix, Image[][] secondaryMatrix, Image previewImage, int primaryImageX, int primaryImageY) {
+    this.primaryMatrix = primaryMatrix;
+    this.secondaryMatrix = secondaryMatrix;
     this.previewImage = previewImage;
+    this.primaryImageX = primaryImageX;
+    this.primaryImageY = primaryImageY;
   }
 
   public Image getPrimaryImage() {
-    return primaryImage;
+    if (primaryMatrix != null)
+      return primaryMatrix[primaryImageY][primaryImageX];
+    return null;
   }
 
-  public List<Image> getOtherImages() {
-    return otherImages;
+  public Image[][] getPrimaryMatrix() {
+    return primaryMatrix;
   }
 
-  public List<Image> getCornerImages() {
-    return cornerImages;
+  public Image[][] getSecondaryMatrix() {
+    return secondaryMatrix;
+  }
+
+  public int getPrimaryImageX() {
+    return primaryImageX;
+  }
+
+  public int getPrimaryImageY() {
+    return primaryImageY;
   }
 
   public Image getPreviewImage() {

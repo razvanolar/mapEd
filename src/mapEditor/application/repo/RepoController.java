@@ -13,6 +13,7 @@ import mapEditor.application.repo.html_exporter.MapHtmlExporter;
 import mapEditor.application.repo.models.LWProjectModel;
 import mapEditor.application.repo.models.ProjectModel;
 import mapEditor.application.repo.results.SaveImagesResult;
+import mapEditor.application.repo.sax_handlers.brush.BrushXMLConverter;
 import mapEditor.application.repo.sax_handlers.config.known_projects.KnownProjectsXMLConverter;
 import mapEditor.application.repo.sax_handlers.config.known_projects.KnownProjectsXMLHandler;
 import mapEditor.application.repo.sax_handlers.maps.MapXMLConverter;
@@ -635,7 +636,7 @@ public class RepoController {
         areUnsavedImages = true;
         unsavedImages.add(image);
         System.out.println("*** Unable to save image. Name: " + image.getPath() + " path: " + image.getPath() +
-                      " Error message: " + ex.getMessage());
+                " Error message: " + ex.getMessage());
       }
     }
 
@@ -652,6 +653,7 @@ public class RepoController {
 
     int count = 0;
 
+    BrushXMLConverter converter = new BrushXMLConverter();
     for (LWBrushModel brush : models) {
       try {
         String name = getRepoUtil().checkBrushNameOrGetANewOne(path, brush.getName());
@@ -664,6 +666,7 @@ public class RepoController {
           continue;
         }
         saveBrushImages(brush, directory);
+        writeContentToFile(converter.convertBrushToXML(brush, brushDirectory), path + name);
         count ++;
       } catch (Exception ex) {
         ex.printStackTrace();
@@ -675,22 +678,25 @@ public class RepoController {
 
   private void saveBrushImages(LWBrushModel brush, File directory) throws Exception {
     String pngExt = KnownFileExtensions.PNG.getExtension();
-    // save primary image
-    int imageCounter = 0;
-    if (saveImage(brush.getPrimaryImage(), directory.getAbsolutePath(), brush.getName() + "_" + imageCounter + pngExt, true) == null)
-      throw new Exception("Unable to save brush primary image");
-    imageCounter ++;
-    // save other images
-    for (Image image : brush.getOtherImages()) {
-      if (saveImage(image, directory.getAbsolutePath(), brush.getName() + "_" + imageCounter + pngExt, true) == null)
-        throw new Exception("Unable to save brush secondary images");
-      imageCounter ++;
+    // save primary images
+    Image[][] primaryMatrix = brush.getPrimaryMatrix();
+    for (int i=0; i<primaryMatrix.length; i++) {
+      for (int j=0; j<primaryMatrix[i].length; j++) {
+        Image image = primaryMatrix[i][j];
+        String imageName = brush.getName() + "_" + i + "_" + j + pngExt;
+        if (saveImage(image, directory.getAbsolutePath(), imageName, true) == null)
+          throw new Exception("Unable to save brush primary images");
+      }
     }
     // save corner images
-    for (Image image : brush.getOtherImages()) {
-      if (saveImage(image, directory.getAbsolutePath(), brush.getName() + "_" + imageCounter + pngExt, true) == null)
-        throw new Exception("Unable to save brush corner images");
-      imageCounter ++;
+    Image[][] secondaryMatrix = brush.getSecondaryMatrix();
+    for (int i=0; i<secondaryMatrix.length; i++) {
+      for (int j=0; j<secondaryMatrix[i].length; j++) {
+        Image image = secondaryMatrix[i][j];
+        String imageName = brush.getName() + "_sec_" + i + "_" + j + pngExt;
+        if (saveImage(image, directory.getAbsolutePath(), imageName, true) == null)
+          throw new Exception("Unable to save brush corner images");
+      }
     }
     // save preview image
     if (saveImage(brush.getPreviewImage(), directory.getAbsolutePath(), brush.getName() + "_preview" + pngExt, true) == null)
