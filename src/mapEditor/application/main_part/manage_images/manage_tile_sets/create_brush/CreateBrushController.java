@@ -11,7 +11,6 @@ import javafx.stage.StageStyle;
 import javafx.stage.Window;
 import mapEditor.application.main_part.app_utils.AppParameters;
 import mapEditor.application.main_part.app_utils.constants.CssConstants;
-import mapEditor.application.main_part.app_utils.inputs.FileExtensionUtil;
 import mapEditor.application.main_part.app_utils.inputs.StringValidator;
 import mapEditor.application.main_part.app_utils.models.brush.LWBrushModel;
 import mapEditor.application.main_part.app_utils.views.canvas.BrushCanvas;
@@ -25,6 +24,7 @@ import mapEditor.application.main_part.types.View;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -123,6 +123,7 @@ public class CreateBrushController implements Controller, CreateBrushListener {
     int secondaryY = brushCanvas.getCompleteSelectionCellY();
 
     List<Image> images = new ArrayList<>();
+    List<Image> cornerImages = new ArrayList<>();
 
     Image primaryImage = brushCanvas.cropCell(primaryX, primaryY);
     images.add(brushCanvas.cropCell(primaryX-1, primaryY-1));
@@ -134,31 +135,35 @@ public class CreateBrushController implements Controller, CreateBrushListener {
     images.add(brushCanvas.cropCell(primaryX, primaryY+1));
     images.add(brushCanvas.cropCell(primaryX+1, primaryY+1));
 
-    images.add(brushCanvas.cropCell(secondaryX, secondaryY));
-    images.add(brushCanvas.cropCell(secondaryX+1, secondaryY));
-    images.add(brushCanvas.cropCell(secondaryX, secondaryY+1));
-    images.add(brushCanvas.cropCell(secondaryX+1, secondaryY+1));
+    cornerImages.add(brushCanvas.cropCell(secondaryX, secondaryY));
+    cornerImages.add(brushCanvas.cropCell(secondaryX+1, secondaryY));
+    cornerImages.add(brushCanvas.cropCell(secondaryX, secondaryY+1));
+    cornerImages.add(brushCanvas.cropCell(secondaryX+1, secondaryY+1));
 
     Image previewImage = brushCanvas.cropBrushPreviewImage();
 
-    return new LWBrushModel(primaryImage, images, previewImage);
+    return new LWBrushModel(primaryImage, images, cornerImages, previewImage);
   }
 
-  private boolean brushNameAreValid() {
+  private boolean brushNamesAreValid() {
     for (SelectableCreateBrushView view : brushViews) {
       LWBrushModel brushModel = view.getBrushModel();
-      if (!(brushModel != null && (FileExtensionUtil.isBrushFile(brushModel.getName()) || StringValidator.isValidFileName(brushModel.getName()))))
+      if (!(brushModel != null && (StringValidator.isValidFileName(brushModel.getName()))))
         return false;
     }
     return true;
   }
 
   public boolean isValidSelection() {
-    return StringValidator.isValidBrushesPath(view.getPathTextField().getText()) && brushNameAreValid();
+    return StringValidator.isValidBrushesPath(view.getPathTextField().getText()) && brushNamesAreValid();
   }
 
   public String getSelectedPath() {
     return view.getPathTextField().getText();
+  }
+
+  public List<LWBrushModel> getBrushModels() {
+    return brushViews.stream().map(SelectableCreateBrushView::getBrushModel).collect(Collectors.toList());
   }
 
   @Override

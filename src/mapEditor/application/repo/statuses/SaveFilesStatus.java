@@ -5,27 +5,27 @@ package mapEditor.application.repo.statuses;
  *
  * Created by razvanolar on 20.02.2016.
  */
-public enum  SaveImagesStatus {
+public enum SaveFilesStatus {
 
   /**
    * No image was saved. This could happen in the following cases:
    *  - images list is null or empty
    *  - no image could be saved
    */
-  NONE("No image was saved on the disk !"),
+  NONE("No file was saved on the disk !"),
 
   /**
    * Only a part of the images are saved.
    */
-  PARTIAL("Only a part of the images were saved. Please check your tiles directory to see the results."),
+  PARTIAL("Only a part of the files were saved. Please check your directory to see the results."),
 
   /**
    * All the images were saved successfully.
    */
-  COMPLETE("All image were saved successfully !");
+  COMPLETE("All files were saved successfully !");
 
   String message;
-  SaveImagesStatus(String message) {
+  SaveFilesStatus(String message) {
     this.message = message;
   }
 

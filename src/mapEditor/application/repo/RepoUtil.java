@@ -1,5 +1,7 @@
 package mapEditor.application.repo;
 
+import mapEditor.application.main_part.app_utils.models.KnownFileExtensions;
+
 import java.io.File;
 
 /**
@@ -74,6 +76,13 @@ public class RepoUtil {
     if (file.exists())
       return getAlternativeNameForExistingFile(directory, fileName);
     return fileName;
+  }
+
+  public String checkBrushNameOrGetANewOne(String directory, String fileName) {
+    if (fileName == null)
+      return null;
+    fileName = fileName.endsWith(KnownFileExtensions.BRUSH.getExtension()) ? fileName : fileName + KnownFileExtensions.BRUSH.getExtension();
+    return checkNameOrGetAnAlternativeOne(directory, fileName);
   }
 
   /**

@@ -21,7 +21,7 @@ import mapEditor.application.main_part.manage_images.manage_tiles.utils.ImageMod
 import mapEditor.application.main_part.types.Controller;
 import mapEditor.application.main_part.types.View;
 import mapEditor.application.repo.results.SaveImagesResult;
-import mapEditor.application.repo.statuses.SaveImagesStatus;
+import mapEditor.application.repo.statuses.SaveFilesStatus;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -174,14 +174,14 @@ public class ManageEditTilesController implements Controller, EditSelectableTile
 
   private void handleSaveImagesResult(SaveImagesResult result) {
     // All the tiles were saved successfully; Display an information message and close the dialog
-    if (result.getStatus() == SaveImagesStatus.COMPLETE) {
+    if (result.getStatus() == SaveFilesStatus.COMPLETE) {
       parentWindow.hide();
       Dialog.showInformDialog(null, result.getStatus().getMessage());
       return;
     }
 
     // Only a part of tiles where saved; Keep only the unsaved tiles and remove the rest
-    if (result.getStatus() == SaveImagesStatus.PARTIAL) {
+    if (result.getStatus() == SaveFilesStatus.PARTIAL) {
       Dialog.showWarningDialog(null, result.getStatus().getMessage(), parentWindow);
       if (result.getUnsavedImages() == null)
         return;

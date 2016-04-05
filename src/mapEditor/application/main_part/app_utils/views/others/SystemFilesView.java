@@ -159,6 +159,8 @@ public class SystemFilesView implements View {
     if (files == null || files.length == 0 || parent == null)
       return;
     for (File file : files) {
+      if (file.getName().startsWith("_"))
+        continue;
       File[] subdirs = file.listFiles();
       boolean canHaveChildren = subdirs != null;
       LazyTreeItem node = new LazyTreeItem(file, canHaveChildren);

@@ -35,9 +35,9 @@ public class ImageCanvas extends Canvas implements StyleListener {
   protected int completeSelectionCellY = -1;
 
   private ColorAdjust colorAdjustEffect;
-  private Color backgroundColor = new Color(0, 0, 0, 0);
-  private Color squareBorderColor = Color.YELLOW;
-  private Color squareFillColor = new Color(0, 0, 0, 0);
+  protected Color backgroundColor = new Color(0, 0, 0, 0);
+  protected Color squareBorderColor = Color.YELLOW;
+  protected Color squareFillColor = new Color(0, 0, 0, 0);
 
   protected int CELL_WIDTH = AppParameters.CURRENT_PROJECT.getCellSize();
   protected int CELL_HEIGHT = AppParameters.CURRENT_PROJECT.getCellSize();
@@ -275,6 +275,7 @@ public class ImageCanvas extends Canvas implements StyleListener {
     if (snapshotParameters == null)
       snapshotParameters = new SnapshotParameters();
     snapshotParameters.setViewport(new Rectangle2D(x * CELL_WIDTH, y * CELL_HEIGHT, CELL_WIDTH, CELL_HEIGHT));
+    snapshotParameters.setFill(Color.TRANSPARENT);
     ImageView imageView = new ImageView(image);
     return imageView.snapshot(snapshotParameters, null);
   }

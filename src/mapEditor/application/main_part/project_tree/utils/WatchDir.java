@@ -74,7 +74,7 @@ public class WatchDir {
 
         // if directory is created, and watching recursively, then
         // register it and its sub-directories
-        if (kind == StandardWatchEventKinds.ENTRY_CREATE) {
+        if (kind == StandardWatchEventKinds.ENTRY_CREATE && !name.getFileName().toString().startsWith("_")) {
           LazyTreeItem item = findItemByPath(dir.toAbsolutePath().toString());
           boolean isDirectory = Files.isDirectory(child, LinkOption.NOFOLLOW_LINKS);
           if (item != null && item.wasExpanded()) {

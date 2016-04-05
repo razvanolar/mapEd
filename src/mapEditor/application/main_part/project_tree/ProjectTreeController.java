@@ -118,10 +118,11 @@ public class ProjectTreeController implements Controller, ProjectTreeContextMenu
     charactersItem.expandedProperty().addListener(treeItemListener);
     mapsItem.expandedProperty().addListener(treeItemListener);
 
-    tilesItem.setExpanded(true);
+//    tilesItem.setExpanded(true);
 
     initWatchDirThreads(tileSetsItem);
     initWatchDirThreads(tilesItem);
+    initWatchDirThreads(brushesItem);
     initWatchDirThreads(charactersItem);
     initWatchDirThreads(mapsItem);
   }
@@ -130,6 +131,8 @@ public class ProjectTreeController implements Controller, ProjectTreeContextMenu
     if (files == null || files.length == 0 || parent == null)
       return;
     for (File file : files) {
+      if (file.getName().startsWith("_"))
+        continue;
       LazyTreeItem node = new LazyTreeItem(file, file.isDirectory(),
               file.isDirectory() ? TreeItemType.FOLDER : FileExtensionUtil.getTreeItemTypeForName(file.getName()));
       node.expandedProperty().addListener(treeItemListener);

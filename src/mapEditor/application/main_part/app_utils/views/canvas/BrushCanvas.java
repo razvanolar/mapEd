@@ -119,6 +119,7 @@ public class BrushCanvas extends ImageCanvas {
     int x = squareCellX - 1;
     int y = squareCellY - 1;
     snapshotParameters.setViewport(new Rectangle2D(x * CELL_WIDTH, y * CELL_HEIGHT, CELL_WIDTH * 3, CELL_HEIGHT * 3));
+    snapshotParameters.setFill(Color.TRANSPARENT);
     ImageView imageView = new ImageView(image);
     return imageView.snapshot(snapshotParameters, null);
   }

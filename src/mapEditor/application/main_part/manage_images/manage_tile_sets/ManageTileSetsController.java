@@ -15,6 +15,7 @@ import mapEditor.application.main_part.app_utils.inputs.StringValidator;
 import mapEditor.application.main_part.app_utils.models.ImageModel;
 import mapEditor.application.main_part.app_utils.models.KnownFileExtensions;
 import mapEditor.application.main_part.app_utils.models.MessageType;
+import mapEditor.application.main_part.app_utils.models.brush.LWBrushModel;
 import mapEditor.application.main_part.app_utils.views.canvas.ImageCanvas;
 import mapEditor.application.main_part.app_utils.views.TabImageLoadView;
 import mapEditor.application.main_part.app_utils.views.dialogs.Dialog;
@@ -38,7 +39,7 @@ import mapEditor.application.main_part.types.Controller;
 import mapEditor.application.main_part.types.View;
 import mapEditor.application.repo.SystemParameters;
 import mapEditor.application.repo.results.SaveImagesResult;
-import mapEditor.application.repo.statuses.SaveImagesStatus;
+import mapEditor.application.repo.statuses.SaveFilesStatus;
 
 import java.io.File;
 import java.util.HashMap;
@@ -223,6 +224,26 @@ public class ManageTileSetsController implements Controller, ManageImagesListene
     CreateBrushController brushController = new CreateBrushController(brushView, currentCanvas.getUpdatedImage(), dialog.getOkButton(), dialog.getStage());
     brushController.bind();
 
+    dialog.getOkButton().setOnAction(event -> {
+      if (!brushController.isValidSelection()) {
+        Dialog.showWarningDialog(null, "Fields are not correctly completed!", dialog.getStage());
+        return;
+      }
+      String path = brushController.getSelectedPath();
+      List<LWBrushModel> brushModels = brushController.getBrushModels();
+      try {
+        SaveFilesStatus status = MapEditorController.getInstance().getRepoController().saveBrushModels(brushModels, path);
+        if (status != SaveFilesStatus.COMPLETE)
+          Dialog.showWarningDialog(null, status.getMessage(), dialog.getStage());
+        else
+          Dialog.showInformDialog(null, "All brushes were saved successfully", dialog.getStage());
+      } catch (Exception ex) {
+        ex.printStackTrace();
+        Dialog.showErrorDialog("Error", "ManageTileSetsController - An error occurred while saving the brushes");
+      }
+      dialog.close();
+    });
+
     dialog.setContent(brushView.asNode());
     dialog.show();
   }
@@ -372,11 +393,11 @@ public class ManageTileSetsController implements Controller, ManageImagesListene
 
     MapEditorController.getInstance().maskView();
     SaveImagesResult result = MapEditorController.getInstance().getRepoController().saveImages(images);
-    SaveImagesStatus status = result.getStatus();
+    SaveFilesStatus status = result.getStatus();
 
-    if (status == SaveImagesStatus.COMPLETE) {
+    if (status == SaveFilesStatus.COMPLETE) {
       clearCroppedTiles();
-    } else if (status == SaveImagesStatus.PARTIAL) {
+    } else if (status == SaveFilesStatus.PARTIAL) {
       clearCroppedTiles();
       List<ImageModel> unsavedImages = result.getUnsavedImages();
       if (unsavedImages != null) {

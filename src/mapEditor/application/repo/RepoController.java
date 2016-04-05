@@ -8,6 +8,7 @@ import mapEditor.application.main_part.app_utils.models.ImageModel;
 import mapEditor.application.main_part.app_utils.models.KnownFileExtensions;
 import mapEditor.application.main_part.app_utils.models.LWMapModel;
 import mapEditor.application.main_part.app_utils.models.MapDetail;
+import mapEditor.application.main_part.app_utils.models.brush.LWBrushModel;
 import mapEditor.application.repo.html_exporter.MapHtmlExporter;
 import mapEditor.application.repo.models.LWProjectModel;
 import mapEditor.application.repo.models.ProjectModel;
@@ -18,7 +19,7 @@ import mapEditor.application.repo.sax_handlers.maps.MapXMLConverter;
 import mapEditor.application.repo.sax_handlers.maps.MapXMLHandler;
 import mapEditor.application.repo.sax_handlers.project_init_file.ProjectXMLConverter;
 import mapEditor.application.repo.sax_handlers.project_init_file.ProjectXMLHandler;
-import mapEditor.application.repo.statuses.SaveImagesStatus;
+import mapEditor.application.repo.statuses.SaveFilesStatus;
 import mapEditor.application.repo.types.CreateProjectStatus;
 import mapEditor.application.repo.types.MapType;
 import mapEditor.application.repo.types.ProjectStatus;
@@ -328,7 +329,7 @@ public class RepoController {
       return mapName;
     } catch (Exception ex) {
       System.out.println("*** RepoController - saveMap - Unable to save map. name: " + mapName +
-      " path: " + mapAbsolutePath + " Error message: " + ex.getMessage());
+              " path: " + mapAbsolutePath + " Error message: " + ex.getMessage());
       ex.printStackTrace();
     }
     return null;
@@ -604,8 +605,8 @@ public class RepoController {
       }
 
       try {
-        ImageIO.write(SwingFXUtils.fromFXImage(image, null), getRepoUtil().getFileExtensionWithoutDot(name), whereFile);
-        return name;
+        boolean value = ImageIO.write(SwingFXUtils.fromFXImage(image, null), getRepoUtil().getFileExtensionWithoutDot(name), whereFile);
+        return value ? name : null;
       } catch (IOException e) {
         System.out.println("*** Unable to save image to disk. Location: " + where + " image name: " + name + " Error message: " + e.getMessage());
       }
@@ -616,7 +617,7 @@ public class RepoController {
   }
 
   public SaveImagesResult saveImages(List<ImageModel> images) {
-    SaveImagesStatus status = SaveImagesStatus.NONE;
+    SaveFilesStatus status = SaveFilesStatus.NONE;
     if (images == null || images.isEmpty())
       return new SaveImagesResult(status, null);
     List<ImageModel> unsavedImages = new ArrayList<>();
@@ -638,7 +639,62 @@ public class RepoController {
       }
     }
 
-    return !areUnsavedImages ? new SaveImagesResult(SaveImagesStatus.COMPLETE, null) : new SaveImagesResult(SaveImagesStatus.PARTIAL, unsavedImages);
+    return !areUnsavedImages ? new SaveImagesResult(SaveFilesStatus.COMPLETE, null) : new SaveImagesResult(SaveFilesStatus.PARTIAL, unsavedImages);
+  }
+
+  public SaveFilesStatus saveBrushModels(List<LWBrushModel> models, String path) {
+    if (path == null || path.isEmpty() || models == null || models.isEmpty())
+      return SaveFilesStatus.NONE;
+    path = path.endsWith("\\") ? path : path + "\\";
+    File file = new File(path);
+    if (!file.exists())
+      return SaveFilesStatus.NONE;
+
+    int count = 0;
+
+    for (LWBrushModel brush : models) {
+      try {
+        String name = getRepoUtil().checkBrushNameOrGetANewOne(path, brush.getName());
+        String brushDirectory = getRepoUtil().checkNameOrGetAnAlternativeOne(path, "_" + brush.getName());
+        if (name == null || brushDirectory == null)
+          continue;
+        File directory = new File(path + brushDirectory);
+        if (!directory.exists() && !directory.mkdirs()) {
+          System.out.println("*** RepoController - saveBrushModels - Unable to create directory : " + path + brushDirectory);
+          continue;
+        }
+        saveBrushImages(brush, directory);
+        count ++;
+      } catch (Exception ex) {
+        ex.printStackTrace();
+      }
+    }
+
+    return count == 0 ? SaveFilesStatus.NONE : count == models.size() ? SaveFilesStatus.COMPLETE : SaveFilesStatus.PARTIAL;
+  }
+
+  private void saveBrushImages(LWBrushModel brush, File directory) throws Exception {
+    String pngExt = KnownFileExtensions.PNG.getExtension();
+    // save primary image
+    int imageCounter = 0;
+    if (saveImage(brush.getPrimaryImage(), directory.getAbsolutePath(), brush.getName() + "_" + imageCounter + pngExt, true) == null)
+      throw new Exception("Unable to save brush primary image");
+    imageCounter ++;
+    // save other images
+    for (Image image : brush.getOtherImages()) {
+      if (saveImage(image, directory.getAbsolutePath(), brush.getName() + "_" + imageCounter + pngExt, true) == null)
+        throw new Exception("Unable to save brush secondary images");
+      imageCounter ++;
+    }
+    // save corner images
+    for (Image image : brush.getOtherImages()) {
+      if (saveImage(image, directory.getAbsolutePath(), brush.getName() + "_" + imageCounter + pngExt, true) == null)
+        throw new Exception("Unable to save brush corner images");
+      imageCounter ++;
+    }
+    // save preview image
+    if (saveImage(brush.getPreviewImage(), directory.getAbsolutePath(), brush.getName() + "_preview" + pngExt, true) == null)
+      throw new Exception("Unable to save brush preview image");
   }
 
   /**
