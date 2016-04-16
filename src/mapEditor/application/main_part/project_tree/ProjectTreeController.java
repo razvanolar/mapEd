@@ -119,6 +119,7 @@ public class ProjectTreeController implements Controller, ProjectTreeContextMenu
     mapsItem.expandedProperty().addListener(treeItemListener);
 
 //    tilesItem.setExpanded(true);
+    brushesItem.setExpanded(true);
 
     initWatchDirThreads(tileSetsItem);
     initWatchDirThreads(tilesItem);
@@ -292,11 +293,21 @@ public class ProjectTreeController implements Controller, ProjectTreeContextMenu
 
     LazyTreeItem selectedItem = contextMenuController.getSelectedItem();
     LazyTreeItem parentItem = contextMenuController.getParentItem();
-    if (selectedItem == null ||
-            (selectedItem.getType() != TreeItemType.PROJECT_TILES_FOLDER &&
-                    parentItem != null && parentItem.getType() != TreeItemType.PROJECT_TILES_FOLDER))
-      return;
 
+    if (selectedItem != null && selectedItem.getType() == TreeItemType.PROJECT_TILES_FOLDER ||
+            parentItem != null && parentItem.getType() == TreeItemType.PROJECT_TILES_FOLDER)
+      openTilesInNewTab(tilesController, selectedItem);
+    else if (selectedItem != null && selectedItem.getType() == TreeItemType.PROJECT_BRUSHES_FOLDER ||
+            parentItem != null && parentItem.getType() == TreeItemType.PROJECT_BRUSHES_FOLDER)
+      openBrushesInNewTab(tilesController, selectedItem);
+  }
+
+  /**
+   * Opens the tiles under the specified item into a new tab.
+   * @param tilesController
+   * @param selectedItem
+   */
+  private void openTilesInNewTab(ManageTilesController tilesController, LazyTreeItem selectedItem) {
     OkCancelDialog dialog = new OkCancelDialog("New Tiles Tab", StageStyle.UTILITY, Modality.APPLICATION_MODAL, false);
     NewTilesTabController.INewTilesTabView tilesTabView = new NewTilesTabView();
     NewTilesTabController tilesTabController = new NewTilesTabController(tilesTabView, dialog.getOkButton());
@@ -323,6 +334,19 @@ public class ProjectTreeController implements Controller, ProjectTreeContextMenu
       tilesController.addTilesTabForFiles(tilesTabController.getTabName(), imageFiles);
     });
     dialog.setContent(tilesTabView.asNode());
+    dialog.show();
+  }
+
+  private void openBrushesInNewTab(ManageTilesController tilesController, LazyTreeItem selectedItem) {
+    OkCancelDialog dialog = new OkCancelDialog("New Brushes Tab", StageStyle.UTILITY, Modality.APPLICATION_MODAL, false);
+    NewTilesTabController.INewTilesTabView newTilesTabView = new NewTilesTabView();
+    NewTilesTabController tabController = new NewTilesTabController(newTilesTabView, dialog.getOkButton());
+
+    dialog.getOkButton().setOnAction(event -> {
+
+    });
+
+    dialog.setContent(newTilesTabView.asNode());
     dialog.show();
   }
 

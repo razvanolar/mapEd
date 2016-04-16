@@ -1,6 +1,8 @@
 package mapEditor.application.main_part.app_utils.models.brush;
 
 import javafx.scene.image.Image;
+import mapEditor.application.main_part.app_utils.models.ImageModel;
+import mapEditor.application.repo.SystemParameters;
 
 /**
  *
@@ -8,15 +10,20 @@ import javafx.scene.image.Image;
  */
 public class LWBrushModel {
 
-  private Image[][] primaryMatrix;
-  private Image[][] secondaryMatrix;
-  private Image previewImage;
+  private ImageModel[][] primaryMatrix;
+  private ImageModel[][] secondaryMatrix;
+  private ImageModel previewImage;
   private String name;
 
   private int primaryImageX;
   private int primaryImageY;
 
-  public LWBrushModel(Image[][] primaryMatrix, Image[][] secondaryMatrix, Image previewImage, int primaryImageX, int primaryImageY) {
+  public LWBrushModel() {
+    primaryMatrix = new ImageModel[SystemParameters.PRIMARY_BRUSH_ROWS][SystemParameters.PRIMARY_BRUSH_COLUMNS];
+    secondaryMatrix = new ImageModel[SystemParameters.SECONDARY_BRUSH_ROWS][SystemParameters.SECONDARY_BRUSH_COLUMNS];
+  }
+
+  public LWBrushModel(ImageModel[][] primaryMatrix, ImageModel[][] secondaryMatrix, ImageModel previewImage, int primaryImageX, int primaryImageY) {
     this.primaryMatrix = primaryMatrix;
     this.secondaryMatrix = secondaryMatrix;
     this.previewImage = previewImage;
@@ -24,17 +31,17 @@ public class LWBrushModel {
     this.primaryImageY = primaryImageY;
   }
 
-  public Image getPrimaryImage() {
+  public ImageModel getPrimaryImage() {
     if (primaryMatrix != null)
       return primaryMatrix[primaryImageY][primaryImageX];
     return null;
   }
 
-  public Image[][] getPrimaryMatrix() {
+  public ImageModel[][] getPrimaryMatrix() {
     return primaryMatrix;
   }
 
-  public Image[][] getSecondaryMatrix() {
+  public ImageModel[][] getSecondaryMatrix() {
     return secondaryMatrix;
   }
 
@@ -46,7 +53,7 @@ public class LWBrushModel {
     return primaryImageY;
   }
 
-  public Image getPreviewImage() {
+  public ImageModel getPreviewImage() {
     return previewImage;
   }
 
@@ -56,5 +63,13 @@ public class LWBrushModel {
 
   public void setName(String name) {
     this.name = name;
+  }
+
+  public void setImageForPrimaryMatrix() {
+
+  }
+
+  public void setImageForSecondaryMatrix() {
+
   }
 }

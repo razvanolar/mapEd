@@ -55,6 +55,11 @@ public class SystemParameters {
   public static final boolean DEFAULT_SHOW_GRID_VALUE = true;
   public static final boolean DEFAULT_SHOW_PROJECT_TREE_VALUE = true;
 
+  public static final int PRIMARY_BRUSH_ROWS = 3;
+  public static final int PRIMARY_BRUSH_COLUMNS = 3;
+  public static final int SECONDARY_BRUSH_ROWS = 2;
+  public static final int SECONDARY_BRUSH_COLUMNS = 2;
+
   public static List<Thread> watchers = new ArrayList<>();
   public static Thread appListenerThread;
 }

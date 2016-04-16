@@ -121,11 +121,12 @@ public class ProjectTreeContextMenuView implements ProjectTreeContextMenuControl
             break;
           case PROJECT_TILES_FOLDER:
             openTilesMenu.setDisable(false);
+            openTilesMenu.setText("Open Tiles");
             newTileSetsMenuItem.setDisable(true);
             newMapMenuItem.setDisable(true);
             break;
           case PROJECT_BRUSHES_FOLDER:
-
+            openTilesMenu.setText("Open Brushes");
             break;
           case PROJECT_CHARACTERS_FOLDER:
             newTileSetsMenuItem.setDisable(true);
@@ -154,6 +155,7 @@ public class ProjectTreeContextMenuView implements ProjectTreeContextMenuControl
         enableOpenMenuItems(false);
         break;
       case PROJECT_TILES_FOLDER:
+        openTilesMenu.setText("Open Tiles");
         openTilesMenu.setDisable(false);
         renameMenuItem.setDisable(true);
         deleteMenuItem.setDisable(true);
@@ -162,7 +164,8 @@ public class ProjectTreeContextMenuView implements ProjectTreeContextMenuControl
         enableOpenMenuItems(false);
         break;
       case PROJECT_BRUSHES_FOLDER:
-        openTilesMenu.setDisable(true);
+        openTilesMenu.setText("Open Brushes");
+        openTilesMenu.setDisable(false);
         renameMenuItem.setDisable(true);
         deleteMenuItem.setDisable(true);
         newTileSetsMenuItem.setDisable(true);

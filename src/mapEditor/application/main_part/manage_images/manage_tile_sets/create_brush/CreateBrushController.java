@@ -12,6 +12,7 @@ import javafx.stage.Window;
 import mapEditor.application.main_part.app_utils.AppParameters;
 import mapEditor.application.main_part.app_utils.constants.CssConstants;
 import mapEditor.application.main_part.app_utils.inputs.StringValidator;
+import mapEditor.application.main_part.app_utils.models.ImageModel;
 import mapEditor.application.main_part.app_utils.models.brush.LWBrushModel;
 import mapEditor.application.main_part.app_utils.views.canvas.BrushCanvas;
 import mapEditor.application.main_part.app_utils.views.dialogs.Dialog;
@@ -122,25 +123,25 @@ public class CreateBrushController implements Controller, CreateBrushListener {
     int secondaryX = brushCanvas.getCompleteSelectionCellX();
     int secondaryY = brushCanvas.getCompleteSelectionCellY();
 
-    Image[][] primaryImages = new Image[3][3];
-    Image[][] secondaryImages = new Image[2][2];
+    ImageModel[][] primaryImages = new ImageModel[3][3];
+    ImageModel[][] secondaryImages = new ImageModel[2][2];
 
-    primaryImages[0][0] = brushCanvas.cropCell(primaryX-1, primaryY-1);
-    primaryImages[0][1] = brushCanvas.cropCell(primaryX, primaryY-1);
-    primaryImages[0][2] = brushCanvas.cropCell(primaryX+1, primaryY-1);
-    primaryImages[1][0] = brushCanvas.cropCell(primaryX-1, primaryY);
-    primaryImages[1][1] = brushCanvas.cropCell(primaryX, primaryY);
-    primaryImages[1][2] = brushCanvas.cropCell(primaryX+1, primaryY);
-    primaryImages[2][0] = brushCanvas.cropCell(primaryX-1, primaryY+1);
-    primaryImages[2][1] = brushCanvas.cropCell(primaryX, primaryY+1);
-    primaryImages[2][2] = brushCanvas.cropCell(primaryX+1, primaryY+1);
+    primaryImages[0][0] = new ImageModel(brushCanvas.cropCell(primaryX-1, primaryY-1));
+    primaryImages[0][1] = new ImageModel(brushCanvas.cropCell(primaryX, primaryY-1));
+    primaryImages[0][2] = new ImageModel(brushCanvas.cropCell(primaryX+1, primaryY-1));
+    primaryImages[1][0] = new ImageModel(brushCanvas.cropCell(primaryX-1, primaryY));
+    primaryImages[1][1] = new ImageModel(brushCanvas.cropCell(primaryX, primaryY));
+    primaryImages[1][2] = new ImageModel(brushCanvas.cropCell(primaryX+1, primaryY));
+    primaryImages[2][0] = new ImageModel(brushCanvas.cropCell(primaryX-1, primaryY+1));
+    primaryImages[2][1] = new ImageModel(brushCanvas.cropCell(primaryX, primaryY+1));
+    primaryImages[2][2] = new ImageModel(brushCanvas.cropCell(primaryX+1, primaryY+1));
 
-    secondaryImages[0][0] = brushCanvas.cropCell(secondaryX, secondaryY);
-    secondaryImages[0][1] = brushCanvas.cropCell(secondaryX+1, secondaryY);
-    secondaryImages[1][0] = brushCanvas.cropCell(secondaryX, secondaryY+1);
-    secondaryImages[1][1] = brushCanvas.cropCell(secondaryX+1, secondaryY+1);
+    secondaryImages[0][0] = new ImageModel(brushCanvas.cropCell(secondaryX, secondaryY));
+    secondaryImages[0][1] = new ImageModel(brushCanvas.cropCell(secondaryX+1, secondaryY));
+    secondaryImages[1][0] = new ImageModel(brushCanvas.cropCell(secondaryX, secondaryY+1));
+    secondaryImages[1][1] = new ImageModel(brushCanvas.cropCell(secondaryX+1, secondaryY+1));
 
-    Image previewImage = brushCanvas.cropBrushPreviewImage();
+    ImageModel previewImage = new ImageModel(brushCanvas.cropBrushPreviewImage());
 
     return new LWBrushModel(primaryImages, secondaryImages, previewImage, 1, 1);
   }

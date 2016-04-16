@@ -15,6 +15,10 @@ public class ImageModel {
   private String path;
   private File file;
 
+  public ImageModel(Image image) {
+    this.image = image;
+  }
+
   public ImageModel(Image image, File file) {
     this.image = image;
     this.file = file;

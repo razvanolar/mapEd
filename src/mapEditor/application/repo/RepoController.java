@@ -4,6 +4,7 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import mapEditor.application.main_part.app_utils.AppParameters;
 import mapEditor.application.main_part.app_utils.data_types.CustomMap;
+import mapEditor.application.main_part.app_utils.inputs.FileExtensionUtil;
 import mapEditor.application.main_part.app_utils.models.ImageModel;
 import mapEditor.application.main_part.app_utils.models.KnownFileExtensions;
 import mapEditor.application.main_part.app_utils.models.LWMapModel;
@@ -14,6 +15,7 @@ import mapEditor.application.repo.models.LWProjectModel;
 import mapEditor.application.repo.models.ProjectModel;
 import mapEditor.application.repo.results.SaveImagesResult;
 import mapEditor.application.repo.sax_handlers.brush.BrushXMLConverter;
+import mapEditor.application.repo.sax_handlers.brush.BrushXMLHandler;
 import mapEditor.application.repo.sax_handlers.config.known_projects.KnownProjectsXMLConverter;
 import mapEditor.application.repo.sax_handlers.config.known_projects.KnownProjectsXMLHandler;
 import mapEditor.application.repo.sax_handlers.maps.MapXMLConverter;
@@ -679,28 +681,53 @@ public class RepoController {
   private void saveBrushImages(LWBrushModel brush, File directory) throws Exception {
     String pngExt = KnownFileExtensions.PNG.getExtension();
     // save primary images
-    Image[][] primaryMatrix = brush.getPrimaryMatrix();
+    ImageModel[][] primaryMatrix = brush.getPrimaryMatrix();
     for (int i=0; i<primaryMatrix.length; i++) {
       for (int j=0; j<primaryMatrix[i].length; j++) {
-        Image image = primaryMatrix[i][j];
+        ImageModel image = primaryMatrix[i][j];
         String imageName = brush.getName() + "_" + i + "_" + j + pngExt;
-        if (saveImage(image, directory.getAbsolutePath(), imageName, true) == null)
+        if (saveImage(image.getImage(), directory.getAbsolutePath(), imageName, true) == null)
           throw new Exception("Unable to save brush primary images");
       }
     }
     // save corner images
-    Image[][] secondaryMatrix = brush.getSecondaryMatrix();
+    ImageModel[][] secondaryMatrix = brush.getSecondaryMatrix();
     for (int i=0; i<secondaryMatrix.length; i++) {
       for (int j=0; j<secondaryMatrix[i].length; j++) {
-        Image image = secondaryMatrix[i][j];
+        ImageModel image = secondaryMatrix[i][j];
         String imageName = brush.getName() + "_sec_" + i + "_" + j + pngExt;
-        if (saveImage(image, directory.getAbsolutePath(), imageName, true) == null)
+        if (saveImage(image.getImage(), directory.getAbsolutePath(), imageName, true) == null)
           throw new Exception("Unable to save brush corner images");
       }
     }
     // save preview image
-    if (saveImage(brush.getPreviewImage(), directory.getAbsolutePath(), brush.getName() + "_preview" + pngExt, true) == null)
+    if (saveImage(brush.getPreviewImage().getImage(), directory.getAbsolutePath(), brush.getName() + "_preview" + pngExt, true) == null)
       throw new Exception("Unable to save brush preview image");
+  }
+
+  public List<LWBrushModel> openBrushesUnderDir(File file, BrushXMLHandler handler) throws Exception {
+    if (file == null || !file.isDirectory())
+      throw new Exception("The specified file is not a directory.");
+    if (handler == null)
+      handler = new BrushXMLHandler();
+
+    List<LWBrushModel> brushes = new ArrayList<>();
+    File[] files = file.listFiles();
+    if (files == null)
+      throw new Exception("Unable to determine the files under " + file.getName());
+    for (File f : files) {
+      if (f.isDirectory() || FileExtensionUtil.isBrushFile(f.getName()))
+        continue;
+      try {
+        String content = readContentFromFile(f);
+        handler.parse(content);
+        LWBrushModel brush = handler.getBrush();
+        brushes.add(brush);
+      } catch (Exception ex) {
+        System.out.println("*** RepoController - openBrushesUnderFile - Unable to create the brush for : " + f.getAbsolutePath());
+      }
+    }
+    return brushes;
   }
 
   /**

@@ -30,7 +30,7 @@ public class SelectableCreateBrushView implements View {
   private CreateBrushListener listener;
 
   public SelectableCreateBrushView(LWBrushModel brushModel, CreateBrushListener listener) {
-    this.imageView = new ImageView(brushModel.getPrimaryImage());
+    this.imageView = new ImageView(brushModel.getPrimaryImage().getImage());
     this.brushModel = brushModel;
     this.listener = listener;
     initGUI();
