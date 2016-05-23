@@ -1,7 +1,7 @@
 package mapEditor.application.repo.sax_handlers.brush;
 
-import mapEditor.application.repo.models.BrushTileModel;
-import mapEditor.application.repo.models.BrushModel;
+import mapEditor.application.main_part.app_utils.models.brush.BrushTileModel;
+import mapEditor.application.main_part.app_utils.models.brush.BrushModel;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;

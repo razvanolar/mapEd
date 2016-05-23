@@ -38,8 +38,8 @@ import mapEditor.application.main_part.types.Controller;
 import mapEditor.application.main_part.types.View;
 import mapEditor.application.repo.RepoController;
 import mapEditor.application.repo.SystemParameters;
-import mapEditor.application.repo.models.BrushModel;
-import mapEditor.application.repo.models.BrushTileModel;
+import mapEditor.application.main_part.app_utils.models.brush.BrushModel;
+import mapEditor.application.main_part.app_utils.models.brush.BrushTileModel;
 import mapEditor.application.repo.models.ProjectModel;
 
 import java.io.File;

@@ -8,10 +8,7 @@ import javafx.scene.paint.Color;
 import mapEditor.MapEditorController;
 import mapEditor.application.main_part.app_utils.AppParameters;
 import mapEditor.application.main_part.app_utils.data_types.CustomMap;
-import mapEditor.application.main_part.app_utils.models.ImageModel;
-import mapEditor.application.main_part.app_utils.models.LayerModel;
-import mapEditor.application.main_part.app_utils.models.MapDetail;
-import mapEditor.application.main_part.app_utils.models.MapTilesContainer;
+import mapEditor.application.main_part.app_utils.models.*;
 
 /**
  *
@@ -65,7 +62,7 @@ public class MapCanvas extends Canvas {
   protected int FORCE_UPDATE = 10;
   protected int[] mapInfo = new int[MAP_INFO_NB];
 
-  protected ImageModel selectedTile;
+  protected AbstractDrawModel selectedDrawModel;
   protected LayerModel selectedLayer;
   protected MapDetail mapDetail;
   protected MapTilesContainer tilesContainer;
@@ -356,8 +353,34 @@ public class MapCanvas extends Canvas {
     if (gridEnabled)
       drawGrid(g, startX, startY, stopX, stopY);
 
+    // draw selection based on the selectedDrawModel type
     g.setStroke(squareColor);
-    g.strokeRect(x + 0.5, y + 0.5, CELL_WIDTH, CELL_HEIGHT);
+    if (selectedDrawModel == null || selectedDrawModel.getDrawModelType() == AbstractDrawModel.DrawModelType.TILE) {
+      g.strokeRect(x + 0.5, y + 0.5, CELL_WIDTH, CELL_HEIGHT);
+    } else if (selectedDrawModel.getDrawModelType() == AbstractDrawModel.DrawModelType.BRUSH) {
+      int row = y / CELL_HEIGHT;
+      int col = x / CELL_WIDTH;
+      if (!checkMatrixBorders(row, col))
+        return;
+
+      g.strokeRect(x + 0.5, y + 0.5, CELL_WIDTH, CELL_HEIGHT);
+      if (checkMatrixBorders(row - 1, col - 1))
+        g.strokeRect(x - CELL_WIDTH + 0.5, y - CELL_HEIGHT + 0.5, CELL_WIDTH, CELL_HEIGHT);
+      if (checkMatrixBorders(row - 1, col))
+        g.strokeRect(x + 0.5, y - CELL_HEIGHT + 0.5, CELL_WIDTH, CELL_HEIGHT);
+      if (checkMatrixBorders(row - 1, col + 1))
+        g.strokeRect(x + CELL_WIDTH + 0.5, y - CELL_HEIGHT + 0.5, CELL_WIDTH, CELL_HEIGHT);
+      if (checkMatrixBorders(row, col - 1))
+        g.strokeRect(x - CELL_WIDTH + 0.5, y + 0.5, CELL_WIDTH, CELL_HEIGHT);
+      if (checkMatrixBorders(row, col + 1))
+        g.strokeRect(x + CELL_WIDTH + 0.5, y + 0.5, CELL_WIDTH, CELL_HEIGHT);
+      if (checkMatrixBorders(row + 1, col - 1))
+        g.strokeRect(x - CELL_WIDTH + 0.5, y + CELL_HEIGHT + 0.5, CELL_WIDTH, CELL_HEIGHT);
+      if (checkMatrixBorders(row + 1, col))
+        g.strokeRect(x + 0.5, y + CELL_HEIGHT + 0.5, CELL_WIDTH, CELL_HEIGHT);
+      if (checkMatrixBorders(row + 1, col + 1))
+        g.strokeRect(x + CELL_WIDTH + 0.5, y + CELL_HEIGHT + 0.5, CELL_WIDTH, CELL_HEIGHT);
+    }
   }
 
   /**
@@ -439,6 +462,10 @@ public class MapCanvas extends Canvas {
     return mapInfo;
   }
 
+  protected boolean checkMatrixBorders(int row, int col) {
+    return row >= 0 && col >= 0 && row < ROWS && col < COLUMNS;
+  }
+
   /**
    * Check if the mouse was pressed in the painted area.
    * @return true, if the last mouse click coordinates are within map borders
@@ -508,8 +535,8 @@ public class MapCanvas extends Canvas {
     mapDetail.setMapTilesInfo(tilesContainer.getMapInfo(mapDetail.getLayers()));
   }
 
-  public void setDrawingTile(ImageModel image) {
-    selectedTile = image;
+  public void setDrawingTile(AbstractDrawModel drawModel) {
+    selectedDrawModel = drawModel;
   }
 
   public MapDetail getMapDetail() {

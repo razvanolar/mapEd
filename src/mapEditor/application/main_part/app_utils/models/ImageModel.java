@@ -8,7 +8,7 @@ import java.io.File;
  *
  * Created by razvanolar on 30.01.2016.
  */
-public class ImageModel {
+public class ImageModel extends AbstractDrawModel {
 
   private Image image;
   private String name;
@@ -16,10 +16,12 @@ public class ImageModel {
   private File file;
 
   public ImageModel(Image image) {
+    super(DrawModelType.TILE);
     this.image = image;
   }
 
   public ImageModel(Image image, File file) {
+    super(DrawModelType.TILE);
     this.image = image;
     this.file = file;
     this.path = refinePath(file.getParentFile().getAbsolutePath());
@@ -27,6 +29,7 @@ public class ImageModel {
   }
 
   public ImageModel(Image image, String path, String name) {
+    super(DrawModelType.TILE);
     this.image = image;
     this.path = refinePath(path);
     this.name = name;
@@ -75,7 +78,7 @@ public class ImageModel {
     if (obj == null || !(obj instanceof ImageModel))
       return false;
     ImageModel model = (ImageModel) obj;
-    return !(getFile() == null || model.getFile() == null) && getFile().getAbsolutePath().equals(model.getFile().getAbsolutePath());
+    return !(getFile() == null || model.getFile() == null) && getFile().getAbsolutePath().equalsIgnoreCase(model.getFile().getAbsolutePath());
   }
 
   @Override

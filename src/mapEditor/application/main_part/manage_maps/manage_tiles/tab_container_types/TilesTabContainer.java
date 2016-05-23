@@ -1,5 +1,6 @@
 package mapEditor.application.main_part.manage_maps.manage_tiles.tab_container_types;
 
+import mapEditor.application.main_part.app_utils.models.AbstractDrawModel;
 import mapEditor.application.main_part.app_utils.models.ImageModel;
 import mapEditor.application.main_part.manage_maps.utils.SelectableTileView;
 import mapEditor.application.main_part.manage_maps.utils.TabType;
@@ -26,7 +27,8 @@ public class TilesTabContainer extends AbstractTabContainer {
     return tiles;
   }
 
-  public ImageModel getSelectedTile() {
+  @Override
+  public AbstractDrawModel getSelectedDrawModel() {
     SelectableTileView tileView = getSelectedTileView();
     return tileView != null ? tileView.getImage() : null;
   }

@@ -11,7 +11,7 @@ import mapEditor.application.main_part.app_utils.models.LWMapModel;
 import mapEditor.application.main_part.app_utils.models.MapDetail;
 import mapEditor.application.main_part.app_utils.models.brush.LWBrushModel;
 import mapEditor.application.repo.html_exporter.MapHtmlExporter;
-import mapEditor.application.repo.models.BrushModel;
+import mapEditor.application.main_part.app_utils.models.brush.BrushModel;
 import mapEditor.application.repo.models.LWProjectModel;
 import mapEditor.application.repo.models.ProjectModel;
 import mapEditor.application.repo.results.SaveImagesResult;

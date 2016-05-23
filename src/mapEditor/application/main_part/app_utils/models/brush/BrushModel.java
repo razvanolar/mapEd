@@ -1,5 +1,6 @@
-package mapEditor.application.repo.models;
+package mapEditor.application.main_part.app_utils.models.brush;
 
+import mapEditor.application.main_part.app_utils.models.AbstractDrawModel;
 import mapEditor.application.main_part.app_utils.models.ImageModel;
 
 import java.util.ArrayList;
@@ -10,26 +11,33 @@ import java.util.List;
  *
  * Created by razvanolar on 16.04.2016.
  */
-public class BrushModel {
+public class BrushModel extends AbstractDrawModel {
 
   private int primaryImageX;
   private int primaryImageY;
   private String previewImagePath;
   private String name;
+  private BrushTileModel[][] primaryMatrix;
   private List<BrushTileModel> primaryTiles;
+  private BrushTileModel[][] secondaryMatrix;
   private List<BrushTileModel> secondaryTiles;
   private ImageModel primaryImageModel;
 
   public BrushModel() {
-    primaryTiles = new ArrayList<>();
-    secondaryTiles = new ArrayList<>();
+    super(DrawModelType.BRUSH);
+    primaryMatrix = new BrushTileModel[3][3];
+    secondaryMatrix = new BrushTileModel[2][2];
+    primaryTiles = new ArrayList<>(9);
+    secondaryTiles = new ArrayList<>(4);
   }
 
   public void addPrimaryTile(BrushTileModel tileModel) {
+    primaryMatrix[tileModel.getRowIndex()][tileModel.getColIndex()] = tileModel;
     primaryTiles.add(tileModel);
   }
 
   public void addSecondaryTile(BrushTileModel tileModel) {
+    secondaryMatrix[tileModel.getRowIndex()][tileModel.getColIndex()] = tileModel;
     secondaryTiles.add(tileModel);
   }
 

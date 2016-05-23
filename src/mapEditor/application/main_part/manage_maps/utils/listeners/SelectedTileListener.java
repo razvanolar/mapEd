@@ -1,6 +1,6 @@
 package mapEditor.application.main_part.manage_maps.utils.listeners;
 
-import mapEditor.application.main_part.app_utils.models.ImageModel;
+import mapEditor.application.main_part.app_utils.models.AbstractDrawModel;
 
 /**
  * Used by ManageTilesController to notify ManageMapsController when the selected tile was changed.
@@ -8,5 +8,5 @@ import mapEditor.application.main_part.app_utils.models.ImageModel;
  */
 public interface SelectedTileListener {
 
-  void selectedTileChanged(ImageModel selectedTile);
+  void selectedTileChanged(AbstractDrawModel selectedTile);
 }

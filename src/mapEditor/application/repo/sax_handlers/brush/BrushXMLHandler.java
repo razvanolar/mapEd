@@ -1,6 +1,6 @@
 package mapEditor.application.repo.sax_handlers.brush;
 
-import mapEditor.application.repo.models.BrushModel;
+import mapEditor.application.main_part.app_utils.models.brush.BrushModel;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;

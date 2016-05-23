@@ -10,6 +10,7 @@ import javafx.stage.StageStyle;
 import mapEditor.MapEditorController;
 import mapEditor.application.main_part.app_utils.AppParameters;
 import mapEditor.application.main_part.app_utils.inputs.StringValidator;
+import mapEditor.application.main_part.app_utils.models.AbstractDrawModel;
 import mapEditor.application.main_part.app_utils.models.ImageModel;
 import mapEditor.application.main_part.app_utils.models.LayerModel;
 import mapEditor.application.main_part.app_utils.models.MapDetail;
@@ -58,7 +59,7 @@ public class ManageMapsController implements Controller, MapLayersListener, Sele
   private PrimaryMapContextMenuController contextMenuController;
   private MapDetail defaultModel;
 
-  private ImageModel selectedTile;
+  private AbstractDrawModel selectedTile;
   private boolean blockTabListener;
 
   public ManageMapsController(IMangeMapsView view, double dividerPosition) {
@@ -471,7 +472,7 @@ public class ManageMapsController implements Controller, MapLayersListener, Sele
   }
 
   @Override
-  public void selectedTileChanged(ImageModel selectedTile) {
+  public void selectedTileChanged(AbstractDrawModel selectedTile) {
     this.selectedTile = selectedTile;
     PrimaryMapView selectedMap = getSelectedMap();
     if (selectedMap != null)

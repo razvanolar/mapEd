@@ -7,6 +7,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import mapEditor.application.main_part.app_utils.models.AbstractDrawModel;
 import mapEditor.application.main_part.app_utils.models.TabKey;
 import mapEditor.application.main_part.manage_maps.utils.SelectableTileView;
 import mapEditor.application.main_part.manage_maps.utils.TabType;
@@ -110,4 +111,6 @@ public abstract class AbstractTabContainer implements View {
   public Region asNode() {
     return scrollPane;
   }
+
+  public abstract AbstractDrawModel getSelectedDrawModel();
 }

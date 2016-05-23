@@ -2,7 +2,7 @@ package mapEditor.application.main_part.manage_maps.utils;
 
 import mapEditor.application.main_part.app_utils.AppParameters;
 import mapEditor.application.main_part.manage_maps.utils.listeners.SelectableTileListener;
-import mapEditor.application.repo.models.BrushModel;
+import mapEditor.application.main_part.app_utils.models.brush.BrushModel;
 
 /**
  *

@@ -22,7 +22,7 @@ import mapEditor.application.main_part.manage_maps.utils.SelectableTileView;
 import mapEditor.application.main_part.manage_maps.utils.listeners.SelectedTileListener;
 import mapEditor.application.main_part.manage_maps.utils.TabType;
 import mapEditor.application.main_part.types.Controller;
-import mapEditor.application.repo.models.BrushModel;
+import mapEditor.application.main_part.app_utils.models.brush.BrushModel;
 import mapEditor.application.repo.models.ProjectModel;
 
 import java.io.File;
@@ -119,11 +119,8 @@ public class ManageTilesController implements Controller, SelectableTileListener
     }
 
     AbstractTabContainer tabContainer = (AbstractTabContainer) newTab.getUserData();
-    if (tabContainer.getTabType() == TabType.TILES && tabContainer instanceof TilesTabContainer) {
-      listener.selectedTileChanged(((TilesTabContainer) tabContainer).getSelectedTile());
-      TilesTabContainer tilesTabContainer = (TilesTabContainer) tabContainer;
-      selectedTileView = tilesTabContainer.getSelectedTileView();
-    }
+    listener.selectedTileChanged(tabContainer.getSelectedDrawModel());
+    selectedTileView = tabContainer.getSelectedTileView();
   }
 
   /**
@@ -187,6 +184,13 @@ public class ManageTilesController implements Controller, SelectableTileListener
 
   @Override
   public void selectedBrushChanged(SelectableBrushView brushView) {
-    
+    if (selectedTileView == null) {
+      selectedTileView = brushView;
+    } else if (selectedTileView != brushView) {
+      selectedTileView.unselect();
+      selectedTileView = brushView;
+    }
+
+    listener.selectedTileChanged(selectedTileView != null ? brushView.getBrushModel() : null);
   }
 }

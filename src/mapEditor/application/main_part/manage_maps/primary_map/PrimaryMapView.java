@@ -8,6 +8,7 @@ import javafx.scene.input.ScrollEvent;
 import mapEditor.MapEditorController;
 import mapEditor.application.main_part.app_utils.data_types.CustomMap;
 import mapEditor.application.main_part.app_utils.models.*;
+import mapEditor.application.main_part.app_utils.models.brush.BrushModel;
 import mapEditor.application.main_part.app_utils.views.dialogs.Dialog;
 import mapEditor.application.main_part.manage_maps.MapCanvas;
 
@@ -221,7 +222,11 @@ public class PrimaryMapView extends MapCanvas {
     if (FILL_AREA)
       fillArea(g, hoveredCellX, hoveredCellY, cellX, cellY);
     else {
-      tilesContainer.addTile(selectedTile, selectedLayer, cellY, cellX);
+      if (selectedDrawModel.getDrawModelType() == AbstractDrawModel.DrawModelType.TILE && selectedDrawModel instanceof ImageModel) {
+        tilesContainer.addTile((ImageModel) selectedDrawModel, selectedLayer, cellY, cellX);
+      } else if (selectedDrawModel.getDrawModelType() == AbstractDrawModel.DrawModelType.BRUSH && selectedDrawModel instanceof BrushModel) {
+        System.out.println("draw brush");
+      }
       paintAllCellTilesPerLayer(g, hoveredCellX, hoveredCellY, cellX, cellY);
     }
 
@@ -229,8 +234,11 @@ public class PrimaryMapView extends MapCanvas {
   }
 
   private void fillArea(GraphicsContext g, int hoveredCellX, int hoveredCellY, int cellX, int cellY) {
-    if (selectedLayer == null)
+    if (selectedLayer == null ||
+            selectedDrawModel.getDrawModelType() != AbstractDrawModel.DrawModelType.TILE ||
+            !(selectedDrawModel instanceof ImageModel))
       return;
+    ImageModel imageModel = (ImageModel) selectedDrawModel;
     ImageModel[][] tiles = tilesContainer.getTilesForLayer(selectedLayer);
     if (tiles != null && tiles[cellY][cellX] != null) {
       paintAllCellTilesPerLayer(g, hoveredCellX, hoveredCellY, cellX, cellY);
@@ -245,7 +253,7 @@ public class PrimaryMapView extends MapCanvas {
       int mapX = model.getMapX();
       int mapY = model.getMapY();
 
-      tilesContainer.addTile(selectedTile, selectedLayer, row, col);
+      tilesContainer.addTile(imageModel, selectedLayer, row, col);
       tiles = tilesContainer.getTilesForLayer(selectedLayer);
       paintAllCellTilesPerLayer(g, mapX, mapY, col, row);
 
@@ -300,10 +308,6 @@ public class PrimaryMapView extends MapCanvas {
         }
       }
     }
-  }
-
-  private boolean checkMatrixBorders(int row, int col) {
-    return row >= 0 && col >= 0 && row < ROWS && col < COLUMNS;
   }
 
   public void setCurrentLayer(LayerModel layer) {

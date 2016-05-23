@@ -1,4 +1,4 @@
-package mapEditor.application.repo.models;
+package mapEditor.application.main_part.app_utils.models.brush;
 
 import mapEditor.application.main_part.app_utils.models.ImageModel;
 
