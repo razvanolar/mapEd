@@ -11,6 +11,7 @@ import mapEditor.application.main_part.app_utils.models.LWMapModel;
 import mapEditor.application.main_part.app_utils.models.MapDetail;
 import mapEditor.application.main_part.app_utils.models.brush.LWBrushModel;
 import mapEditor.application.repo.html_exporter.MapHtmlExporter;
+import mapEditor.application.repo.models.BrushModel;
 import mapEditor.application.repo.models.LWProjectModel;
 import mapEditor.application.repo.models.ProjectModel;
 import mapEditor.application.repo.results.SaveImagesResult;
@@ -705,23 +706,24 @@ public class RepoController {
       throw new Exception("Unable to save brush preview image");
   }
 
-  public List<LWBrushModel> openBrushesUnderDir(File file, BrushXMLHandler handler) throws Exception {
+  public List<BrushModel> openBrushesUnderDir(File file, BrushXMLHandler handler) throws Exception {
     if (file == null || !file.isDirectory())
       throw new Exception("The specified file is not a directory.");
     if (handler == null)
       handler = new BrushXMLHandler();
 
-    List<LWBrushModel> brushes = new ArrayList<>();
+    List<BrushModel> brushes = new ArrayList<>();
     File[] files = file.listFiles();
     if (files == null)
       throw new Exception("Unable to determine the files under " + file.getName());
     for (File f : files) {
-      if (f.isDirectory() || FileExtensionUtil.isBrushFile(f.getName()))
+      if (f.isDirectory() || !FileExtensionUtil.isBrushFile(f.getName()))
         continue;
       try {
         String content = readContentFromFile(f);
-        handler.parse(content);
-        LWBrushModel brush = handler.getBrush();
+        handler.parse(content, f.getParentFile().getAbsolutePath());
+        BrushModel brush = handler.getBrush();
+        brush.setName(f.getName());
         brushes.add(brush);
       } catch (Exception ex) {
         System.out.println("*** RepoController - openBrushesUnderFile - Unable to create the brush for : " + f.getAbsolutePath());

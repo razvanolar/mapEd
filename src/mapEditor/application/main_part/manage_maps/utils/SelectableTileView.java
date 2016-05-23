@@ -22,14 +22,14 @@ public class SelectableTileView extends StackPane {
   private static EventHandler<MouseEvent> onMouseExitedListener;
   private static EventHandler<MouseEvent> onMousePressedListener;
 
-  private HBox detailedContainer;
-  private ImageView imageView;
+  protected HBox detailedContainer;
+  protected ImageView imageView;
 
-  private ImageModel image;
-  private String name;
-  private boolean detailedView;
-  private boolean selected;
-  private SelectableTileListener listener;
+  protected ImageModel image;
+  protected String name;
+  protected boolean detailedView;
+  protected boolean selected;
+  protected SelectableTileListener listener;
 
   public SelectableTileView(ImageModel image, boolean detailedView, SelectableTileListener listener) {
     this.image = image;
@@ -42,6 +42,12 @@ public class SelectableTileView extends StackPane {
     this.setOnMouseEntered(getOnMouseEnteredListener());
     this.setOnMouseExited(getOnMouseExitedListener());
     this.setOnMousePressed(getOnMousePressedListener());
+  }
+
+  public SelectableTileView(ImageModel image, boolean detailedView, SelectableTileListener listener, String name) {
+    this(image, detailedView, listener);
+    this.name = name;
+    setContentBasedOnViewType();
   }
 
   private void setContentBasedOnViewType() {

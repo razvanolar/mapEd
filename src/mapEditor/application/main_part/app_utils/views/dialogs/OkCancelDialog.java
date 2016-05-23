@@ -151,6 +151,10 @@ public class OkCancelDialog implements DialogListener {
       stage.close();
   }
 
+  public boolean isHidden() {
+    return stage == null || stage.isShowing();
+  }
+
   public Button getOkButton() {
     return okButton;
   }

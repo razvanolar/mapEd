@@ -42,6 +42,10 @@ public class ImageProvider {
     return file.exists() ? new Image("file:///" + file.getAbsolutePath().replace("\\", "/")) : null;
   }
 
+  public static ImageModel getImageModel(String path) {
+    return getImageModel(new File(path));
+  }
+
   public static ImageModel getImageModel(File file) {
     Image image = getImage(file);
     return image != null ? new ImageModel(image, file) : null;

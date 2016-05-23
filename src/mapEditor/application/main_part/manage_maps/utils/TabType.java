@@ -6,5 +6,5 @@ package mapEditor.application.main_part.manage_maps.utils;
  */
 public enum TabType {
 
-  TILES, TILESET, OBJECTS
+  TILES, BRUSHES, OBJECTS
 }

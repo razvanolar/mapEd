@@ -26,7 +26,7 @@ public class BrushXMLConverter {
     for (int i=0; i<3; i++) {
       for (int j=0; j<3; j++) {
         builder.append("\t<primary_tile path=\"").append(templateName).append(i).append("_").append(j).append(pngExt).
-                append("\" x=\"").append(i).append("\" j=\"").append(j).append("\" />\n");
+                append("\" x=\"").append(i).append("\" y=\"").append(j).append("\" />\n");
       }
     }
 
@@ -34,9 +34,11 @@ public class BrushXMLConverter {
     for (int i=0; i<2; i++) {
       for (int j=0; j<2; j++) {
         builder.append("\t<secondary_tile path=\"").append(templateName).append("sec_").append(i).append("_").append(j).append(pngExt).
-                append("\" x=\"").append(i).append("\" j=\"").append(j).append("\" />\n");
+                append("\" x=\"").append(i).append("\" y=\"").append(j).append("\" />\n");
       }
     }
+
+    builder.append("\n\t<preview_image path=\"").append(model.getName()).append("\" />\n");
 
     builder.append("</brush>");
 

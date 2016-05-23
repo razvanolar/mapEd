@@ -14,12 +14,15 @@ import mapEditor.application.main_part.app_utils.models.TabKey;
 import mapEditor.application.main_part.app_utils.views.dialogs.OkCancelDialog;
 import mapEditor.application.main_part.manage_maps.manage_tiles.create_tiles_tab.CreateTilesTabView;
 import mapEditor.application.main_part.manage_maps.manage_tiles.tab_container_types.AbstractTabContainer;
+import mapEditor.application.main_part.manage_maps.manage_tiles.tab_container_types.BrushesTabContainer;
 import mapEditor.application.main_part.manage_maps.manage_tiles.tab_container_types.TilesTabContainer;
+import mapEditor.application.main_part.manage_maps.utils.SelectableBrushView;
 import mapEditor.application.main_part.manage_maps.utils.listeners.SelectableTileListener;
 import mapEditor.application.main_part.manage_maps.utils.SelectableTileView;
 import mapEditor.application.main_part.manage_maps.utils.listeners.SelectedTileListener;
 import mapEditor.application.main_part.manage_maps.utils.TabType;
 import mapEditor.application.main_part.types.Controller;
+import mapEditor.application.repo.models.BrushModel;
 import mapEditor.application.repo.models.ProjectModel;
 
 import java.io.File;
@@ -116,8 +119,8 @@ public class ManageTilesController implements Controller, SelectableTileListener
     }
 
     AbstractTabContainer tabContainer = (AbstractTabContainer) newTab.getUserData();
-    listener.selectedTileChanged(tabContainer.getSelectedTile());
     if (tabContainer.getTabType() == TabType.TILES && tabContainer instanceof TilesTabContainer) {
+      listener.selectedTileChanged(((TilesTabContainer) tabContainer).getSelectedTile());
       TilesTabContainer tilesTabContainer = (TilesTabContainer) tabContainer;
       selectedTileView = tilesTabContainer.getSelectedTileView();
     }
@@ -144,8 +147,21 @@ public class ManageTilesController implements Controller, SelectableTileListener
     addTilesTabForModels(title, images);
   }
 
+  public void addBrushTabFromXMLModels(String title, List<BrushModel> brushes) {
+    if (StringValidator.isNullOrEmpty(title))
+      return;
+
+    BrushesTabContainer tilesTabContainer = new BrushesTabContainer(title, true);
+    for (BrushModel brushModel : brushes)
+      tilesTabContainer.addTile(new SelectableBrushView(brushModel, true, this));
+
+    Tab tab = new Tab(title, tilesTabContainer.asNode());
+    tab.setUserData(tilesTabContainer);
+    view.addTab(tab);
+  }
+
   public void addTilesTabForModels(String title, List<ImageModel> tiles) {
-    if (StringValidator.isNullOrEmpty(title) || tiles == null)
+    if (StringValidator.isNullOrEmpty(title))
       return;
 
     TilesTabContainer tilesTabContainer = new TilesTabContainer(title, true);
@@ -167,5 +183,10 @@ public class ManageTilesController implements Controller, SelectableTileListener
     }
 
     listener.selectedTileChanged(selectedTileView != null ? selectedTileView.getImage() : null);
+  }
+
+  @Override
+  public void selectedBrushChanged(SelectableBrushView brushView) {
+    
   }
 }

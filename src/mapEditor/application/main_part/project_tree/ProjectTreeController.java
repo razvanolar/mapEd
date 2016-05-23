@@ -38,6 +38,8 @@ import mapEditor.application.main_part.types.Controller;
 import mapEditor.application.main_part.types.View;
 import mapEditor.application.repo.RepoController;
 import mapEditor.application.repo.SystemParameters;
+import mapEditor.application.repo.models.BrushModel;
+import mapEditor.application.repo.models.BrushTileModel;
 import mapEditor.application.repo.models.ProjectModel;
 
 import java.io.File;
@@ -343,7 +345,31 @@ public class ProjectTreeController implements Controller, ProjectTreeContextMenu
     NewTilesTabController tabController = new NewTilesTabController(newTilesTabView, dialog.getOkButton());
 
     dialog.getOkButton().setOnAction(event -> {
-
+      String tabName = tabController.getTabName();
+      try {
+        dialog.close();
+        List<BrushModel> brushes = MapEditorController.getInstance().getRepoController().openBrushesUnderDir(selectedItem.getValue(), null);
+        for (BrushModel brushModel : brushes) {
+          // load primary tiles
+          for (BrushTileModel tileModel : brushModel.getPrimaryTiles()) {
+            ImageModel imageModel = ImageProvider.getImageModel(tileModel.getPath());
+            tileModel.setImageModel(imageModel);
+            if (tileModel.getRowIndex() == brushModel.getPrimaryImageY() && tileModel.getColIndex() == brushModel.getPrimaryImageX()) {
+              brushModel.setPrimaryImageModel(imageModel);
+            }
+          }
+          // load secondary tiles
+          for (BrushTileModel tileModel : brushModel.getSecondaryTiles()) {
+            ImageModel imageModel = ImageProvider.getImageModel(tileModel.getPath());
+            tileModel.setImageModel(imageModel);
+          }
+        }
+        tilesController.addBrushTabFromXMLModels(tabName, brushes);
+      } catch (Exception ex) {
+        if (!dialog.isHidden())
+          dialog.close();
+        Dialog.showErrorDialog(null, "Project tree controller exception. Error message: " + ex.getMessage());
+      }
     });
 
     dialog.setContent(newTilesTabView.asNode());
