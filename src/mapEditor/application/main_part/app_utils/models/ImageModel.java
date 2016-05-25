@@ -13,7 +13,6 @@ public class ImageModel extends AbstractDrawModel {
   private Image image;
   private String name;
   private String path;
-  private File file;
 
   public ImageModel(Image image) {
     super(DrawModelType.TILE);

@@ -5,12 +5,15 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.Region;
+import mapEditor.MapEditorController;
 import mapEditor.application.main_part.app_utils.AppParameters;
 import mapEditor.application.main_part.app_utils.inputs.FileExtensionUtil;
 import mapEditor.application.main_part.app_utils.inputs.ImageProvider;
 import mapEditor.application.main_part.app_utils.inputs.StringValidator;
 import mapEditor.application.main_part.app_utils.models.ImageModel;
 import mapEditor.application.main_part.app_utils.models.TabKey;
+import mapEditor.application.main_part.app_utils.models.brush.BrushTileModel;
+import mapEditor.application.main_part.app_utils.views.dialogs.Dialog;
 import mapEditor.application.main_part.app_utils.views.dialogs.OkCancelDialog;
 import mapEditor.application.main_part.manage_maps.manage_tiles.create_tiles_tab.CreateTilesTabView;
 import mapEditor.application.main_part.manage_maps.manage_tiles.tab_container_types.AbstractTabContainer;
@@ -57,10 +60,13 @@ public class ManageTilesController implements Controller, SelectableTileListener
     Map<TabKey, List<File>> tabs = AppParameters.CURRENT_PROJECT.getOpenedTileTabs();
     if (tabs != null && !tabs.isEmpty()) {
       for (TabKey key : tabs.keySet()) {
-        List<File> tiles = tabs.get(key);
-        if (tiles != null && tiles.isEmpty())
+        List<File> drawModels = tabs.get(key);
+        if (drawModels != null && drawModels.isEmpty())
           continue;
-        addTilesTabForFiles(key.getName(), tiles);
+        if (key.getType() == TabType.TILES)
+          addTilesTabForFiles(key.getName(), drawModels);
+        else if (key.getType() == TabType.BRUSHES)
+          addBrushTabForBrushFiles(key.getName(), drawModels);
       }
     }
     addListeners();
@@ -93,6 +99,10 @@ public class ManageTilesController implements Controller, SelectableTileListener
                 TilesTabContainer tilesTab = (TilesTabContainer) abstractTab;
                 for (ImageModel tile : tilesTab.getTileModels())
                   currentProject.addTileForTileTabKey(tilesTab.getKey(), tile.getFile());
+              } else if (abstractTab.getTabType() == TabType.BRUSHES && abstractTab instanceof BrushesTabContainer) {
+                BrushesTabContainer brushTab = (BrushesTabContainer) abstractTab;
+                for (BrushModel brush : brushTab.getBrushModels())
+                  currentProject.addTileForTileTabKey(brushTab.getKey(), brush.getFile());
               }
             }
           }
@@ -124,7 +134,7 @@ public class ManageTilesController implements Controller, SelectableTileListener
   }
 
   /**
-   * Create a new tiles tab.
+   * Create a new tiles tab and loads the specified images into it.
    * @param title
    * Tab title.
    * @param imageFiles
@@ -144,6 +154,13 @@ public class ManageTilesController implements Controller, SelectableTileListener
     addTilesTabForModels(title, images);
   }
 
+  /**
+   * Add a new brush tab for the specified brush models list.
+   * @param title
+   * Tab title.
+   * @param brushes
+   * BrushModel list.
+   */
   public void addBrushTabFromXMLModels(String title, List<BrushModel> brushes) {
     if (StringValidator.isNullOrEmpty(title))
       return;
@@ -157,6 +174,42 @@ public class ManageTilesController implements Controller, SelectableTileListener
     view.addTab(tab);
   }
 
+  /**
+   * Add a new brush tab for the specified brush files list.
+   * @param title
+   * Tab title.
+   * @param brushFiles
+   * Brush files list.
+   */
+  public void addBrushTabForBrushFiles(String title, List<File> brushFiles) {
+    try {
+      List<BrushModel> brushes = loadBrushModelListForFiles(brushFiles);
+      addBrushTabFromXMLModels(title, brushes);
+    } catch (Exception ex) {
+      Dialog.showWarningDialog(null, "ManageTilesController error occurred. Error message: " + ex.getMessage());
+    }
+  }
+
+  public List<BrushModel> loadBrushModelListForFiles(List<File> brushFiles) throws Exception {
+    List<BrushModel> brushModels = MapEditorController.getInstance().getRepoController().openBrushesForFiles(brushFiles, null);
+    loadTilesForBrushModels(brushModels);
+    return brushModels;
+  }
+
+  /**
+   * Load all the brush models under the specified directory file.
+   * @param dirFile
+   * Directory file.
+   * @return
+   * Brush models list.
+   * @throws Exception
+   */
+  public List<BrushModel> loadBrushModelsListUnderDirectory(File dirFile) throws Exception {
+    List<BrushModel> brushes = MapEditorController.getInstance().getRepoController().openBrushesUnderDir(dirFile, null);
+    loadTilesForBrushModels(brushes);
+    return brushes;
+  }
+
   public void addTilesTabForModels(String title, List<ImageModel> tiles) {
     if (StringValidator.isNullOrEmpty(title))
       return;
@@ -168,6 +221,30 @@ public class ManageTilesController implements Controller, SelectableTileListener
     Tab tab = new Tab(title, tilesTabContainer.asNode());
     tab.setUserData(tilesTabContainer);
     view.addTab(tab);
+  }
+
+  /**
+   * Tries to load the tiles composing the brushes.
+   * @param brushModels
+   * Brush models list.
+   * @throws Exception
+   */
+  private void loadTilesForBrushModels(List<BrushModel> brushModels) throws Exception {
+    for (BrushModel brushModel : brushModels) {
+      // load primary tiles
+      for (BrushTileModel tileModel : brushModel.getPrimaryTiles()) {
+        ImageModel imageModel = ImageProvider.getImageModel(tileModel.getPath());
+        tileModel.setImageModel(imageModel);
+        if (tileModel.getRowIndex() == brushModel.getPrimaryImageY() && tileModel.getColIndex() == brushModel.getPrimaryImageX()) {
+          brushModel.setPrimaryImageModel(imageModel);
+        }
+      }
+      // load secondary tiles
+      for (BrushTileModel tileModel : brushModel.getSecondaryTiles()) {
+        ImageModel imageModel = ImageProvider.getImageModel(tileModel.getPath());
+        tileModel.setImageModel(imageModel);
+      }
+    }
   }
 
   @Override

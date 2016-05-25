@@ -348,22 +348,7 @@ public class ProjectTreeController implements Controller, ProjectTreeContextMenu
       String tabName = tabController.getTabName();
       try {
         dialog.close();
-        List<BrushModel> brushes = MapEditorController.getInstance().getRepoController().openBrushesUnderDir(selectedItem.getValue(), null);
-        for (BrushModel brushModel : brushes) {
-          // load primary tiles
-          for (BrushTileModel tileModel : brushModel.getPrimaryTiles()) {
-            ImageModel imageModel = ImageProvider.getImageModel(tileModel.getPath());
-            tileModel.setImageModel(imageModel);
-            if (tileModel.getRowIndex() == brushModel.getPrimaryImageY() && tileModel.getColIndex() == brushModel.getPrimaryImageX()) {
-              brushModel.setPrimaryImageModel(imageModel);
-            }
-          }
-          // load secondary tiles
-          for (BrushTileModel tileModel : brushModel.getSecondaryTiles()) {
-            ImageModel imageModel = ImageProvider.getImageModel(tileModel.getPath());
-            tileModel.setImageModel(imageModel);
-          }
-        }
+        List<BrushModel> brushes = tilesController.loadBrushModelsListUnderDirectory(selectedItem.getValue());
         tilesController.addBrushTabFromXMLModels(tabName, brushes);
       } catch (Exception ex) {
         if (!dialog.isHidden())

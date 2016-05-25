@@ -223,9 +223,11 @@ public class PrimaryMapView extends MapCanvas {
       fillArea(g, hoveredCellX, hoveredCellY, cellX, cellY);
     else {
       if (selectedDrawModel.getDrawModelType() == AbstractDrawModel.DrawModelType.TILE && selectedDrawModel instanceof ImageModel) {
+        // single tile selected
         tilesContainer.addTile((ImageModel) selectedDrawModel, selectedLayer, cellY, cellX);
       } else if (selectedDrawModel.getDrawModelType() == AbstractDrawModel.DrawModelType.BRUSH && selectedDrawModel instanceof BrushModel) {
-        System.out.println("draw brush");
+        // brush selected
+
       }
       paintAllCellTilesPerLayer(g, hoveredCellX, hoveredCellY, cellX, cellY);
     }

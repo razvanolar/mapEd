@@ -706,16 +706,41 @@ public class RepoController {
       throw new Exception("Unable to save brush preview image");
   }
 
+  /**
+   * Load all the brushes under the specified directory.
+   * @param file Directory file
+   * @param handler BrushXMLHandler
+   * @return brushes list
+   * @throws Exception
+   */
   public List<BrushModel> openBrushesUnderDir(File file, BrushXMLHandler handler) throws Exception {
     if (file == null || !file.isDirectory())
       throw new Exception("The specified file is not a directory.");
     if (handler == null)
       handler = new BrushXMLHandler();
 
-    List<BrushModel> brushes = new ArrayList<>();
     File[] files = file.listFiles();
     if (files == null)
       throw new Exception("Unable to determine the files under " + file.getName());
+    List<File> fileList = new ArrayList<>();
+    Collections.addAll(fileList, files);
+    return openBrushesForFiles(fileList, handler);
+  }
+
+  /**
+   * Load all the brushes for the specified files.
+   * @param files Files list
+   * @param handler BrushXMLHandler - if null, a new one will be created.
+   * @return brushes list
+   * @throws Exception
+   */
+  public List<BrushModel> openBrushesForFiles(List<File> files, BrushXMLHandler handler) throws Exception {
+    if (files == null)
+      throw new Exception("The specified files list is null");
+    if (handler == null)
+      handler = new BrushXMLHandler();
+
+    List<BrushModel> brushes = new ArrayList<>();
     for (File f : files) {
       if (f.isDirectory() || !FileExtensionUtil.isBrushFile(f.getName()))
         continue;
@@ -724,9 +749,10 @@ public class RepoController {
         handler.parse(content, f.getParentFile().getAbsolutePath());
         BrushModel brush = handler.getBrush();
         brush.setName(f.getName());
+        brush.setFile(f);
         brushes.add(brush);
       } catch (Exception ex) {
-        System.out.println("*** RepoController - openBrushesUnderFile - Unable to create the brush for : " + f.getAbsolutePath());
+        System.out.println("*** RepoController - openBrushesForFile - Unable to create the brush for : " + f.getAbsolutePath());
       }
     }
     return brushes;

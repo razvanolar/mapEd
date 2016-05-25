@@ -23,7 +23,7 @@ public class ProjectSAXHandler extends DefaultHandler {
 
   private ProjectModel project;
   private List<LWMapModel> lwMapModels;
-  private List<File> tiles;
+  private List<File> drawModels;
   private TabKey key;
 
   public ProjectSAXHandler(String projectDirPath) {
@@ -77,13 +77,19 @@ public class ProjectSAXHandler extends DefaultHandler {
         break;
       case "tab":
         key = new TabKey(attributes.getValue("name"), TabType.valueOf(attributes.getValue("type")));
-        tiles = new ArrayList<>();
+        drawModels = new ArrayList<>();
         break;
       case "tile":
         String tileRelativeDir = attributes.getValue("path");
         File tile = new File(projectDirPath + tileRelativeDir);
         if (tile.exists())
-          tiles.add(tile);
+          drawModels.add(tile);
+        break;
+      case "brush":
+        String brushRelativeDir = attributes.getValue("path");
+        File brush = new File(projectDirPath + brushRelativeDir);
+        if (brush.exists())
+          drawModels.add(brush);
         break;
     }
   }
@@ -92,8 +98,8 @@ public class ProjectSAXHandler extends DefaultHandler {
   public void endElement(String uri, String localName, String qName) throws SAXException {
     switch (qName) {
       case "tab":
-        if (key != null && tiles != null && !tiles.isEmpty())
-          project.addTilesForTileTabKey(key, tiles);
+        if (key != null && drawModels != null && !drawModels.isEmpty())
+          project.addTilesForTileTabKey(key, drawModels);
         break;
     }
   }
