@@ -1,5 +1,6 @@
 package mapEditor.application.repo.models;
 
+import mapEditor.application.main_part.app_utils.data_types.CustomMap;
 import mapEditor.application.main_part.app_utils.models.LWMapModel;
 import mapEditor.application.main_part.app_utils.models.MapDetail;
 import mapEditor.application.main_part.app_utils.models.TabKey;
@@ -9,9 +10,7 @@ import mapEditor.application.repo.types.MapType;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  *
@@ -34,7 +33,7 @@ public class ProjectModel {
 
   private List<LWMapModel> lwMapModels;
   private List<MapDetail> mapDetails = new ArrayList<>();
-  private Map<TabKey, List<File>> openedTileTabs = new HashMap<>();
+  private CustomMap<TabKey, List<File>> openedTileTabs = new CustomMap<>();
 
   private boolean is2DVisibilitySelected;
   private boolean isGridVisibilitySelected;
@@ -107,7 +106,7 @@ public class ProjectModel {
     return mapDetails;
   }
 
-  public Map<TabKey, List<File>> getOpenedTileTabs() {
+  public CustomMap<TabKey, List<File>> getOpenedTileTabs() {
     return openedTileTabs;
   }
 
@@ -269,7 +268,7 @@ public class ProjectModel {
   }
 
   public void removeTileTabKey(TabKey key) {
-    if (key != null && openedTileTabs.containsKey(key))
+    if (key != null && openedTileTabs.contains(key))
       openedTileTabs.remove(key);
   }
 }

@@ -1,5 +1,6 @@
 package mapEditor.application.repo.sax_handlers.project_init_file;
 
+import mapEditor.application.main_part.app_utils.data_types.CustomMap;
 import mapEditor.application.main_part.app_utils.models.*;
 import mapEditor.application.main_part.manage_maps.utils.TabType;
 import mapEditor.application.repo.SystemParameters;
@@ -64,11 +65,11 @@ public class ProjectXMLConverter {
       builder.append("</maps>\n");
   }
 
-  private void convertImageModelTabs(StringBuilder builder, Map<TabKey, List<File>> tabs, String projectPath) {
+  private void convertImageModelTabs(StringBuilder builder, CustomMap<TabKey, List<File>> tabs, String projectPath) {
     builder.append("\n\t<tabs>");
     if (!tabs.isEmpty()) {
       builder.append("\n");
-      for (TabKey key : tabs.keySet()) {
+      for (TabKey key : tabs.keys()) {
         if (key.getType() == TabType.TILES)
           convertTileTabs(builder, key.getName(), tabs.get(key), projectPath);
         else if (key.getType() == TabType.BRUSHES)

@@ -7,6 +7,7 @@ import javafx.scene.control.TabPane;
 import javafx.scene.layout.Region;
 import mapEditor.MapEditorController;
 import mapEditor.application.main_part.app_utils.AppParameters;
+import mapEditor.application.main_part.app_utils.data_types.CustomMap;
 import mapEditor.application.main_part.app_utils.inputs.FileExtensionUtil;
 import mapEditor.application.main_part.app_utils.inputs.ImageProvider;
 import mapEditor.application.main_part.app_utils.inputs.StringValidator;
@@ -31,7 +32,6 @@ import mapEditor.application.repo.models.ProjectModel;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  *
@@ -57,9 +57,9 @@ public class ManageTilesController implements Controller, SelectableTileListener
   }
 
   public void bind() {
-    Map<TabKey, List<File>> tabs = AppParameters.CURRENT_PROJECT.getOpenedTileTabs();
+    CustomMap<TabKey, List<File>> tabs = AppParameters.CURRENT_PROJECT.getOpenedTileTabs();
     if (tabs != null && !tabs.isEmpty()) {
-      for (TabKey key : tabs.keySet()) {
+      for (TabKey key : tabs.keys()) {
         List<File> drawModels = tabs.get(key);
         if (drawModels != null && drawModels.isEmpty())
           continue;
