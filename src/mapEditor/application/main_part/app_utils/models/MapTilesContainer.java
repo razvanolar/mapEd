@@ -58,6 +58,16 @@ public class MapTilesContainer {
     return tilesMatrix.tilesMatrix;
   }
 
+  public void createTileMapForLayerIfNotExists(LayerModel layer) {
+    if (tilesMap == null)
+      tilesMap = new CustomMap<>();
+    TilesMatrix matrix = tilesMap.get(layer);
+    if (matrix == null) {
+      matrix = new TilesMatrix();
+      tilesMap.put(layer, matrix);
+    }
+  }
+
   public CustomMap<LayerModel, TilesMatrix> getTilesMap() {
     return tilesMap;
   }

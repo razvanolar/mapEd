@@ -22,6 +22,7 @@ import java.util.Queue;
 public class PrimaryMapView extends MapCanvas {
 
   public static boolean FILL_AREA;
+  public static PrimaryMapUtil mapUtil = new PrimaryMapUtil();
 
   public PrimaryMapView(MapDetail mapDetail) {
     super(mapDetail.getRows(), mapDetail.getColumns());
@@ -202,37 +203,44 @@ public class PrimaryMapView extends MapCanvas {
       Dialog.showWarningDialog(null, "Selected layer is not checked");
       return;
     }
-    /* the cartesian coordinates of the hovered cell */
-//    int x = (int) event.getX() + 1;
-//    int y = (int) event.getY() + 1;
 
     /** matrix cells coordinates */
     int cellX = (int) ((event.getX() - canvasX) / CELL_WIDTH);
     int cellY = (int) ((event.getY() - canvasY) / CELL_HEIGHT);
 
     /** map coordinates */
-    int hoveredCellX = (int) ((event.getX() - canvasX) / CELL_WIDTH) * CELL_WIDTH + canvasX;
-    int hoveredCellY = (int) ((event.getY() - canvasY) / CELL_HEIGHT) * CELL_HEIGHT + canvasY;
+    int hoveredCellX = (int) ((event.getX() - canvasX) / CELL_WIDTH) * CELL_WIDTH + canvasX + 1;
+    int hoveredCellY = (int) ((event.getY() - canvasY) / CELL_HEIGHT) * CELL_HEIGHT + canvasY + 1;
 
     GraphicsContext g = getGraphicsContext2D();
-    g.setFill(fillColor);
-    g.clearRect(hoveredCellX + 1, hoveredCellY + 1, CELL_WIDTH, CELL_HEIGHT);
-    g.fillRect(hoveredCellX + 1, hoveredCellY + 1, CELL_WIDTH, CELL_HEIGHT);
 
-    if (FILL_AREA)
+    if (FILL_AREA && selectedDrawModel.getDrawModelType() == AbstractDrawModel.DrawModelType.TILE)
       fillArea(g, hoveredCellX, hoveredCellY, cellX, cellY);
     else {
       if (selectedDrawModel.getDrawModelType() == AbstractDrawModel.DrawModelType.TILE && selectedDrawModel instanceof ImageModel) {
         // single tile selected
         tilesContainer.addTile((ImageModel) selectedDrawModel, selectedLayer, cellY, cellX);
+        paintAllCellTilesPerLayer(g, hoveredCellX, hoveredCellY, cellX, cellY);
       } else if (selectedDrawModel.getDrawModelType() == AbstractDrawModel.DrawModelType.BRUSH && selectedDrawModel instanceof BrushModel) {
         // brush selected
-
+        BrushModel brush = (BrushModel) selectedDrawModel;
+        runBrushAlgorithm(cellX, cellY, brush);
       }
-      paintAllCellTilesPerLayer(g, hoveredCellX, hoveredCellY, cellX, cellY);
     }
 
     drawGridLines(hoveredCellX - canvasX, hoveredCellY - canvasY);
+  }
+
+  /**
+   * Run draw brush runBrushAlgorithm using PrimaryMapUtil
+   * @param cellX hovered cell X value
+   * @param cellY hovered cell Y value
+   * @param brush BrushModel
+   */
+  private void runBrushAlgorithm(int cellX, int cellY, BrushModel brush) {
+    tilesContainer.createTileMapForLayerIfNotExists(selectedLayer);
+    mapUtil.run(cellX, cellY, brush, tilesContainer.getTilesForLayer(selectedLayer));
+    paint();
   }
 
   private void fillArea(GraphicsContext g, int hoveredCellX, int hoveredCellY, int cellX, int cellY) {
@@ -298,6 +306,9 @@ public class PrimaryMapView extends MapCanvas {
   private void paintAllCellTilesPerLayer(GraphicsContext g, int hoveredCellX, int hoveredCellY, int cellX, int cellY) {
     CustomMap<LayerModel, MapTilesContainer.TilesMatrix> map = tilesContainer.getTilesMap();
     if (map != null) {
+      g.setFill(fillColor);
+      g.clearRect(hoveredCellX, hoveredCellY, CELL_WIDTH, CELL_HEIGHT);
+      g.fillRect(hoveredCellX, hoveredCellY, CELL_WIDTH, CELL_HEIGHT);
       for (LayerModel layer : mapDetail.getLayers()) {
         if (!layer.isChecked())
           continue;

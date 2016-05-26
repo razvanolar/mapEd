@@ -26,7 +26,7 @@ public class BrushXMLConverter {
     for (int i=0; i<3; i++) {
       for (int j=0; j<3; j++) {
         builder.append("\t<primary_tile path=\"").append(templateName).append(i).append("_").append(j).append(pngExt).
-                append("\" x=\"").append(i).append("\" y=\"").append(j).append("\" />\n");
+                append("\" y=\"").append(i).append("\" x=\"").append(j).append("\" />\n");
       }
     }
 
