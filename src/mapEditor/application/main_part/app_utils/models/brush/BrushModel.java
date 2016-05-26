@@ -88,6 +88,10 @@ public class BrushModel extends AbstractDrawModel {
     this.name = name;
   }
 
+  public String getPath() {
+    return file.getAbsolutePath();
+  }
+
   public ImageModel getPrimaryImageModel() {
     return primaryImageModel;
   }

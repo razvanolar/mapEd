@@ -6,6 +6,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.image.Image;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
 import javafx.stage.Modality;
@@ -39,7 +42,6 @@ import mapEditor.application.main_part.types.View;
 import mapEditor.application.repo.RepoController;
 import mapEditor.application.repo.SystemParameters;
 import mapEditor.application.main_part.app_utils.models.brush.BrushModel;
-import mapEditor.application.main_part.app_utils.models.brush.BrushTileModel;
 import mapEditor.application.repo.models.ProjectModel;
 
 import java.io.File;
@@ -83,6 +85,24 @@ public class ProjectTreeController implements Controller, ProjectTreeContextMenu
 
   private void addListeners() {
     view.getTree().setContextMenu(contextMenuController.getContextMenu());
+
+    view.getTree().setOnDragDetected(event -> {
+      System.out.println("drag detected: ");
+      TreeItem<File> selectedItem = getSelectedItem();
+      if (selectedItem == null)
+        return;
+
+      /* drag was detected, start a drag-and-drop gesture */
+      Dragboard dragboard = view.getTree().startDragAndDrop(TransferMode.ANY);
+
+      ClipboardContent content = new ClipboardContent();
+      List<File> fileList = new ArrayList<File>(1);
+      fileList.add(selectedItem.getValue());
+      content.putFiles(fileList);
+      dragboard.setContent(content);
+
+      event.consume();
+    });
 
     view.getTree().getSelectionModel().selectedItemProperty().addListener((observable, oldItem, newItem) -> {
       contextMenuController.setSelectedItem(newItem != null ? (LazyTreeItem) newItem : null);
@@ -306,8 +326,8 @@ public class ProjectTreeController implements Controller, ProjectTreeContextMenu
 
   /**
    * Opens the tiles under the specified item into a new tab.
-   * @param tilesController
-   * @param selectedItem
+   * @param tilesController ManageTilesController
+   * @param selectedItem LazyTreeItem
    */
   private void openTilesInNewTab(ManageTilesController tilesController, LazyTreeItem selectedItem) {
     OkCancelDialog dialog = new OkCancelDialog("New Tiles Tab", StageStyle.UTILITY, Modality.APPLICATION_MODAL, false);
