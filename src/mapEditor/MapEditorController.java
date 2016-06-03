@@ -118,6 +118,10 @@ public class MapEditorController {
     createProjectController.bind();
   }
 
+  public void convertCurrentMapToTMX() {
+    manageMapsController.exportCurrentMapToTMX();
+  }
+
   public void changeVisibilityState(boolean is2DVisibilitySelected, boolean isGridVisibilitySelected) {
     AppParameters.CURRENT_PROJECT.setIs2DVisibilitySelected(is2DVisibilitySelected);
     AppParameters.CURRENT_PROJECT.setIsGridVisibilitySelected(isGridVisibilitySelected);

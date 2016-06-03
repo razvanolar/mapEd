@@ -51,6 +51,49 @@ public class FileExtensionUtil {
     return !StringValidator.isNullOrEmpty(name) && getFileExtension(name) == KnownFileExtensions.BRUSH;
   }
 
+  public static boolean isTmxFile(String name) {
+    return !StringValidator.isNullOrEmpty(name) && getFileExtension(name) == KnownFileExtensions.TMX;
+  }
+
+  /**
+   * Returns the name of the specified file name without containing it's extension.
+   * @param fileName
+   * File name.
+   * @return The file name without extension.
+   *         NULL if fileName is null.
+   */
+  public static String getFileNameWithoutExtension(String fileName) {
+    if (fileName == null)
+      return null;
+    StringBuilder builder = new StringBuilder(fileName);
+    int index = builder.lastIndexOf(".");
+    if (index == -1)
+      return fileName;
+    return builder.substring(0, index);
+  }
+
+  /**
+   * Remove the specified extension from the specified name.
+   * @param name file name
+   * @return String
+   */
+  public static String getNameWithoutExtension(String name, KnownFileExtensions ext) {
+    if (!name.endsWith(ext.getExtension()))
+      return name;
+    return getFileNameWithoutExtension(name);
+  }
+
+  /**
+   * Add the specified extension to the specified name, if it does not have it.
+   * @param name String
+   * @return file name
+   */
+  public static String getNameWithExtension(String name, KnownFileExtensions ext) {
+    if (name.endsWith(ext.getExtension()))
+      return name;
+    return name + ext.getExtension();
+  }
+
   public static boolean hasExtension(String name) {
     return !StringValidator.isNullOrEmpty(name) && !StringValidator.isNullOrEmpty(getStringExtension(name));
   }

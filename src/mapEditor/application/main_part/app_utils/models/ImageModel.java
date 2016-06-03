@@ -10,6 +10,9 @@ import java.io.File;
  */
 public class ImageModel extends AbstractDrawModel {
 
+  // not always valid, used only when the tileset of a map is computed
+  private int id;
+
   private Image image;
   private String name;
   private String path;
@@ -70,6 +73,14 @@ public class ImageModel extends AbstractDrawModel {
     if (pathValue != null && !pathValue.endsWith("\\"))
       pathValue += "\\";
     return pathValue;
+  }
+
+  public int getId() {
+    return id;
+  }
+
+  public void setId(int id) {
+    this.id = id;
   }
 
   @Override

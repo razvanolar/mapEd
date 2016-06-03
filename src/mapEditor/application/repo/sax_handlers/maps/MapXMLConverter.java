@@ -1,9 +1,11 @@
 package mapEditor.application.repo.sax_handlers.maps;
 
 import javafx.scene.paint.Color;
+import mapEditor.application.main_part.app_utils.AppParameters;
 import mapEditor.application.main_part.app_utils.data_types.CustomMap;
 import mapEditor.application.main_part.app_utils.models.*;
 import mapEditor.application.repo.SystemParameters;
+import mapEditor.application.repo.types.MapType;
 
 import java.util.*;
 
@@ -83,6 +85,60 @@ public class MapXMLConverter {
     }
 
     return builder.append("</map>").toString();
+  }
+
+  public String convertBrushToTMX(MapDetail map, String tilesetName, String tilesetPath) throws Exception {
+    if (map == null)
+      throw new Exception("MapXMLConverter - convertMapToXML - Map instance is NULL");
+
+    int cellSize = AppParameters.CURRENT_PROJECT.getCellSize();
+
+    StringBuilder builder = new StringBuilder();
+    int spacing = 0;
+    int margin = 0;
+
+    builder.append(SystemParameters.XML_HEADER).append("\n\n");
+
+    builder.append("<map orientation=\"").append(MapType.ORTHOGONAL.getOrientation()).append("\" ").
+            append("width=\"").append(map.getColumns()).append("\" ").
+            append("height=\"").append(map.getRows()).append("\" ").
+            append("tilewidth=\"").append(cellSize).append("\" ").
+            append("tileheight=\"").append(cellSize).append("\" />\n");
+
+    builder.append("\t<tileset firstgid=\"1\" ").append("name=\"").append(tilesetName).append("\" ").
+            append("tilewidth=\"").append(cellSize).append("\" ").
+            append("tileheight=\"").append(cellSize).append("\" ").
+            append("spacing=\"").append(spacing).append("\" ").
+            append("margin=\"").append(margin).append("\" />\n");
+    builder.append("\t\t<image source=\"").append(tilesetPath).append("\" />\n");
+    builder.append("\t</tileset>\n");
+
+    CustomMap<LayerModel, CustomMap<ImageModel, List<CellModel>>> layersTilesMap = map.getMapTilesInfo().getLayersTilesMap();
+    for (LayerModel layer : layersTilesMap.keys()) {
+      convertLayerDetailsToTMXFormat(builder, layer, layersTilesMap.get(layer));
+    }
+
+    builder.append("</map>");
+
+    return builder.toString();
+  }
+
+  private void convertLayerDetailsToTMXFormat(StringBuilder builder, LayerModel layer,
+                                              CustomMap<ImageModel, List<CellModel>> imageModelMap) {
+    builder.append("\t<layer name=\"").append(layer.getName()).append("\">\n");
+    builder.append("\t\t<data>\n");
+
+    for (ImageModel imageModel : imageModelMap.keys()) {
+      List<CellModel> cellModels = imageModelMap.get(imageModel);
+      int gid = imageModel.getId();
+      for (CellModel cell : cellModels) {
+        builder.append("\t\t\t<tile gid=\"").append(gid).append("\" row=\"").append(cell.getY()).append("\" ").
+                append(" col=\"").append(cell.getX()).append("\" />\n");
+      }
+    }
+
+    builder.append("\t\t</data>\n");
+    builder.append("\t</layer>\n");
   }
 
   private String convertColorToXml(StringBuilder builder, String tag, Color color) {

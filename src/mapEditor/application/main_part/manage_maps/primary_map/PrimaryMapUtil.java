@@ -212,7 +212,7 @@ public class PrimaryMapUtil {
     node1.addBottom(node4, node14);
 
     node2.addRight(node2, node3, node14);
-    node2.addBottom(node5);
+    node2.addBottom(node5, node11, node12);
     node2.addLeft(node2, node1, node13);
 
     node3.addBottom(node6, node13);
@@ -234,7 +234,7 @@ public class PrimaryMapUtil {
     node7.addTop(node4, node12);
     node7.addRight(node8, node12);
 
-    node8.addTop(node5);
+    node8.addTop(node5, node13, node14);
     node8.addRight(node8, node9, node12);
     node8.addLeft(node8, node7, node11);
 

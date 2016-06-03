@@ -202,6 +202,9 @@ public class PrimaryMapView extends MapCanvas {
     } else if (!selectedLayer.isChecked()) {
       Dialog.showWarningDialog(null, "Selected layer is not checked");
       return;
+    } else if (selectedDrawModel == null) {
+      Dialog.showWarningDialog(null, "Please select a tile");
+      return;
     }
 
     /** matrix cells coordinates */

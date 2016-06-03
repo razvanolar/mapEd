@@ -10,16 +10,15 @@ import javafx.stage.StageStyle;
 import mapEditor.MapEditorController;
 import mapEditor.application.main_part.app_utils.AppParameters;
 import mapEditor.application.main_part.app_utils.inputs.StringValidator;
-import mapEditor.application.main_part.app_utils.models.AbstractDrawModel;
-import mapEditor.application.main_part.app_utils.models.ImageModel;
-import mapEditor.application.main_part.app_utils.models.LayerModel;
-import mapEditor.application.main_part.app_utils.models.MapDetail;
+import mapEditor.application.main_part.app_utils.models.*;
 import mapEditor.application.main_part.app_utils.views.dialogs.Dialog;
 import mapEditor.application.main_part.app_utils.views.dialogs.OkCancelDialog;
 import mapEditor.application.main_part.manage_maps.manage_layers.LayersController;
 import mapEditor.application.main_part.manage_maps.manage_tiles.ManageTilesController;
 import mapEditor.application.main_part.manage_maps.primary_map.context_menu.PrimaryMapContextMenuController;
 import mapEditor.application.main_part.manage_maps.primary_map.context_menu.PrimaryMapContextMenuView;
+import mapEditor.application.main_part.manage_maps.primary_map.tmx_export.TmxExportController;
+import mapEditor.application.main_part.manage_maps.primary_map.tmx_export.TmxExportView;
 import mapEditor.application.main_part.manage_maps.utils.RenameMapController;
 import mapEditor.application.main_part.manage_maps.utils.listeners.MapContextMenuListener;
 import mapEditor.application.main_part.manage_maps.visibility_map.Map2DVisibilityController;
@@ -36,6 +35,7 @@ import mapEditor.application.main_part.types.View;
 import mapEditor.application.repo.SystemParameters;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -377,6 +377,48 @@ public class ManageMapsController implements Controller, MapLayersListener, Sele
         mapView.paint();
       }
     }
+  }
+
+  public void exportCurrentMapToTMX() {
+    PrimaryMapView mapView = getSelectedMap();
+    if (mapView == null)
+      return;
+
+    mapView.updateMapModelDetails();
+    mapView.updateMapModelInfos();
+
+    OkCancelDialog dialog = new OkCancelDialog("Export map to .tmx format", StageStyle.UTILITY, Modality.APPLICATION_MODAL, true);
+    TmxExportController.ITmxExportView tmxView = new TmxExportView();
+    TmxExportController tmxController = new TmxExportController(tmxView, mapView.getMapDetail(), dialog.getStage(), dialog.getOkButton());
+    tmxController.bind();
+    dialog.setContent(tmxView.asNode());
+
+    dialog.getOkButton().setOnAction(event -> {
+      try {
+        // the ids of the tiles will be set when calling this method
+        // when the distinct tiles are computed
+        String tilesetName = tmxController.constructAndSaveTileset();
+        boolean result = tilesetName != null;
+        if (!result) {
+          dialog.close();
+          Dialog.showWarningDialog(null, "Unable to compute and save the tileset");
+        }
+
+        // export the map in tmx format
+        result = tmxController.exportMapToTMX(tilesetName);
+        dialog.close();
+        if (result)
+          Dialog.showInformDialog(null, "Tileset and the map in tmx format were saved");
+        else
+          Dialog.showWarningDialog(null, "Unable to save the map");
+      } catch (Exception ex) {
+        dialog.close();
+        Dialog.showWarningDialog(null, ex.getMessage());
+        ex.printStackTrace();
+      }
+    });
+
+    dialog.show();
   }
 
   /**

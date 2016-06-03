@@ -5,6 +5,7 @@ import javafx.scene.image.Image;
 import mapEditor.application.main_part.app_utils.AppParameters;
 import mapEditor.application.main_part.app_utils.data_types.CustomMap;
 import mapEditor.application.main_part.app_utils.inputs.FileExtensionUtil;
+import mapEditor.application.main_part.app_utils.inputs.StringValidator;
 import mapEditor.application.main_part.app_utils.models.ImageModel;
 import mapEditor.application.main_part.app_utils.models.KnownFileExtensions;
 import mapEditor.application.main_part.app_utils.models.LWMapModel;
@@ -421,8 +422,33 @@ public class RepoController {
     return false;
   }
 
+  /**
+   *
+   * @param mapDetail MapDetail
+   * @param dirPath path of the directory under which the tmx file will be saved
+   * @param name name of the tmx file
+   * @param tilesetName name of the tileset used by the tmx file
+   * @return true if the file was saved successfully; false otherwise
+   * @throws Exception
+   */
+  public boolean exportMapToTMX(MapDetail mapDetail, String dirPath, String name, String tilesetName) throws Exception {
+    if (StringValidator.isNullOrEmpty(dirPath) || StringValidator.isNullOrEmpty(name) || mapDetail == null)
+      return false;
+    String simpleName = FileExtensionUtil.getNameWithoutExtension(name, KnownFileExtensions.TMX);
+    String nameWithExtension = FileExtensionUtil.getNameWithExtension(name, KnownFileExtensions.TMX);
+    dirPath = dirPath.endsWith("\\") ? dirPath : dirPath + "\\";
+    File file = new File(dirPath);
+    if (!file.exists())
+      throw new Exception("The specified directory path does not exist.");
+    MapXMLConverter converter = new MapXMLConverter();
+    String result = converter.convertBrushToTMX(mapDetail, simpleName, tilesetName);
+    String tmxName = getRepoUtil().checkNameOrGetAnAlternativeOne(dirPath, nameWithExtension);
+    writeContentToFile(result, dirPath + tmxName);
+    return true;
+  }
+
   public boolean exportMapToHtml(String projectPath, File mapFile) throws Exception {
-    if (projectPath == null || projectPath.isEmpty() || mapFile == null || !mapFile.exists())
+    if (StringValidator.isNullOrEmpty(projectPath) || mapFile == null || !mapFile.exists())
       return false;
     MapDetail mapDetail = createMapModelFromFile(projectPath, mapFile, null);
     MapHtmlExporter htmlExporter = new MapHtmlExporter(mapDetail);

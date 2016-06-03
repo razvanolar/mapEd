@@ -9,7 +9,7 @@ import java.util.List;
  * Created by razvanolar on 03.02.2016.
  */
 public enum KnownFileExtensions {
-  NONE("", ""), UNKNOWN("", ""), PNG(".png", "png"), JPG(".jpg", "jpg"), MAP(".map", "map"), BRUSH(".brush", "brush");
+  NONE("", ""), UNKNOWN("", ""), PNG(".png", "png"), JPG(".jpg", "jpg"), MAP(".map", "map"), BRUSH(".brush", "brush"), TMX(".tmx", "tmx");
 
 
   String extension;

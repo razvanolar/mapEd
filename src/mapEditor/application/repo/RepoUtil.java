@@ -1,5 +1,6 @@
 package mapEditor.application.repo;
 
+import mapEditor.application.main_part.app_utils.inputs.FileExtensionUtil;
 import mapEditor.application.main_part.app_utils.models.KnownFileExtensions;
 
 import java.io.File;
@@ -125,23 +126,6 @@ public class RepoUtil {
   }
 
   /**
-   * Returns the name of the specified file name without containing it's extension.
-   * @param fileName
-   * File name.
-   * @return The file name without extension.
-   *         NULL if fileName is null.
-   */
-  public String getFileNameWithoutExtension(String fileName) {
-    if (fileName == null)
-      return null;
-    StringBuilder builder = new StringBuilder(fileName);
-    int index = builder.lastIndexOf(".");
-    if (index == -1)
-      return fileName;
-    return builder.substring(0, index);
-  }
-
-  /**
    * Returns the name of the specified file without containing the order number or it's extension.
    * @param fileName
    * File name.
@@ -149,7 +133,7 @@ public class RepoUtil {
    *         NULL if fileName is null.
    */
   public String getFileNameWithoutOrder(String fileName) {
-    String name = getFileNameWithoutExtension(fileName);
+    String name = FileExtensionUtil.getFileNameWithoutExtension(fileName);
     if (name == null)
       return null;
     if (!name.matches(ORDERED_FILE_REGEX))

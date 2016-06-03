@@ -22,6 +22,7 @@ public class MapEditorToolbarController implements Controller {
 
   public interface IMapEditorToolbarView extends View {
     Button getNewMapButton();
+    Button getTmxFormatButton();
     ToggleButton getChange2DVisibility();
     ToggleButton getChangeGridVisibility();
     ToggleButton getFillAreaButton();
@@ -51,6 +52,11 @@ public class MapEditorToolbarController implements Controller {
   private void addListeners() {
     // new map listener
     view.getNewMapButton().setOnAction(event -> onNewMapButtonSelection());
+
+    // tmx format listener
+    view.getTmxFormatButton().setOnAction(event -> {
+      MapEditorController.getInstance().convertCurrentMapToTMX();
+    });
 
     // visibility listener
     view.getChange2DVisibility().selectedProperty().addListener((observable, oldValue, newValue) -> {
