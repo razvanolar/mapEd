@@ -13,7 +13,7 @@ import mapEditor.application.main_part.app_utils.models.ImageModel;
 import mapEditor.application.main_part.app_utils.models.KnownFileExtensions;
 import mapEditor.application.main_part.app_utils.views.dialogs.OkCancelDialog;
 import mapEditor.application.main_part.app_utils.views.others.SystemFilesView;
-import mapEditor.application.main_part.manage_images.manage_tile_sets.utils.ManageImagesListener;
+import mapEditor.application.main_part.manage_images.manage_tile_sets.utils.listeners.ManageImagesListener;
 import mapEditor.application.main_part.types.Controller;
 import mapEditor.application.main_part.types.View;
 

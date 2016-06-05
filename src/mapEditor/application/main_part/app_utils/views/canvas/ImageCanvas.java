@@ -50,7 +50,7 @@ public class ImageCanvas extends Canvas implements StyleListener {
   }
 
   private void addListeners() {
-    this.setOnMousePressed(this::onMouserPressed);
+    this.setOnMousePressed(this::onMousePressed);
 
     this.setOnMouseDragged(event -> {
       if (event.isShiftDown())
@@ -79,7 +79,7 @@ public class ImageCanvas extends Canvas implements StyleListener {
     });
   }
 
-  protected void onMouserPressed(MouseEvent event) {
+  protected void onMousePressed(MouseEvent event) {
     pressedX = (int) event.getX();
     pressedY = (int) event.getY();
     pressedImageX = imageX;
@@ -232,6 +232,36 @@ public class ImageCanvas extends Canvas implements StyleListener {
     }, snapshotParameters, null);
   }
 
+  public Image cropSelection() {
+    if (image == null)
+      return null;
+
+    int minCellX = squareCellX;
+    int minCellY = squareCellY;
+    int diffX = 0;
+    int diffY = 0;
+
+    if (completeSelectionCellX >= 0 && completeSelectionCellX <= image.getWidth() &&
+            completeSelectionCellY >=0 && completeSelectionCellY <= image.getHeight()) {
+      minCellX = Math.min(completeSelectionCellX, squareCellX);
+      minCellY = Math.min(completeSelectionCellY, squareCellY);
+      diffX = Math.abs(completeSelectionCellX - squareCellX);
+      diffY = Math.abs(completeSelectionCellY - squareCellY);
+    }
+
+    ImageView imageView = new ImageView(image);
+    if (snapshotParameters == null)
+      snapshotParameters = new SnapshotParameters();
+
+    snapshotParameters.setFill(Color.TRANSPARENT);
+    snapshotParameters.setViewport(new Rectangle2D(minCellX * CELL_WIDTH,
+            minCellY * CELL_HEIGHT,
+            (diffX + 1) * CELL_WIDTH,
+            (diffY + 1) * CELL_HEIGHT));
+
+    return imageView.snapshot(snapshotParameters, null);
+  }
+
   public void cropSelectedMatrix(Callback<ImageMatrix, Void> callback) {
     if (image == null)
       return;
@@ -326,6 +356,11 @@ public class ImageCanvas extends Canvas implements StyleListener {
     squareCellY = 0;
     completeSelectionCellX = -1;
     completeSelectionCellY = -1;
+  }
+
+  public boolean isMultiAreaSelected() {
+    return completeSelectionCellX >= 0 && completeSelectionCellY >= 0 &&
+            (completeSelectionCellX != squareCellX || completeSelectionCellY != squareCellY);
   }
 
   /**

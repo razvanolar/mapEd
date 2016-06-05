@@ -14,7 +14,6 @@ public class ImageModel extends AbstractDrawModel {
   private int id;
 
   private Image image;
-  private String name;
   private String path;
 
   public ImageModel(Image image) {
@@ -43,10 +42,6 @@ public class ImageModel extends AbstractDrawModel {
 
   public String getPath() {
     return path;
-  }
-
-  public String getName() {
-    return name;
   }
 
   public void setPath(String imagePath) {

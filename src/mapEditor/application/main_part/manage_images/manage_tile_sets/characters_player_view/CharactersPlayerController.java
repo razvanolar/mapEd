@@ -11,7 +11,7 @@ import javafx.util.Duration;
 import mapEditor.application.main_part.app_utils.constants.CssConstants;
 import mapEditor.application.main_part.app_utils.models.ImageMatrix;
 import mapEditor.application.main_part.app_utils.views.canvas.CharacterCanvas;
-import mapEditor.application.main_part.manage_images.manage_tile_sets.utils.CharacterPlayerListener;
+import mapEditor.application.main_part.manage_images.manage_tile_sets.utils.listeners.CharacterPlayerListener;
 import mapEditor.application.main_part.types.Controller;
 import mapEditor.application.main_part.types.View;
 

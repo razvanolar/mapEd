@@ -26,12 +26,14 @@ import mapEditor.application.main_part.manage_images.manage_tile_sets.characters
 import mapEditor.application.main_part.manage_images.manage_tile_sets.configurations.ManageConfigurationController;
 import mapEditor.application.main_part.manage_images.manage_tile_sets.create_brush.CreateBrushController;
 import mapEditor.application.main_part.manage_images.manage_tile_sets.create_brush.CreateBrushView;
+import mapEditor.application.main_part.manage_images.manage_tile_sets.create_object.CreateObjectController;
+import mapEditor.application.main_part.manage_images.manage_tile_sets.create_object.CreateObjectView;
 import mapEditor.application.main_part.manage_images.manage_tile_sets.cropped_tiles.detailed_view.CroppedTilesDetailedController;
 import mapEditor.application.main_part.manage_images.manage_tile_sets.cropped_tiles.detailed_view.CroppedTileDetailedDetailedView;
 import mapEditor.application.main_part.manage_images.manage_tile_sets.cropped_tiles.CroppedTilesPathView;
 import mapEditor.application.main_part.manage_images.manage_tile_sets.cropped_tiles.simple_view.CroppedTileSimpleController;
 import mapEditor.application.main_part.manage_images.manage_tile_sets.cropped_tiles.simple_view.CroppedTileSimpleView;
-import mapEditor.application.main_part.manage_images.manage_tile_sets.utils.ManageImagesListener;
+import mapEditor.application.main_part.manage_images.manage_tile_sets.utils.listeners.ManageImagesListener;
 import mapEditor.application.main_part.manage_images.manage_tile_sets.utils.SaveImageController;
 import mapEditor.application.main_part.manage_images.manage_tile_sets.utils.SaveImageView;
 import mapEditor.application.main_part.manage_images.manage_tile_sets.utils.TabContentView;
@@ -70,6 +72,7 @@ public class ManageTileSetsController implements Controller, ManageImagesListene
     Button getAddNewTabButton();
     Button getPlayCharactersButton();
     Button getBrushButton();
+    Button getObjectButton();
     Button getSaveCroppedTilesButton();
     Button getSettingsButton();
     Button getCropSelectionButton();
@@ -212,6 +215,8 @@ public class ManageTileSetsController implements Controller, ManageImagesListene
     });
 
     view.getBrushButton().setOnAction(event -> onBrushSelection());
+
+    view.getObjectButton().setOnAction(event -> onObjectSelection());
   }
 
   private void onBrushSelection() {
@@ -244,7 +249,22 @@ public class ManageTileSetsController implements Controller, ManageImagesListene
       dialog.close();
     });
 
-    dialog.setContent(brushView.asNode());
+    dialog.setContent(brushView.getNode());
+    dialog.show();
+  }
+
+  private void onObjectSelection() {
+    if (currentCanvas == null || currentCanvas.getImage() == null)
+      return;
+
+    OkCancelDialog dialog = new OkCancelDialog("Create Object", StageStyle.UTILITY, Modality.APPLICATION_MODAL, true, 800, 600);
+
+    CreateObjectController.ICreateObjectView objectView = new CreateObjectView();
+    CreateObjectController objectController = new CreateObjectController(objectView, currentCanvas.getUpdatedImage(), dialog.getOkButton(), dialog.getStage());
+    objectController.bind();
+
+    dialog.setContent(objectView.asNode());
+
     dialog.show();
   }
 

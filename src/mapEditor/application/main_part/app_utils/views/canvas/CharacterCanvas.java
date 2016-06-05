@@ -3,7 +3,7 @@ package mapEditor.application.main_part.app_utils.views.canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
-import mapEditor.application.main_part.manage_images.manage_tile_sets.utils.CharacterPlayerListener;
+import mapEditor.application.main_part.manage_images.manage_tile_sets.utils.listeners.CharacterPlayerListener;
 
 /**
  *

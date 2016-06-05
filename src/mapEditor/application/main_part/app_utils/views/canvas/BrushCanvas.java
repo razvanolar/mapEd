@@ -26,7 +26,7 @@ public class BrushCanvas extends ImageCanvas {
   }
 
   @Override
-  protected void onMouserPressed(MouseEvent event) {
+  protected void onMousePressed(MouseEvent event) {
     pressedX = (int) event.getX();
     pressedY = (int) event.getY();
     pressedImageX = imageX;

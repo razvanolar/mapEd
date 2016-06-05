@@ -1,6 +1,5 @@
 package mapEditor.application.main_part.app_utils.models.brush;
 
-import javafx.scene.image.Image;
 import mapEditor.application.main_part.app_utils.models.ImageModel;
 import mapEditor.application.repo.SystemParameters;
 

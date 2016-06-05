@@ -23,7 +23,6 @@ public class BrushModel extends AbstractDrawModel {
   private int primaryImageX;
   private int primaryImageY;
   private String previewImagePath;
-  private String name;
   private BrushTileModel[][] primaryMatrix;
   private List<BrushTileModel> primaryTiles;
   private BrushTileModel[][] secondaryMatrix;
@@ -78,14 +77,6 @@ public class BrushModel extends AbstractDrawModel {
 
   public void setPreviewImagePath(String previewImagePath) {
     this.previewImagePath = previewImagePath;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
   }
 
   public String getPath() {

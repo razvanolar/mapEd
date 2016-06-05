@@ -18,10 +18,10 @@ import mapEditor.application.main_part.app_utils.views.canvas.BrushCanvas;
 import mapEditor.application.main_part.app_utils.views.dialogs.Dialog;
 import mapEditor.application.main_part.app_utils.views.dialogs.OkCancelDialog;
 import mapEditor.application.main_part.app_utils.views.others.SystemFilesView;
-import mapEditor.application.main_part.manage_images.manage_tile_sets.utils.CreateBrushListener;
+import mapEditor.application.main_part.manage_images.manage_tile_sets.utils.create_views.SelectableCreateEntityView;
 import mapEditor.application.main_part.manage_images.manage_tile_sets.utils.create_views.SelectableCreateBrushView;
+import mapEditor.application.main_part.manage_images.manage_tile_sets.utils.listeners.CreateEntityListener;
 import mapEditor.application.main_part.types.Controller;
-import mapEditor.application.main_part.types.View;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,17 +31,18 @@ import java.util.stream.Collectors;
  *
  * Created by razvanolar on 03.04.2016.
  */
-public class CreateBrushController implements Controller, CreateBrushListener {
+public class CreateBrushController implements Controller, CreateEntityListener {
 
   private BrushCanvas brushCanvas;
 
-  public interface ICreateBrushView extends View {
+  public interface ICreateBrushView {
     Button getAddBrushButton();
     TextField getPathTextField();
     Button getPathButton();
     void addBrushView(Region region);
     void removeBrushView(Region region);
     void addCanvasContainer(Region region);
+    Region getNode();
   }
 
   private ICreateBrushView view;
@@ -88,7 +89,7 @@ public class CreateBrushController implements Controller, CreateBrushListener {
         return;
       }
 
-      LWBrushModel brushModel = getCroppedImagesModel();
+      LWBrushModel brushModel = getCroppedBrushModel();
       SelectableCreateBrushView selectableCreateBrushView = new SelectableCreateBrushView(brushModel, this);
       view.addBrushView(selectableCreateBrushView.asNode());
       brushViews.add(selectableCreateBrushView);
@@ -117,7 +118,7 @@ public class CreateBrushController implements Controller, CreateBrushListener {
     });
   }
 
-  private LWBrushModel getCroppedImagesModel() {
+  private LWBrushModel getCroppedBrushModel() {
     int primaryX = brushCanvas.getSquareCellX();
     int primaryY = brushCanvas.getSquareCellY();
     int secondaryX = brushCanvas.getCompleteSelectionCellX();
@@ -168,13 +169,15 @@ public class CreateBrushController implements Controller, CreateBrushListener {
   }
 
   @Override
-  public void removeBrushField(SelectableCreateBrushView selectableCreateBrushView) {
-    brushViews.remove(selectableCreateBrushView);
-    view.removeBrushView(selectableCreateBrushView.asNode());
+  public void removeEntityField(SelectableCreateEntityView selectableCreateBrushView) {
+    if (selectableCreateBrushView != null && selectableCreateBrushView instanceof SelectableCreateBrushView) {
+      brushViews.remove(selectableCreateBrushView);
+      view.removeBrushView(selectableCreateBrushView.asNode());
+    }
   }
 
   @Override
-  public void brushNameChanged(SelectableCreateBrushView selectableCreateBrushView) {
+  public void entityNameChanged(SelectableCreateEntityView selectableCreateBrushView) {
     completeSelectionNode.setDisable(!isValidSelection());
   }
 }

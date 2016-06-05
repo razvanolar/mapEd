@@ -14,6 +14,7 @@ public class AbstractDrawModel {
 
   protected DrawModelType drawModelType;
   protected File file;
+  protected String name;
 
   protected AbstractDrawModel(DrawModelType drawModelType) {
     this.drawModelType = drawModelType;
@@ -25,6 +26,18 @@ public class AbstractDrawModel {
 
   public void setFile(File file) {
     this.file = file;
+  }
+
+  public void setDrawModelType(DrawModelType drawModelType) {
+    this.drawModelType = drawModelType;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
   }
 
   public DrawModelType getDrawModelType() {

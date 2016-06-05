@@ -1,4 +1,4 @@
-package mapEditor.application.main_part.manage_images.manage_tile_sets.utils;
+package mapEditor.application.main_part.manage_images.manage_tile_sets.utils.listeners;
 
 /**
  *
