@@ -441,7 +441,7 @@ public class RepoController {
     if (!file.exists())
       throw new Exception("The specified directory path does not exist.");
     MapXMLConverter converter = new MapXMLConverter();
-    String result = converter.convertBrushToTMX(mapDetail, simpleName, tilesetName);
+    String result = converter.convertMapToTMX(mapDetail, simpleName, tilesetName);
     String tmxName = getRepoUtil().checkNameOrGetAnAlternativeOne(dirPath, nameWithExtension);
     writeContentToFile(result, dirPath + tmxName);
     return true;

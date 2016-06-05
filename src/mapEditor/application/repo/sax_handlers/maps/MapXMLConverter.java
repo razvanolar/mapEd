@@ -87,7 +87,7 @@ public class MapXMLConverter {
     return builder.append("</map>").toString();
   }
 
-  public String convertBrushToTMX(MapDetail map, String tilesetName, String tilesetPath) throws Exception {
+  public String convertMapToTMX(MapDetail map, String tilesetName, String tilesetPath) throws Exception {
     if (map == null)
       throw new Exception("MapXMLConverter - convertMapToXML - Map instance is NULL");
 
@@ -103,13 +103,13 @@ public class MapXMLConverter {
             append("width=\"").append(map.getColumns()).append("\" ").
             append("height=\"").append(map.getRows()).append("\" ").
             append("tilewidth=\"").append(cellSize).append("\" ").
-            append("tileheight=\"").append(cellSize).append("\" />\n");
+            append("tileheight=\"").append(cellSize).append("\" >\n");
 
     builder.append("\t<tileset firstgid=\"1\" ").append("name=\"").append(tilesetName).append("\" ").
             append("tilewidth=\"").append(cellSize).append("\" ").
             append("tileheight=\"").append(cellSize).append("\" ").
             append("spacing=\"").append(spacing).append("\" ").
-            append("margin=\"").append(margin).append("\" />\n");
+            append("margin=\"").append(margin).append("\" >\n");
     builder.append("\t\t<image source=\"").append(tilesetPath).append("\" />\n");
     builder.append("\t</tileset>\n");
 
@@ -125,7 +125,8 @@ public class MapXMLConverter {
 
   private void convertLayerDetailsToTMXFormat(StringBuilder builder, LayerModel layer,
                                               CustomMap<ImageModel, List<CellModel>> imageModelMap) {
-    builder.append("\t<layer name=\"").append(layer.getName()).append("\">\n");
+    builder.append("\t<layer name=\"").append(layer.getName()).append("\" type=\"").
+            append(layer.getType()).append("\" >\n");
     builder.append("\t\t<data>\n");
 
     for (ImageModel imageModel : imageModelMap.keys()) {
@@ -198,9 +199,7 @@ public class MapXMLConverter {
       CustomMap<ImageModel, List<CellModel>> tilesMap = layersTilesMap.get(layer);
       if (tilesMap == null || tilesMap.isEmpty())
         continue;
-      for (ImageModel key : tilesMap.keys())
-        if (!tilesSet.contains(key))
-          tilesSet.add(key);
+      tilesMap.keys().stream().filter(key -> !tilesSet.contains(key)).forEach(tilesSet::add);
     }
 
     return tilesSet;
