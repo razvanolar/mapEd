@@ -104,10 +104,17 @@ public class CreateObjectController implements Controller, CreateEntityListener 
     int completeSelectionCellX = objectCanvas.getCompleteSelectionCellX();
     int completeSelectionCellY = objectCanvas.getCompleteSelectionCellY();
 
-    int minCellX = Math.min(squareCellX, completeSelectionCellX);
-    int minCellY = Math.min(squareCellY, completeSelectionCellY);
-    int maxCellX = Math.max(squareCellX, completeSelectionCellX);
-    int maxCellY = Math.max(squareCellY, completeSelectionCellY);
+    int minCellX = squareCellX;
+    int minCellY = squareCellY;
+    int maxCellX = squareCellX;
+    int maxCellY = squareCellY;
+
+    if (objectCanvas.isMultiAreaSelected()) {
+      minCellX = Math.min(squareCellX, completeSelectionCellX);
+      minCellY = Math.min(squareCellY, completeSelectionCellY);
+      maxCellX = Math.max(squareCellX, completeSelectionCellX);
+      maxCellY = Math.max(squareCellY, completeSelectionCellY);
+    }
 
     int rows = maxCellY - minCellY + 1;
     int cols = maxCellX - minCellX + 1;
