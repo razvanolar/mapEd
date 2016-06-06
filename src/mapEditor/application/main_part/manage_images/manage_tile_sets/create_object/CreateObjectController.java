@@ -6,15 +6,20 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Region;
+import javafx.stage.Modality;
+import javafx.stage.StageStyle;
 import javafx.stage.Window;
 import mapEditor.application.main_part.app_utils.AppParameters;
 import mapEditor.application.main_part.app_utils.constants.CssConstants;
+import mapEditor.application.main_part.app_utils.inputs.StringValidator;
 import mapEditor.application.main_part.app_utils.models.CellModel;
 import mapEditor.application.main_part.app_utils.models.ImageModel;
 import mapEditor.application.main_part.app_utils.models.object.ObjectModel;
 import mapEditor.application.main_part.app_utils.models.object.ObjectTileModel;
 import mapEditor.application.main_part.app_utils.views.canvas.ObjectCanvas;
 import mapEditor.application.main_part.app_utils.views.dialogs.Dialog;
+import mapEditor.application.main_part.app_utils.views.dialogs.OkCancelDialog;
+import mapEditor.application.main_part.app_utils.views.others.SystemFilesView;
 import mapEditor.application.main_part.manage_images.manage_tile_sets.utils.create_views.SelectableCreateEntityView;
 import mapEditor.application.main_part.manage_images.manage_tile_sets.utils.create_views.SelectableCreateObjectView;
 import mapEditor.application.main_part.manage_images.manage_tile_sets.utils.listeners.CreateEntityListener;
@@ -23,6 +28,7 @@ import mapEditor.application.main_part.types.View;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -96,6 +102,23 @@ public class CreateObjectController implements Controller, CreateEntityListener 
       objectViews.add(selectableCreateObjectView);
       completeSelectionNode.setDisable(true);
     });
+
+    view.getPathButton().setOnAction(event -> {
+      OkCancelDialog dialog = new OkCancelDialog("Select Objects Path", StageStyle.UTILITY, Modality.APPLICATION_MODAL, true, true, parent);
+
+      SystemFilesView filesView = new SystemFilesView(dialog.getOkButton(), AppParameters.CURRENT_PROJECT.getObjectsFile(), true, null);
+      dialog.getOkButton().setOnAction(event1 -> {
+        String selectedPath = filesView.getSelectedPath();
+        if (StringValidator.isValidObjectsPath(selectedPath)) {
+          view.getPathTextField().setText(selectedPath);
+          completeSelectionNode.setDisable(!isValidSelection());
+        }
+        dialog.close();
+      });
+
+      dialog.setContent(filesView.asNode());
+      dialog.show();
+    });
   }
 
   private ObjectModel getCroppedObjectModel() {
@@ -154,12 +177,25 @@ public class CreateObjectController implements Controller, CreateEntityListener 
     return objectModel;
   }
 
-  private boolean isValidSelection() {
-    return false;
+  public boolean isValidSelection() {
+    return StringValidator.isValidObjectsPath(view.getPathTextField().getText()) && objectNamesAreValid();
   }
 
-  private boolean isValidPath(String path) {
-    return false;
+  private boolean objectNamesAreValid() {
+    if (objectViews == null || objectViews.isEmpty())
+      return false;
+    for (SelectableCreateObjectView objectView : objectViews) {
+      ObjectModel objectModel = objectView.getObjectModel();
+      if (objectModel == null || !StringValidator.isValidFileName(objectModel.getName()))
+        return false;
+    }
+    return true;
+  }
+
+  public List<ObjectModel> getObjectModels() {
+    if (objectViews == null || objectViews.isEmpty())
+      return null;
+    return objectViews.stream().map(SelectableCreateObjectView::getObjectModel).collect(Collectors.toList());
   }
 
   @Override

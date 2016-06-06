@@ -39,6 +39,24 @@ public class FileExtensionUtil {
     return extensions.contains(ext);
   }
 
+  public static boolean isImageExtension(String ext) {
+    if (StringValidator.isNullOrEmpty(ext) || !ext.startsWith("."))
+      return false;
+    List<KnownFileExtensions> extensions = KnownFileExtensions.getImageExtensions();
+    for (KnownFileExtensions extension : extensions) {
+      if (extension.getExtension().equalsIgnoreCase(ext))
+        return true;
+    }
+    return false;
+  }
+
+  public static boolean isImageExtension(KnownFileExtensions ext) {
+    if (ext == null)
+      return false;
+    List<KnownFileExtensions> extensions = KnownFileExtensions.getImageExtensions();
+    return extensions.contains(ext);
+  }
+
   public static boolean isPngFile(String name) {
     return !(name == null || getFileExtension(name) != KnownFileExtensions.PNG);
   }

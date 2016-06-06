@@ -16,6 +16,7 @@ import mapEditor.application.main_part.app_utils.models.ImageModel;
 import mapEditor.application.main_part.app_utils.models.KnownFileExtensions;
 import mapEditor.application.main_part.app_utils.models.MessageType;
 import mapEditor.application.main_part.app_utils.models.brush.LWBrushModel;
+import mapEditor.application.main_part.app_utils.models.object.ObjectModel;
 import mapEditor.application.main_part.app_utils.views.canvas.ImageCanvas;
 import mapEditor.application.main_part.app_utils.views.TabImageLoadView;
 import mapEditor.application.main_part.app_utils.views.dialogs.Dialog;
@@ -263,8 +264,20 @@ public class ManageTileSetsController implements Controller, ManageImagesListene
     CreateObjectController objectController = new CreateObjectController(objectView, currentCanvas.getUpdatedImage(), dialog.getOkButton(), dialog.getStage());
     objectController.bind();
 
-    dialog.setContent(objectView.asNode());
+    dialog.getOkButton().setOnAction(event -> {
+      if (!objectController.isValidSelection()) {
+        Dialog.showWarningDialog(null, "Fields are not correctly completed!", dialog.getStage());
+        return;
+      }
 
+      List<ObjectModel> objectModels = objectController.getObjectModels();
+      if (objectModels == null) {
+        Dialog.showWarningDialog(null, "You have to create at least one objects!", dialog.getStage());
+        return;
+      }
+    });
+
+    dialog.setContent(objectView.asNode());
     dialog.show();
   }
 

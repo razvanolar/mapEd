@@ -650,6 +650,11 @@ public class RepoController {
     return null;
   }
 
+  /**
+   * Save the specified images at their current path.
+   * @param images ImageModel list
+   * @return the status of the operation
+   */
   public SaveImagesResult saveImages(List<ImageModel> images) {
     SaveFilesStatus status = SaveFilesStatus.NONE;
     if (images == null || images.isEmpty())
@@ -676,6 +681,28 @@ public class RepoController {
     return !areUnsavedImages ? new SaveImagesResult(SaveFilesStatus.COMPLETE, null) : new SaveImagesResult(SaveFilesStatus.PARTIAL, unsavedImages);
   }
 
+  /**
+   * Save the specified matrix of image models to the specified path using the provided template name.
+   * @param imageMatrix ImageModel matrix
+   * @param templateName String; the common name for all the images
+   * @param path Valid directory path; The location at which the images will be saved
+   * @param extensions Image extension; Extension the images will have, if it's not a valid image extension, the PNG extension
+   *                   will be used by default
+   * @throws Exception
+   */
+  public void saveImageMatrix(ImageModel[][] imageMatrix, String templateName, String path, KnownFileExtensions extensions) throws Exception {
+    String pngExt = extensions != null && !FileExtensionUtil.isImageExtension(extensions) ?
+            extensions.getExtension() : KnownFileExtensions.PNG.getExtension();
+    for (int i = 0; i < imageMatrix.length; i ++) {
+      for (int j = 0; j < imageMatrix[i].length; j ++) {
+        ImageModel image = imageMatrix[i][j];
+        String imageName = templateName + "_" + i + "_" + j + pngExt;
+        if (saveImage(image.getImage(), path, imageName, true) == null)
+          throw new Exception("Unable to save images from matrix");
+      }
+    }
+  }
+
   public SaveFilesStatus saveBrushModels(List<LWBrushModel> models, String path) {
     if (path == null || path.isEmpty() || models == null || models.isEmpty())
       return SaveFilesStatus.NONE;
@@ -685,7 +712,6 @@ public class RepoController {
       return SaveFilesStatus.NONE;
 
     int count = 0;
-
     BrushXMLConverter converter = new BrushXMLConverter();
     for (LWBrushModel brush : models) {
       try {
@@ -710,29 +736,16 @@ public class RepoController {
   }
 
   private void saveBrushImages(LWBrushModel brush, File directory) throws Exception {
-    String pngExt = KnownFileExtensions.PNG.getExtension();
     // save primary images
-    ImageModel[][] primaryMatrix = brush.getPrimaryMatrix();
-    for (int i=0; i<primaryMatrix.length; i++) {
-      for (int j=0; j<primaryMatrix[i].length; j++) {
-        ImageModel image = primaryMatrix[i][j];
-        String imageName = brush.getName() + "_" + i + "_" + j + pngExt;
-        if (saveImage(image.getImage(), directory.getAbsolutePath(), imageName, true) == null)
-          throw new Exception("Unable to save brush primary images");
-      }
-    }
+    saveImageMatrix(brush.getPrimaryMatrix(), brush.getName(), directory.getAbsolutePath(), KnownFileExtensions.PNG);
+
     // save corner images
-    ImageModel[][] secondaryMatrix = brush.getSecondaryMatrix();
-    for (int i=0; i<secondaryMatrix.length; i++) {
-      for (int j=0; j<secondaryMatrix[i].length; j++) {
-        ImageModel image = secondaryMatrix[i][j];
-        String imageName = brush.getName() + "_sec_" + i + "_" + j + pngExt;
-        if (saveImage(image.getImage(), directory.getAbsolutePath(), imageName, true) == null)
-          throw new Exception("Unable to save brush corner images");
-      }
-    }
+    saveImageMatrix(brush.getSecondaryMatrix(), brush.getName() + "_sec", directory.getAbsolutePath(), KnownFileExtensions.PNG);
+
     // save preview image
-    if (saveImage(brush.getPreviewImage().getImage(), directory.getAbsolutePath(), brush.getName() + "_preview" + pngExt, true) == null)
+    if (saveImage(brush.getPreviewImage().getImage(),
+            directory.getAbsolutePath(),
+            brush.getName() + "_preview" + KnownFileExtensions.PNG.getExtension(), true) == null)
       throw new Exception("Unable to save brush preview image");
   }
 

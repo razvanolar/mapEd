@@ -148,6 +148,8 @@ public class CreateBrushController implements Controller, CreateEntityListener {
   }
 
   private boolean brushNamesAreValid() {
+    if (brushViews == null || brushViews.isEmpty())
+      return false;
     for (SelectableCreateBrushView view : brushViews) {
       LWBrushModel brushModel = view.getBrushModel();
       if (!(brushModel != null && (StringValidator.isValidFileName(brushModel.getName()))))

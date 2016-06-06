@@ -17,6 +17,10 @@ public class SelectableCreateObjectView extends SelectableCreateEntityView {
     this.objectModel = objectModel;
   }
 
+  public ObjectModel getObjectModel() {
+    return objectModel;
+  }
+
   @Override
   public void setModelName(String value) {
     objectModel.setName(value);
