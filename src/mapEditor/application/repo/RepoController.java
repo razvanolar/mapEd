@@ -11,6 +11,8 @@ import mapEditor.application.main_part.app_utils.models.KnownFileExtensions;
 import mapEditor.application.main_part.app_utils.models.LWMapModel;
 import mapEditor.application.main_part.app_utils.models.MapDetail;
 import mapEditor.application.main_part.app_utils.models.brush.LWBrushModel;
+import mapEditor.application.main_part.app_utils.models.object.ObjectModel;
+import mapEditor.application.main_part.app_utils.models.object.ObjectTileModel;
 import mapEditor.application.repo.html_exporter.MapHtmlExporter;
 import mapEditor.application.main_part.app_utils.models.brush.BrushModel;
 import mapEditor.application.repo.models.LWProjectModel;
@@ -22,6 +24,7 @@ import mapEditor.application.repo.sax_handlers.config.known_projects.KnownProjec
 import mapEditor.application.repo.sax_handlers.config.known_projects.KnownProjectsXMLHandler;
 import mapEditor.application.repo.sax_handlers.maps.MapXMLConverter;
 import mapEditor.application.repo.sax_handlers.maps.MapXMLHandler;
+import mapEditor.application.repo.sax_handlers.object.ObjectXMLConverter;
 import mapEditor.application.repo.sax_handlers.project_init_file.ProjectXMLConverter;
 import mapEditor.application.repo.sax_handlers.project_init_file.ProjectXMLHandler;
 import mapEditor.application.repo.statuses.SaveFilesStatus;
@@ -747,6 +750,49 @@ public class RepoController {
             directory.getAbsolutePath(),
             brush.getName() + "_preview" + KnownFileExtensions.PNG.getExtension(), true) == null)
       throw new Exception("Unable to save brush preview image");
+  }
+
+  public SaveFilesStatus saveObjectModels(List<ObjectModel> models, String path) {
+    if (path == null || path.isEmpty() || models == null || models.isEmpty())
+      return SaveFilesStatus.NONE;
+    path = path.endsWith("\\") ? path : path + "\\";
+    File file = new File(path);
+    if (!file.exists())
+      return SaveFilesStatus.NONE;
+
+    int count = 0;
+    ObjectXMLConverter converter = new ObjectXMLConverter();
+    for (ObjectModel object : models) {
+      try {
+        String name = getRepoUtil().checkObjectNameOrGetANewOne(path, object.getName());
+        String objectDirectory = getRepoUtil().checkNameOrGetAnAlternativeOne(path, "_" + object.getName());
+        if (name == null || objectDirectory == null)
+          continue;
+        objectDirectory = objectDirectory.endsWith("\\") ? objectDirectory : objectDirectory + "\\";
+        File directory = new File(path + objectDirectory);
+        if (!directory.exists() && !directory.mkdirs()) {
+          System.out.println("*** RepoController - saveBrushModels - Unable to create directory : " + path + objectDirectory);
+          continue;
+        }
+        // save object tiles
+        ObjectTileModel[][] objectTileModels = object.getObjectTileModels();
+        String templateName = object.getName() + "_";
+        for (int i = 0; i < object.getRows(); i ++) {
+          for (int j = 0; j < object.getCols(); j ++) {
+            saveImage(objectTileModels[i][j].getImage().getImage(),
+                    directory.getAbsolutePath(),
+                    templateName + i + "_" + j + KnownFileExtensions.PNG.getExtension(),
+                    true);
+          }
+        }
+        writeContentToFile(converter.convertObjectToXML(object, objectDirectory), path + name);
+        count ++;
+      } catch (Exception ex) {
+        ex.printStackTrace();
+      }
+    }
+
+    return count == 0 ? SaveFilesStatus.NONE : count == models.size() ? SaveFilesStatus.COMPLETE : SaveFilesStatus.PARTIAL;
   }
 
   /**

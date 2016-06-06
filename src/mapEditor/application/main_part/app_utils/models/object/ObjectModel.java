@@ -20,9 +20,13 @@ public class ObjectModel extends AbstractDrawModel {
   private String previewImagePath;
   private int primaryTileX;
   private int primaryTileY;
+  private int rows;
+  private int cols;
 
-  public ObjectModel() {
+  public ObjectModel(int rows, int cols) {
     super(DrawModelType.OBJECT);
+    this.rows = rows;
+    this.cols = cols;
   }
 
   public ObjectTileModel[][] getObjectTileModels() {
@@ -81,6 +85,14 @@ public class ObjectModel extends AbstractDrawModel {
     if (!isInBounds(row, col))
       return null;
     return objectTileModels[row][col];
+  }
+
+  public int getRows() {
+    return rows;
+  }
+
+  public int getCols() {
+    return cols;
   }
 
   private boolean isInBounds(int row, int col) {

@@ -275,6 +275,19 @@ public class ManageTileSetsController implements Controller, ManageImagesListene
         Dialog.showWarningDialog(null, "You have to create at least one objects!", dialog.getStage());
         return;
       }
+
+      try {
+        SaveFilesStatus status = MapEditorController.getInstance().getRepoController().saveObjectModels(objectModels, objectController.getSelectedPath());
+        dialog.close();
+        if (status != SaveFilesStatus.COMPLETE)
+          Dialog.showWarningDialog(null, status.getMessage(), dialog.getStage());
+        else
+          Dialog.showInformDialog(null, "All objects were saved successfully", dialog.getStage());
+      } catch (Exception ex) {
+        dialog.close();
+        ex.printStackTrace();
+        Dialog.showErrorDialog("Error", "ManageTileSetsController - An error occurred while saving the objects");
+      }
     });
 
     dialog.setContent(objectView.asNode());

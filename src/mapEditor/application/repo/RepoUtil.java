@@ -86,6 +86,13 @@ public class RepoUtil {
     return checkNameOrGetAnAlternativeOne(directory, fileName);
   }
 
+  public String checkObjectNameOrGetANewOne(String directory, String fileName) {
+    if (fileName == null)
+      return null;
+    fileName = fileName.endsWith(KnownFileExtensions.OBJECT.getExtension()) ? fileName : fileName + KnownFileExtensions.OBJECT.getExtension();
+    return checkNameOrGetAnAlternativeOne(directory, fileName);
+  }
+
   /**
    * Returns the file extension.
    * @param fileName

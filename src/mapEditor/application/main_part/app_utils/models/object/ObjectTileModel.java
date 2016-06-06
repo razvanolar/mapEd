@@ -60,4 +60,8 @@ public class ObjectTileModel {
   public void setPlace(ObjectModel.ObjectTilePlace place) {
     this.place = place;
   }
+
+  public boolean isSolid() {
+    return place == ObjectModel.ObjectTilePlace.OBJECT;
+  }
 }

@@ -159,7 +159,7 @@ public class CreateObjectController implements Controller, CreateEntityListener 
 
     Image previewImage = objectCanvas.cropSelection();
 
-    ObjectModel objectModel = new ObjectModel();
+    ObjectModel objectModel = new ObjectModel(rows, cols);
     objectModel.setObjectTileModels(objectTileModels);
     objectModel.setPreviewImageModel(new ImageModel(previewImage));
 
@@ -196,6 +196,10 @@ public class CreateObjectController implements Controller, CreateEntityListener 
     if (objectViews == null || objectViews.isEmpty())
       return null;
     return objectViews.stream().map(SelectableCreateObjectView::getObjectModel).collect(Collectors.toList());
+  }
+
+  public String getSelectedPath() {
+    return view.getPathTextField().getText();
   }
 
   @Override
