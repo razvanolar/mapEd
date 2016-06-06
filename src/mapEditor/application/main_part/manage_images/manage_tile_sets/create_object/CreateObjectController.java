@@ -72,7 +72,7 @@ public class CreateObjectController implements Controller, CreateEntityListener 
     scrollPane.heightProperty().addListener(listener);
 
     view.addCanvasContainer(scrollPane);
-    view.getPathTextField().setText(AppParameters.CURRENT_PROJECT.getBrushesFile().getAbsolutePath());
+    view.getPathTextField().setText(AppParameters.CURRENT_PROJECT.getObjectsFile().getAbsolutePath());
 
     completeSelectionNode.setDisable(true);
     addListeners();
@@ -155,6 +155,10 @@ public class CreateObjectController implements Controller, CreateEntityListener 
   }
 
   private boolean isValidSelection() {
+    return false;
+  }
+
+  private boolean isValidPath(String path) {
     return false;
   }
 

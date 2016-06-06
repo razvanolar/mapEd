@@ -96,7 +96,7 @@ public class ProjectTreeController implements Controller, ProjectTreeContextMenu
       Dragboard dragboard = view.getTree().startDragAndDrop(TransferMode.ANY);
 
       ClipboardContent content = new ClipboardContent();
-      List<File> fileList = new ArrayList<File>(1);
+      List<File> fileList = new ArrayList<>(1);
       fileList.add(selectedItem.getValue());
       content.putFiles(fileList);
       dragboard.setContent(content);
@@ -121,6 +121,7 @@ public class ProjectTreeController implements Controller, ProjectTreeContextMenu
     LazyTreeItem tileSetsItem = new LazyTreeItem(project.getTileSetsFile(), true, TreeItemType.PROJECT_TILE_SETS_FOLDER);
     LazyTreeItem tilesItem = new LazyTreeItem(project.getTilesFile(), true, TreeItemType.PROJECT_TILES_FOLDER);
     LazyTreeItem brushesItem = new LazyTreeItem(project.getBrushesFile(), true, TreeItemType.PROJECT_BRUSHES_FOLDER);
+    LazyTreeItem objectsItem = new LazyTreeItem(project.getObjectsFile(), true, TreeItemType.PROJECT_OBJECTS_FOLDER);
     LazyTreeItem charactersItem = new LazyTreeItem(project.getCharactersFile(), true, TreeItemType.PROJECT_CHARACTERS_FOLDER);
     LazyTreeItem mapsItem = new LazyTreeItem(project.getMapsFile(), true, TreeItemType.PROJECT_MAPS_FOLDER);
 
@@ -129,7 +130,7 @@ public class ProjectTreeController implements Controller, ProjectTreeContextMenu
             mapsItem);
     view.getTree().getSelectionModel().select(tilesGroupItem);
     contextMenuController.setSelectedItem(tilesGroupItem);
-    tilesGroupItem.getChildren().addAll(tileSetsItem, tilesItem, brushesItem);
+    tilesGroupItem.getChildren().addAll(tileSetsItem, tilesItem, brushesItem, objectsItem);
     tilesGroupItem.setExpanded(true);
     tilesGroupItem.setWasExpanded(true);
 
@@ -137,6 +138,7 @@ public class ProjectTreeController implements Controller, ProjectTreeContextMenu
     tileSetsItem.expandedProperty().addListener(treeItemListener);
     tilesItem.expandedProperty().addListener(treeItemListener);
     brushesItem.expandedProperty().addListener(treeItemListener);
+    objectsItem.expandedProperty().addListener(treeItemListener);
     charactersItem.expandedProperty().addListener(treeItemListener);
     mapsItem.expandedProperty().addListener(treeItemListener);
 
@@ -146,6 +148,7 @@ public class ProjectTreeController implements Controller, ProjectTreeContextMenu
     initWatchDirThreads(tileSetsItem);
     initWatchDirThreads(tilesItem);
     initWatchDirThreads(brushesItem);
+    initWatchDirThreads(objectsItem);
     initWatchDirThreads(charactersItem);
     initWatchDirThreads(mapsItem);
   }

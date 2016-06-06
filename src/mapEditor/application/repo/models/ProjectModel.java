@@ -28,6 +28,7 @@ public class ProjectModel {
   private File tileSetsFile;
   private File tilesFile;
   private File brushesFile;
+  private File objectsFile;
   private File charactersFile;
   private File mapsFile;
 
@@ -100,6 +101,10 @@ public class ProjectModel {
 
   public File getBrushesFile() {
     return brushesFile;
+  }
+
+  public File getObjectsFile() {
+    return objectsFile;
   }
 
   public List<MapDetail> getMapDetails() {
@@ -182,6 +187,10 @@ public class ProjectModel {
 
   public void setBrushesFile(File brushesFile) {
     this.brushesFile = brushesFile;
+  }
+
+  public void setObjectsFile(File objectsFile) {
+    this.objectsFile = objectsFile;
   }
 
   public void setHexValue(String hexValue) {

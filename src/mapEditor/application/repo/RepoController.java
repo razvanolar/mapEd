@@ -232,6 +232,7 @@ public class RepoController {
     File tileSetsFile = new File(projectPath + SystemParameters.TILE_SETS_FOLDER_PATH);
     File tilesFile = new File(projectPath + SystemParameters.TILES_FOLDER_PATH);
     File brushesFile = new File(projectPath + SystemParameters.BRUSHES_FOLDER_PATH);
+    File objectsFile = new File(projectPath + SystemParameters.OBJECTS_FOLDER_PATH);
     File charactersFile = new File(projectPath + SystemParameters.CHARACTERS_FOLDER_PATH);
     File mapsFile = new File(projectPath + SystemParameters.MAPS_FOLDER_PATH);
     if (!tileGroupsFile.exists() && !tileGroupsFile.mkdirs())
@@ -242,6 +243,8 @@ public class RepoController {
       throw new Exception("Tiles directory does not exist and failed to create.");
     if (!brushesFile.exists() && !brushesFile.mkdirs())
       throw new Exception("Brushes directory does not exist and failed to create.");
+    if (!objectsFile.exists() && !objectsFile.mkdirs())
+      throw new Exception("Objects directory does not exist and failed to create.");
     if (!charactersFile.exists() && !charactersFile.mkdirs())
       throw new Exception("Characters directory does not exist and failed to create.");
     if (!mapsFile.exists() && !mapsFile.mkdirs())
@@ -250,6 +253,7 @@ public class RepoController {
     project.setTileSetsFile(tileSetsFile);
     project.setTilesFile(tilesFile);
     project.setBrushesFile(brushesFile);
+    project.setObjectsFile(objectsFile);
     project.setCharactersFile(charactersFile);
     project.setMapsFile(mapsFile);
   }

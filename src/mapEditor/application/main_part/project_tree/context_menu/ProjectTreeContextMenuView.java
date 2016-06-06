@@ -128,6 +128,9 @@ public class ProjectTreeContextMenuView implements ProjectTreeContextMenuControl
           case PROJECT_BRUSHES_FOLDER:
             openTilesMenu.setText("Open Brushes");
             break;
+          case PROJECT_OBJECTS_FOLDER:
+            openTilesMenu.setText("Open Objects");
+            break;
           case PROJECT_CHARACTERS_FOLDER:
             newTileSetsMenuItem.setDisable(true);
             newTilesMenuItem.setDisable(true);
@@ -165,6 +168,16 @@ public class ProjectTreeContextMenuView implements ProjectTreeContextMenuControl
         break;
       case PROJECT_BRUSHES_FOLDER:
         openTilesMenu.setText("Open Brushes");
+        openTilesMenu.setDisable(false);
+        renameMenuItem.setDisable(true);
+        deleteMenuItem.setDisable(true);
+        newTileSetsMenuItem.setDisable(true);
+        newTilesMenuItem.setDisable(true);
+        newMapMenuItem.setDisable(true);
+        enableOpenMenuItems(false);
+        break;
+      case PROJECT_OBJECTS_FOLDER:
+        openTilesMenu.setText("Open Objects");
         openTilesMenu.setDisable(false);
         renameMenuItem.setDisable(true);
         deleteMenuItem.setDisable(true);
