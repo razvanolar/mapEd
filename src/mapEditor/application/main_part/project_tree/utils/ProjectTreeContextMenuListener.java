@@ -10,7 +10,7 @@ public interface ProjectTreeContextMenuListener {
   void loadNewTileSets();
   void openMap();
   void openInImageEditor();
-  void openTilesInNewTab();
+  void openEntityInNewTab();
   void openTilesInImageEditor();
   void deleteFile();
   void exportMapToHtml();

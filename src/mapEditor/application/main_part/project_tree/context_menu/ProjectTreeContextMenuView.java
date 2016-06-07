@@ -21,7 +21,7 @@ public class ProjectTreeContextMenuView implements ProjectTreeContextMenuControl
   private MenuItem newMapMenuItem;
   private MenuItem openMapMenuItem;
   private Menu openTilesMenu;
-  private MenuItem openTilesInNewTabMenuItem;
+  private MenuItem openEntityInNewTabMenuItem;
   private MenuItem openTilesInExistingTabMenuItem;
   private MenuItem openTilesInImageEditor;
   private MenuItem openInImageEditorMenuItem;
@@ -44,7 +44,7 @@ public class ProjectTreeContextMenuView implements ProjectTreeContextMenuControl
     newMapMenuItem = new MenuItem("Map");
     openMapMenuItem = new MenuItem("Open Map");
     openTilesMenu = new Menu("Open Tiles");
-    openTilesInNewTabMenuItem = new MenuItem("In New Tab");
+    openEntityInNewTabMenuItem = new MenuItem("In New Tab");
     openTilesInExistingTabMenuItem = new MenuItem("In Existing Tab");
     openTilesInImageEditor = new MenuItem("In Image Editor");
     openInImageEditorMenuItem = new MenuItem("Open in Image Editor");
@@ -61,7 +61,7 @@ public class ProjectTreeContextMenuView implements ProjectTreeContextMenuControl
             newTilesMenuItem,
             newMapMenuItem);
 
-    openTilesMenu.getItems().addAll(openTilesInNewTabMenuItem,
+    openTilesMenu.getItems().addAll(openEntityInNewTabMenuItem,
             openTilesInExistingTabMenuItem,
             openTilesInImageEditor);
 
@@ -238,8 +238,8 @@ public class ProjectTreeContextMenuView implements ProjectTreeContextMenuControl
     return openMapMenuItem;
   }
 
-  public MenuItem getOpenTilesInNewTabMenuItem() {
-    return openTilesInNewTabMenuItem;
+  public MenuItem getOpenEntityInNewTabMenuItem() {
+    return openEntityInNewTabMenuItem;
   }
 
   public MenuItem getOpenTilesInExistingTabMenuItem() {

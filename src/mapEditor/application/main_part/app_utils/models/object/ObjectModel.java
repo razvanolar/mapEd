@@ -15,7 +15,6 @@ public class ObjectModel extends AbstractDrawModel {
 
   private ObjectTileModel[][] objectTileModels;
 
-  private String path;
   private ImageModel previewImageModel;
   private String previewImagePath;
   private int primaryTileX;
@@ -35,14 +34,6 @@ public class ObjectModel extends AbstractDrawModel {
 
   public void setObjectTileModels(ObjectTileModel[][] objectTileModels) {
     this.objectTileModels = objectTileModels;
-  }
-
-  public String getPath() {
-    return path;
-  }
-
-  public void setPath(String path) {
-    this.path = path;
   }
 
   public ImageModel getPreviewImageModel() {

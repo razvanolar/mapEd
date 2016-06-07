@@ -14,11 +14,32 @@ public class ObjectTileModel {
   private ImageModel image;
   private ObjectModel.ObjectTilePlace place;
 
+  /**
+   * Used when the object is cropped (created).
+   * @param row row index
+   * @param col col index
+   * @param image tile image
+   * @param place FOREGROUND or OBJECT, depends with which type the tile was tagged
+   */
   public ObjectTileModel(int row, int col, ImageModel image, ObjectModel.ObjectTilePlace place) {
     this.row = row;
     this.col = col;
     this.image = image;
     this.place = place;
+  }
+
+  /**
+   * Used when the object is loaded from the xml file.
+   * @param row row index
+   * @param col col index
+   * @param path full path of the referred tile
+   * @param isSolid true is the tile is marked as solid; false otherwise
+   */
+  public ObjectTileModel(int row, int col, String path, boolean isSolid) {
+    this.row = row;
+    this.col = col;
+    this.path = path;
+    this.place = isSolid ? ObjectModel.ObjectTilePlace.OBJECT : ObjectModel.ObjectTilePlace.FOREGROUND;
   }
 
   public int getRow() {

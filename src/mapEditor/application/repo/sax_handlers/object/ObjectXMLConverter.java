@@ -21,7 +21,7 @@ public class ObjectXMLConverter {
 
     builder.append("<object ").
             append("name=\"").append(object.getName()).append("\" ").
-            append("row=\"").append(object.getRows()).append("\" ").
+            append("rows=\"").append(object.getRows()).append("\" ").
             append("cols=\"").append(object.getCols()).append("\" ").
             append("primaryX=\"").append(object.getPrimaryTileX()).append("\" ").
             append("primaryY=\"").append(object.getPrimaryTileY()).append("\" >\n");

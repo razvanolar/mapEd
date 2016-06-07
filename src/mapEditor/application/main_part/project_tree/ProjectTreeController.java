@@ -21,6 +21,7 @@ import mapEditor.application.main_part.app_utils.inputs.StringValidator;
 import mapEditor.application.main_part.app_utils.models.ImageModel;
 import mapEditor.application.main_part.app_utils.models.LazyTreeItem;
 import mapEditor.application.main_part.app_utils.models.TreeItemType;
+import mapEditor.application.main_part.app_utils.models.object.ObjectModel;
 import mapEditor.application.main_part.app_utils.views.dialogs.Dialog;
 import mapEditor.application.main_part.app_utils.views.dialogs.OkCancelDialog;
 import mapEditor.application.main_part.app_utils.views.dialogs.SimpleInputDialog;
@@ -310,7 +311,7 @@ public class ProjectTreeController implements Controller, ProjectTreeContextMenu
   }
 
   @Override
-  public void openTilesInNewTab() {
+  public void openEntityInNewTab() {
     MapEditorController.getInstance().changeToMapView();
     ManageTilesController tilesController = MapEditorController.getInstance().getManageTilesController();
     if (tilesController == null)
@@ -325,6 +326,10 @@ public class ProjectTreeController implements Controller, ProjectTreeContextMenu
     else if (selectedItem != null && selectedItem.getType() == TreeItemType.PROJECT_BRUSHES_FOLDER ||
             parentItem != null && parentItem.getType() == TreeItemType.PROJECT_BRUSHES_FOLDER)
       openBrushesInNewTab(tilesController, selectedItem);
+    else if (selectedItem != null && selectedItem.getType() == TreeItemType.PROJECT_OBJECTS_FOLDER ||
+            parentItem != null && parentItem.getType() == TreeItemType.PROJECT_OBJECTS_FOLDER) {
+      openObjectsInNewTab(tilesController, selectedItem);
+    }
   }
 
   /**
@@ -370,9 +375,31 @@ public class ProjectTreeController implements Controller, ProjectTreeContextMenu
     dialog.getOkButton().setOnAction(event -> {
       String tabName = tabController.getTabName();
       try {
-        dialog.close();
         List<BrushModel> brushes = tilesController.loadBrushModelsListUnderDirectory(selectedItem.getValue());
         tilesController.addBrushTabFromXMLModels(tabName, brushes);
+        dialog.close();
+      } catch (Exception ex) {
+        if (!dialog.isHidden())
+          dialog.close();
+        Dialog.showErrorDialog(null, "Project tree controller exception. Error message: " + ex.getMessage());
+      }
+    });
+
+    dialog.setContent(newTilesTabView.asNode());
+    dialog.show();
+  }
+
+  private void openObjectsInNewTab(ManageTilesController tilesController, LazyTreeItem selectedItem) {
+    OkCancelDialog dialog = new OkCancelDialog("New Objects Tab", StageStyle.UTILITY, Modality.APPLICATION_MODAL, false);
+    NewTilesTabController.INewTilesTabView newTilesTabView = new NewTilesTabView();
+    NewTilesTabController tabController = new NewTilesTabController(newTilesTabView, dialog.getOkButton());
+
+    dialog.getOkButton().setOnAction(event -> {
+      String tabName = tabController.getTabName();
+      try {
+        List<ObjectModel> objects = tilesController.loadObjectModelsListUnderDirectory(selectedItem.getValue());
+        tilesController.addObjectTabFromXMLModels(tabName, objects);
+        dialog.close();
       } catch (Exception ex) {
         if (!dialog.isHidden())
           dialog.close();

@@ -1,6 +1,7 @@
 package mapEditor.application.main_part.manage_maps.utils.listeners;
 
 import mapEditor.application.main_part.manage_maps.utils.SelectableBrushView;
+import mapEditor.application.main_part.manage_maps.utils.SelectableObjectView;
 import mapEditor.application.main_part.manage_maps.utils.SelectableTileView;
 
 /**
@@ -11,4 +12,5 @@ public interface SelectableTileListener {
 
   void selectedTileChanged(SelectableTileView selectedView);
   void selectedBrushChanged(SelectableBrushView brushView);
+  void selectedObjectChanged(SelectableObjectView objectView);
 }

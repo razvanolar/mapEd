@@ -16,13 +16,17 @@ import mapEditor.application.main_part.app_utils.inputs.StringValidator;
 import mapEditor.application.main_part.app_utils.models.ImageModel;
 import mapEditor.application.main_part.app_utils.models.TabKey;
 import mapEditor.application.main_part.app_utils.models.brush.BrushTileModel;
+import mapEditor.application.main_part.app_utils.models.object.ObjectModel;
+import mapEditor.application.main_part.app_utils.models.object.ObjectTileModel;
 import mapEditor.application.main_part.app_utils.views.dialogs.Dialog;
 import mapEditor.application.main_part.app_utils.views.dialogs.OkCancelDialog;
 import mapEditor.application.main_part.manage_maps.manage_tiles.create_tiles_tab.CreateTilesTabView;
 import mapEditor.application.main_part.manage_maps.manage_tiles.tab_container_types.AbstractTabContainer;
 import mapEditor.application.main_part.manage_maps.manage_tiles.tab_container_types.BrushesTabContainer;
+import mapEditor.application.main_part.manage_maps.manage_tiles.tab_container_types.ObjectsTabContainer;
 import mapEditor.application.main_part.manage_maps.manage_tiles.tab_container_types.TilesTabContainer;
 import mapEditor.application.main_part.manage_maps.utils.SelectableBrushView;
+import mapEditor.application.main_part.manage_maps.utils.SelectableObjectView;
 import mapEditor.application.main_part.manage_maps.utils.listeners.SelectableTileListener;
 import mapEditor.application.main_part.manage_maps.utils.SelectableTileView;
 import mapEditor.application.main_part.manage_maps.utils.listeners.SelectedTileListener;
@@ -195,7 +199,7 @@ public class ManageTilesController implements Controller, SelectableTileListener
    * BrushModel list.
    */
   public void addBrushTabFromXMLModels(String title, List<BrushModel> brushes) {
-    if (StringValidator.isNullOrEmpty(title))
+    if (StringValidator.isNullOrEmpty(title) || brushes == null || brushes.isEmpty())
       return;
 
     BrushesTabContainer brushesTabContainer = new BrushesTabContainer(title, true);
@@ -204,6 +208,19 @@ public class ManageTilesController implements Controller, SelectableTileListener
 
     Tab tab = new Tab(title, brushesTabContainer.asNode());
     tab.setUserData(brushesTabContainer);
+    view.addTab(tab);
+  }
+
+  public void addObjectTabFromXMLModels(String title, List<ObjectModel> objects) {
+    if (StringValidator.isNullOrEmpty(title) || objects == null || objects.isEmpty())
+      return;
+
+    ObjectsTabContainer objectsTabContainer = new ObjectsTabContainer(title, true);
+    for (ObjectModel objectModel : objects)
+      objectsTabContainer.addTile(new SelectableObjectView(objectModel, true, this));
+
+    Tab tab = new Tab(title, objectsTabContainer.asNode());
+    tab.setUserData(objectsTabContainer);
     view.addTab(tab);
   }
 
@@ -276,6 +293,20 @@ public class ManageTilesController implements Controller, SelectableTileListener
     return brushes;
   }
 
+  /**
+   * Load all the object models under the specified directory file.
+   * @param dirFile
+   * Directory file
+   * @return
+   * Object models list.
+   * @throws Exception
+   */
+  public List<ObjectModel> loadObjectModelsListUnderDirectory(File dirFile) throws Exception {
+    List<ObjectModel> objects = MapEditorController.getInstance().getRepoController().openObjectsUnderDir(dirFile, null);
+    loadTilesForObjectModels(objects);
+    return objects;
+  }
+
   public void addTilesTabForModels(String title, List<ImageModel> tiles) {
     if (StringValidator.isNullOrEmpty(title))
       return;
@@ -309,6 +340,27 @@ public class ManageTilesController implements Controller, SelectableTileListener
       for (BrushTileModel tileModel : brushModel.getSecondaryTiles()) {
         ImageModel imageModel = ImageProvider.getImageModel(tileModel.getPath());
         tileModel.setImageModel(imageModel);
+      }
+    }
+  }
+
+  /**
+   * Tries to load the tiles composing the objects.
+   * @param objectModels
+   * Object models list
+   * @throws Exception
+   */
+  private void loadTilesForObjectModels(List<ObjectModel> objectModels) throws Exception {
+    for (ObjectModel objectModel : objectModels) {
+      int rows = objectModel.getRows();
+      int cols = objectModel.getCols();
+      ObjectTileModel[][] objectTileModels = objectModel.getObjectTileModels();
+      for (int i = 0; i < rows; i ++) {
+        for (int j = 0; j < cols; j ++) {
+          ObjectTileModel objectTileModel = objectTileModels[i][j];
+          ImageModel imageModel = ImageProvider.getImageModel(objectTileModel.getPath());
+          objectTileModel.setImage(imageModel);
+        }
       }
     }
   }
@@ -367,5 +419,17 @@ public class ManageTilesController implements Controller, SelectableTileListener
     }
 
     listener.selectedTileChanged(selectedTileView != null ? brushView.getBrushModel() : null);
+  }
+
+  @Override
+  public void selectedObjectChanged(SelectableObjectView objectView) {
+    if (selectedTileView == null) {
+      selectedTileView = objectView;
+    } else if (selectedTileView != objectView) {
+      selectedTileView.unselect();
+      selectedTileView = objectView;
+    }
+
+    listener.selectedTileChanged(selectedTileView != null ? objectView.getObejectModel() : null);
   }
 }

@@ -25,6 +25,7 @@ import mapEditor.application.repo.sax_handlers.config.known_projects.KnownProjec
 import mapEditor.application.repo.sax_handlers.maps.MapXMLConverter;
 import mapEditor.application.repo.sax_handlers.maps.MapXMLHandler;
 import mapEditor.application.repo.sax_handlers.object.ObjectXMLConverter;
+import mapEditor.application.repo.sax_handlers.object.ObjectXMLHandler;
 import mapEditor.application.repo.sax_handlers.project_init_file.ProjectXMLConverter;
 import mapEditor.application.repo.sax_handlers.project_init_file.ProjectXMLHandler;
 import mapEditor.application.repo.statuses.SaveFilesStatus;
@@ -845,6 +846,44 @@ public class RepoController {
       }
     }
     return brushes;
+  }
+
+  public List<ObjectModel> openObjectsUnderDir(File file, ObjectXMLHandler handler) throws Exception {
+    if (file == null || !file.isDirectory())
+      throw new Exception("The specified file is not a directory.");
+    if (handler == null)
+      handler = new ObjectXMLHandler();
+
+    File[] files = file.listFiles();
+    if (files == null)
+      throw new Exception("Unable to determine the files under " + file.getName());
+    List<File> fileList = new ArrayList<>();
+    Collections.addAll(fileList, files);
+    return openObjectsForFiles(fileList, handler);
+  }
+
+  public List<ObjectModel> openObjectsForFiles(List<File> files, ObjectXMLHandler handler) throws Exception {
+    if (files == null)
+      throw new Exception("The specified files list is null");
+    if (handler == null)
+      handler = new ObjectXMLHandler();
+
+    List<ObjectModel> objects = new ArrayList<>();
+    for (File f : files) {
+      if (f.isDirectory() || !FileExtensionUtil.isObjectFile(f.getName()))
+        continue;
+      try {
+        String content = readContentFromFile(f);
+        handler.parse(content, f.getParentFile().getAbsolutePath());
+        ObjectModel object = handler.getObjectModel();
+        object.setName(f.getName());
+        object.setFile(f);
+        objects.add(object);
+      } catch (Exception ex) {
+        System.out.println("*** RepoController - openObjectsForFile - Unable to create the object for : " + f.getAbsolutePath());
+      }
+    }
+    return objects;
   }
 
   /**
