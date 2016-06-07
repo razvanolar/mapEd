@@ -35,7 +35,6 @@ import mapEditor.application.main_part.types.View;
 import mapEditor.application.repo.SystemParameters;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -102,7 +101,7 @@ public class ManageMapsController implements Controller, MapLayersListener, Sele
         MapDetail mapDetail = mapCanvas.getMapDetail();
         mapDetail.setSelected(true);
         layersController.loadLayers(mapDetail.getLayers());
-        mapCanvas.setDrawingTile(selectedTile);
+        mapCanvas.setDrawingEntity(selectedTile);
 
         // change view according to selected visibility state
         change2DVisibilityState(is2DVisibilitySelected, isGridVisibilitySelected, newItem);
@@ -514,11 +513,11 @@ public class ManageMapsController implements Controller, MapLayersListener, Sele
   }
 
   @Override
-  public void selectedTileChanged(AbstractDrawModel selectedTile) {
-    this.selectedTile = selectedTile;
+  public void selectedEntityChanged(AbstractDrawModel selectedEntity) {
+    this.selectedTile = selectedEntity;
     PrimaryMapView selectedMap = getSelectedMap();
     if (selectedMap != null)
-      selectedMap.setDrawingTile(selectedTile);
+      selectedMap.setDrawingEntity(selectedEntity);
   }
 
   @Override

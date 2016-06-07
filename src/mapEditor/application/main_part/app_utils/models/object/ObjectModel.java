@@ -22,6 +22,8 @@ public class ObjectModel extends AbstractDrawModel {
   private int rows;
   private int cols;
 
+  private boolean haveForegroundTiles;
+
   public ObjectModel(int rows, int cols) {
     super(DrawModelType.OBJECT);
     this.rows = rows;
@@ -34,6 +36,18 @@ public class ObjectModel extends AbstractDrawModel {
 
   public void setObjectTileModels(ObjectTileModel[][] objectTileModels) {
     this.objectTileModels = objectTileModels;
+    boolean value = false;
+    for (int i = 0; i < rows; i ++) {
+      for (int j = 0; j < cols; j ++) {
+        if (!objectTileModels[i][j].isSolid()) {
+          value = true;
+          break;
+        }
+      }
+      if (value)
+        break;
+    }
+    this.haveForegroundTiles = value;
   }
 
   public ImageModel getPreviewImageModel() {
@@ -84,6 +98,10 @@ public class ObjectModel extends AbstractDrawModel {
 
   public int getCols() {
     return cols;
+  }
+
+  public boolean isHaveForegroundTiles() {
+    return haveForegroundTiles;
   }
 
   private boolean isInBounds(int row, int col) {

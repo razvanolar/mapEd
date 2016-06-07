@@ -9,10 +9,13 @@ import mapEditor.MapEditorController;
 import mapEditor.application.main_part.app_utils.data_types.CustomMap;
 import mapEditor.application.main_part.app_utils.models.*;
 import mapEditor.application.main_part.app_utils.models.brush.BrushModel;
+import mapEditor.application.main_part.app_utils.models.object.ObjectModel;
+import mapEditor.application.main_part.app_utils.models.object.ObjectTileModel;
 import mapEditor.application.main_part.app_utils.views.dialogs.Dialog;
 import mapEditor.application.main_part.manage_maps.MapCanvas;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 
 /**
@@ -228,6 +231,35 @@ public class PrimaryMapView extends MapCanvas {
         // brush selected
         BrushModel brush = (BrushModel) selectedDrawModel;
         runBrushAlgorithm(cellX, cellY, brush);
+      } else if (selectedDrawModel.getDrawModelType() == AbstractDrawModel.DrawModelType.OBJECT && selectedDrawModel instanceof ObjectModel) {
+        // object selected
+
+        if (selectedLayer.getType() != LayerType.OBJECT) {
+          Dialog.showWarningDialog(null, "Please select an object type layer");
+          return;
+        }
+
+        List<LayerModel> layers = mapDetail.getLayers();
+        int index = layers.indexOf(selectedLayer);
+        if (index == -1) {
+          Dialog.showWarningDialog(null, "Index of the selected layer can't be found");
+          return;
+        }
+        LayerModel firstForegroundLayer = null;
+        for (int i = index + 1; i < layers.size(); i ++) {
+          LayerModel model = layers.get(i);
+          if (model != null && model.getType() == LayerType.FOREGROUND) {
+            firstForegroundLayer = model;
+            break;
+          }
+        }
+        if (firstForegroundLayer == null) {
+          Dialog.showWarningDialog(null, "The object is having foreground tiles defined. Please create a foreground layer to follow the current object layer.");
+          return;
+        }
+
+        ObjectModel objectModel = (ObjectModel) selectedDrawModel;
+        drawObjectModel(objectModel, firstForegroundLayer, cellY, cellX);
       }
     }
 
@@ -243,6 +275,27 @@ public class PrimaryMapView extends MapCanvas {
   private void runBrushAlgorithm(int cellX, int cellY, BrushModel brush) {
     tilesContainer.createTileMapForLayerIfNotExists(selectedLayer);
     mapUtil.run(cellX, cellY, brush, tilesContainer.getTilesForLayer(selectedLayer));
+    paint();
+  }
+
+  private void drawObjectModel(ObjectModel object, LayerModel foregroundLayer, int row, int col) {
+    int rows = object.getRows();
+    int cols = object.getCols();
+    int primaryCellY = object.getPrimaryTileY();
+    int primaryCellX = object.getPrimaryTileX();
+    int gridStartRow = row - primaryCellY;
+    int gridStartCol = col - primaryCellX;
+
+    ObjectTileModel[][] objectTileModels = object.getObjectTileModels();
+    for (int i = gridStartRow; i < gridStartRow + rows; i ++) {
+      for (int j = gridStartCol; j < gridStartCol + cols; j ++) {
+        ObjectTileModel tileModel = objectTileModels[i - gridStartRow][j - gridStartCol];
+        if (tileModel.isSolid())
+          tilesContainer.addTile(tileModel.getImage(), selectedLayer, i, j);
+        else
+          tilesContainer.addTile(tileModel.getImage(), foregroundLayer, i, j);
+      }
+    }
     paint();
   }
 

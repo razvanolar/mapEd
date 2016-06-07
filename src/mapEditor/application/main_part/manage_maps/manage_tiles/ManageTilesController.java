@@ -161,12 +161,12 @@ public class ManageTilesController implements Controller, SelectableTileListener
   private void onTabChanged(Tab oldTab, Tab newTab) {
     if (newTab == null) {
       selectedTileView = null;
-      listener.selectedTileChanged(null);
+      listener.selectedEntityChanged(null);
       return;
     }
 
     AbstractTabContainer tabContainer = (AbstractTabContainer) newTab.getUserData();
-    listener.selectedTileChanged(tabContainer.getSelectedDrawModel());
+    listener.selectedEntityChanged(tabContainer.getSelectedDrawModel());
     selectedTileView = tabContainer.getSelectedTileView();
   }
 
@@ -406,7 +406,7 @@ public class ManageTilesController implements Controller, SelectableTileListener
       selectedTileView = selectedView;
     }
 
-    listener.selectedTileChanged(selectedTileView != null ? selectedTileView.getImage() : null);
+    listener.selectedEntityChanged(selectedTileView != null ? selectedTileView.getImage() : null);
   }
 
   @Override
@@ -418,7 +418,7 @@ public class ManageTilesController implements Controller, SelectableTileListener
       selectedTileView = brushView;
     }
 
-    listener.selectedTileChanged(selectedTileView != null ? brushView.getBrushModel() : null);
+    listener.selectedEntityChanged(selectedTileView != null ? brushView.getBrushModel() : null);
   }
 
   @Override
@@ -430,6 +430,6 @@ public class ManageTilesController implements Controller, SelectableTileListener
       selectedTileView = objectView;
     }
 
-    listener.selectedTileChanged(selectedTileView != null ? objectView.getObejectModel() : null);
+    listener.selectedEntityChanged(selectedTileView != null ? objectView.getObejectModel() : null);
   }
 }

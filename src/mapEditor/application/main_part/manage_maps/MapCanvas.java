@@ -9,6 +9,7 @@ import mapEditor.MapEditorController;
 import mapEditor.application.main_part.app_utils.AppParameters;
 import mapEditor.application.main_part.app_utils.data_types.CustomMap;
 import mapEditor.application.main_part.app_utils.models.*;
+import mapEditor.application.main_part.app_utils.models.object.ObjectModel;
 
 /**
  *
@@ -380,6 +381,27 @@ public class MapCanvas extends Canvas {
         g.strokeRect(x + 0.5, y + CELL_HEIGHT + 0.5, CELL_WIDTH, CELL_HEIGHT);
       if (checkMatrixBorders(row + 1, col + 1))
         g.strokeRect(x + CELL_WIDTH + 0.5, y + CELL_HEIGHT + 0.5, CELL_WIDTH, CELL_HEIGHT);
+    } else if (selectedDrawModel.getDrawModelType() == AbstractDrawModel.DrawModelType.OBJECT &&
+            selectedDrawModel instanceof ObjectModel) {
+      ObjectModel objectModel = (ObjectModel) selectedDrawModel;
+      int rows = objectModel.getRows();
+      int cols = objectModel.getCols();
+      int selectedRow = y / CELL_HEIGHT;
+      int selectedCol = x / CELL_WIDTH;
+      int primaryX = objectModel.getPrimaryTileX();
+      int primaryY = objectModel.getPrimaryTileY();
+
+      int offsetY = y % CELL_HEIGHT;
+      int offsetX = x % CELL_WIDTH;
+
+      int gridStartRow = selectedRow - primaryY;
+      int gridStartCol = selectedCol - primaryX;
+      for (int row = gridStartRow; row < gridStartRow + rows; row ++) {
+        for (int col = gridStartCol; col < gridStartCol + cols; col ++) {
+          if (checkMatrixBorders(row, col))
+            g.strokeRect(col * CELL_WIDTH + .5 + offsetX, row * CELL_HEIGHT + .5 + offsetY, CELL_WIDTH, CELL_HEIGHT);
+        }
+      }
     }
   }
 
@@ -535,7 +557,7 @@ public class MapCanvas extends Canvas {
     mapDetail.setMapTilesInfo(tilesContainer.getMapInfo(mapDetail.getLayers()));
   }
 
-  public void setDrawingTile(AbstractDrawModel drawModel) {
+  public void setDrawingEntity(AbstractDrawModel drawModel) {
     selectedDrawModel = drawModel;
   }
 

@@ -8,5 +8,5 @@ import mapEditor.application.main_part.app_utils.models.AbstractDrawModel;
  */
 public interface SelectedTileListener {
 
-  void selectedTileChanged(AbstractDrawModel selectedTile);
+  void selectedEntityChanged(AbstractDrawModel selectedTile);
 }
