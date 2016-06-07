@@ -91,6 +91,12 @@ public class ProjectSAXHandler extends DefaultHandler {
         if (brush.exists())
           drawModels.add(brush);
         break;
+      case "object":
+        String objectRelativeDir = attributes.getValue("path");
+        File object = new File(projectDirPath + objectRelativeDir);
+        if (object.exists())
+          drawModels.add(object);
+        break;
     }
   }
 

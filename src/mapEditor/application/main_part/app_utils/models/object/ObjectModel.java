@@ -100,6 +100,10 @@ public class ObjectModel extends AbstractDrawModel {
     return cols;
   }
 
+  public String getPath() {
+    return file.getAbsolutePath();
+  }
+
   public boolean isHaveForegroundTiles() {
     return haveForegroundTiles;
   }

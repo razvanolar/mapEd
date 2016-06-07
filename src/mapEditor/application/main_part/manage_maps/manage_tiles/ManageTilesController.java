@@ -74,6 +74,8 @@ public class ManageTilesController implements Controller, SelectableTileListener
           addTilesTabForFiles(key.getName(), drawModels);
         else if (key.getType() == TabType.BRUSHES)
           addBrushTabForBrushFiles(key.getName(), drawModels);
+        else if (key.getType() == TabType.OBJECTS)
+          addObjectTabForObjectFiles(key.getName(), drawModels);
       }
     }
     addListeners();
@@ -110,6 +112,10 @@ public class ManageTilesController implements Controller, SelectableTileListener
                 BrushesTabContainer brushTab = (BrushesTabContainer) abstractTab;
                 for (BrushModel brush : brushTab.getBrushModels())
                   currentProject.addTileForTileTabKey(brushTab.getKey(), brush.getFile());
+              } else if (abstractTab.getTabType() == TabType.OBJECTS && abstractTab instanceof ObjectsTabContainer) {
+                ObjectsTabContainer objectTab = (ObjectsTabContainer) abstractTab;
+                for (ObjectModel object : objectTab.getObjectModels())
+                  currentProject.addTileForTileTabKey(objectTab.getKey(), object.getFile());
               }
             }
           }
@@ -137,8 +143,14 @@ public class ManageTilesController implements Controller, SelectableTileListener
         Tab selectedTab = view.getTabPane().getSelectionModel().getSelectedItem();
         if (isValidTab(selectedTab)) {
           AbstractTabContainer abstractTab = (AbstractTabContainer) selectedTab.getUserData();
-          if (abstractTab.getTabType() == TabType.BRUSHES && abstractTab instanceof BrushesTabContainer) {
+          if (abstractTab.getTabType() == TabType.TILES && abstractTab instanceof TilesTabContainer) {
+            addTileFileToExistingTab((TilesTabContainer) abstractTab, dragboard.getFiles());
+            success = true;
+          } else if (abstractTab.getTabType() == TabType.BRUSHES && abstractTab instanceof BrushesTabContainer) {
             addBrushFileToExistingTab((BrushesTabContainer) abstractTab, dragboard.getFiles());
+            success = true;
+          } else if (abstractTab.getTabType() == TabType.OBJECTS && abstractTab instanceof ObjectsTabContainer) {
+            addObjectFileToExistingTab((ObjectsTabContainer) abstractTab, dragboard.getFiles());
             success = true;
           }
         }
@@ -181,14 +193,18 @@ public class ManageTilesController implements Controller, SelectableTileListener
     if (StringValidator.isNullOrEmpty(title) || imageFiles == null || imageFiles.isEmpty())
       return;
 
+    List<ImageModel> images = loadImageModelListForFiles(imageFiles);
+    addTilesTabForModels(title, images);
+  }
+
+  private List<ImageModel> loadImageModelListForFiles(List<File> imageFiles) {
     List<ImageModel> images = new ArrayList<>();
     imageFiles.stream().filter(file -> FileExtensionUtil.isImageFile(file.getName())).forEach(file -> {
       ImageModel image = ImageProvider.getImageModel(file);
       if (image != null)
         images.add(image);
     });
-
-    addTilesTabForModels(title, images);
+    return images;
   }
 
   /**
@@ -231,12 +247,49 @@ public class ManageTilesController implements Controller, SelectableTileListener
    * @param brushFiles
    * Brush files list.
    */
-  public void addBrushTabForBrushFiles(String title, List<File> brushFiles) {
+  private void addBrushTabForBrushFiles(String title, List<File> brushFiles) {
     try {
       List<BrushModel> brushes = loadBrushModelListForFiles(brushFiles);
       addBrushTabFromXMLModels(title, brushes);
     } catch (Exception ex) {
       Dialog.showWarningDialog(null, "ManageTilesController error occurred. Error message: " + ex.getMessage());
+    }
+  }
+
+  private void addObjectTabForObjectFiles(String title, List<File> objectFiles) {
+    try {
+      List<ObjectModel> objects = loadObjectModelListForFiles(objectFiles);
+      addObjectTabFromXMLModels(title, objects);
+    } catch (Exception ex) {
+      Dialog.showWarningDialog(null, "ManageTilesController error occurred. Error message: " + ex.getMessage());
+    }
+  }
+
+  private  void addTileFileToExistingTab(TilesTabContainer tilesTabContainer, List<File> tileFiles) {
+    if (tilesTabContainer == null || tileFiles == null || tileFiles.isEmpty())
+      return;
+    try {
+      List<ImageModel> imageModels = tilesTabContainer.getTileModels();
+
+      //remove the tiles that are already loaded
+      Iterator<File> iterator = tileFiles.iterator();
+      while (iterator.hasNext()) {
+        File file = iterator.next();
+        for (ImageModel imageModel : imageModels) {
+          if (file.getAbsolutePath().equalsIgnoreCase(imageModel.getPath()))
+            iterator.remove();
+        }
+      }
+
+      ProjectModel currentProject = AppParameters.CURRENT_PROJECT;
+
+      List<ImageModel> tiles = loadImageModelListForFiles(tileFiles);
+      for (ImageModel imageModel : tiles) {
+        tilesTabContainer.addTile(new SelectableTileView(imageModel, true, this));
+        currentProject.addTileForTileTabKey(tilesTabContainer.getKey(), imageModel.getFile());
+      }
+    } catch (Exception ex) {
+      Dialog.showWarningDialog(null, "ManageTilesController - Unable to add the specified tile files into the current tab. Error message: " + ex.getMessage());
     }
   }
 
@@ -273,10 +326,44 @@ public class ManageTilesController implements Controller, SelectableTileListener
     }
   }
 
+  private void addObjectFileToExistingTab(ObjectsTabContainer objectsTabContainer, List<File> objectFiles) {
+    if (objectsTabContainer == null || objectFiles == null || objectFiles.isEmpty())
+      return;
+    try {
+      List<ObjectModel> objectModels = objectsTabContainer.getObjectModels();
+
+      // remove the objects that are already loaded
+      Iterator<File> iterator = objectFiles.iterator();
+      while (iterator.hasNext()) {
+        File file = iterator.next();
+        for (ObjectModel objectModel : objectModels) {
+          if (file.getAbsolutePath().equalsIgnoreCase(objectModel.getPath()))
+            iterator.remove();
+        }
+      }
+
+      ProjectModel currentProject = AppParameters.CURRENT_PROJECT;
+
+      List<ObjectModel> objects = loadObjectModelListForFiles(objectFiles);
+      for (ObjectModel objectModel : objects) {
+        objectsTabContainer.addTile(new SelectableObjectView(objectModel, true, this));
+        currentProject.addTileForTileTabKey(objectsTabContainer.getKey(), objectModel.getFile());
+      }
+    } catch (Exception ex) {
+      Dialog.showWarningDialog(null, "ManageTilesController - Unable to add the specified object files into the current tab. Error message: " + ex.getMessage());
+    }
+  }
+
   public List<BrushModel> loadBrushModelListForFiles(List<File> brushFiles) throws Exception {
     List<BrushModel> brushModels = MapEditorController.getInstance().getRepoController().openBrushesForFiles(brushFiles, null);
     loadTilesForBrushModels(brushModels);
     return brushModels;
+  }
+
+  public List<ObjectModel> loadObjectModelListForFiles(List<File> objectFiles) throws Exception {
+    List<ObjectModel> objectModels = MapEditorController.getInstance().getRepoController().openObjectsForFiles(objectFiles, null);
+    loadTilesForObjectModels(objectModels);
+    return objectModels;
   }
 
   /**
@@ -384,6 +471,11 @@ public class ManageTilesController implements Controller, SelectableTileListener
     } else if (abstractTab.getTabType() == TabType.BRUSHES && abstractTab instanceof BrushesTabContainer) {
       for (File file : files) {
         if (!file.exists() || !FileExtensionUtil.isBrushFile(file.getName()))
+          return false;
+      }
+    } else if (abstractTab.getTabType() == TabType.OBJECTS && abstractTab instanceof ObjectsTabContainer) {
+      for (File file : files) {
+        if (!file.exists() || !FileExtensionUtil.isObjectFile(file.getName()))
           return false;
       }
     } else {

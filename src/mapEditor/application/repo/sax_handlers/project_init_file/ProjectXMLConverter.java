@@ -71,41 +71,31 @@ public class ProjectXMLConverter {
       builder.append("\n");
       for (TabKey key : tabs.keys()) {
         if (key.getType() == TabType.TILES)
-          convertTileTabs(builder, key.getName(), tabs.get(key), projectPath);
+          convertEntityTab(builder, key.getName(), key.getType(), "tile", tabs.get(key), projectPath);
+//          convertTileTabs(builder, key.getName(), tabs.get(key), projectPath);
         else if (key.getType() == TabType.BRUSHES)
-          convertBrushTabs(builder, key.getName(), tabs.get(key), projectPath);
+          convertEntityTab(builder, key.getName(), key.getType(), "brush", tabs.get(key), projectPath);
+//          convertBrushTabs(builder, key.getName(), tabs.get(key), projectPath);
+        else if (key.getType() == TabType.OBJECTS)
+          convertEntityTab(builder, key.getName(), key.getType(), "object", tabs.get(key), projectPath);
       }
       builder.append("\t</tabs>\n");
     } else
       builder.append("</tabs>\n");
   }
 
-  private void convertTileTabs(StringBuilder builder, String tabName, List<File> tiles, String projectPath) {
-    if (tiles == null)
+  private void convertEntityTab(StringBuilder builder, String tabName, TabType tabType, String entityTag, List<File> entities, String projectPath) {
+    if (entities == null)
       return;
-    builder.append("\t\t<tab name=\"").append(tabName).append("\" type=\"").append(TabType.TILES.name()).append("\" ");
-    if (tiles.isEmpty()) {
+    builder.append("\t\t<tab name=\"").append(tabName).append("\" type=\"").append(tabType.name()).append("\" ");
+    if (entities.isEmpty()) {
       builder.append("/>\n");
       return;
     }
     builder.append(">\n");
-    for (File tile : tiles) {
-      builder.append("\t\t\t<tile path=\"").append(tile.getAbsolutePath().replace(projectPath, "")).append("\" />\n");
-    }
-    builder.append("\t\t</tab>\n");
-  }
-
-  private void convertBrushTabs(StringBuilder builder, String tabName, List<File> brushes, String projectPath) {
-    if (brushes == null)
-      return;
-    builder.append("\t\t<tab name=\"").append(tabName).append("\" type=\"").append(TabType.BRUSHES.name()).append("\" ");
-    if (brushes.isEmpty()) {
-      builder.append("/>\n");
-      return;
-    }
-    builder.append(">\n");
-    for (File brush : brushes) {
-      builder.append("\t\t\t<brush path=\"").append(brush.getAbsolutePath().replace(projectPath, "")).append("\" />\n");
+    for (File file : entities) {
+      builder.append("\t\t\t<").append(entityTag).append(" path=\"").append(file.getAbsolutePath().replace(projectPath, "")).
+              append("\" />\n");
     }
     builder.append("\t\t</tab>\n");
   }
