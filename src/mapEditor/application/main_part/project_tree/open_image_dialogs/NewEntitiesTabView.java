@@ -11,12 +11,12 @@ import javafx.scene.text.Text;
  *
  * Created by razvanolar on 01.03.2016.
  */
-public class NewTilesTabView implements NewTilesTabController.INewTilesTabView {
+public class NewEntitiesTabView implements NewEntitiesTabController.INewEntitiesTabView {
 
   private GridPane mainContainer;
   private TextField nameTextField;
 
-  public NewTilesTabView() {
+  public NewEntitiesTabView() {
     initGUI();
   }
 

@@ -3,6 +3,7 @@ package mapEditor.application.main_part.manage_images.manage_tile_sets;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.ListChangeListener;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Modality;
@@ -16,17 +17,20 @@ import mapEditor.application.main_part.app_utils.models.ImageModel;
 import mapEditor.application.main_part.app_utils.models.KnownFileExtensions;
 import mapEditor.application.main_part.app_utils.models.MessageType;
 import mapEditor.application.main_part.app_utils.models.brush.LWBrushModel;
+import mapEditor.application.main_part.app_utils.models.character.CharacterModel;
 import mapEditor.application.main_part.app_utils.models.object.ObjectModel;
 import mapEditor.application.main_part.app_utils.views.canvas.ImageCanvas;
 import mapEditor.application.main_part.app_utils.views.TabImageLoadView;
 import mapEditor.application.main_part.app_utils.views.dialogs.Dialog;
 import mapEditor.application.main_part.app_utils.views.dialogs.OkCancelDialog;
 import mapEditor.application.main_part.app_utils.views.others.SystemFilesView;
-import mapEditor.application.main_part.manage_images.manage_tile_sets.characters_player_view.CharactersPlayerController;
+import mapEditor.application.main_part.manage_images.manage_tile_sets.characters_player_view.CharacterPlayerController;
 import mapEditor.application.main_part.manage_images.manage_tile_sets.characters_player_view.CharactersPlayerView;
 import mapEditor.application.main_part.manage_images.manage_tile_sets.configurations.ManageConfigurationController;
 import mapEditor.application.main_part.manage_images.manage_tile_sets.create_brush.CreateBrushController;
 import mapEditor.application.main_part.manage_images.manage_tile_sets.create_brush.CreateBrushView;
+import mapEditor.application.main_part.manage_images.manage_tile_sets.create_character.CreateCharacterController;
+import mapEditor.application.main_part.manage_images.manage_tile_sets.create_character.CreateCharacterView;
 import mapEditor.application.main_part.manage_images.manage_tile_sets.create_object.CreateObjectController;
 import mapEditor.application.main_part.manage_images.manage_tile_sets.create_object.CreateObjectView;
 import mapEditor.application.main_part.manage_images.manage_tile_sets.cropped_tiles.detailed_view.CroppedTilesDetailedController;
@@ -74,6 +78,7 @@ public class ManageTileSetsController implements Controller, ManageImagesListene
     Button getPlayCharactersButton();
     Button getBrushButton();
     Button getObjectButton();
+    Button getCharacterButton();
     Button getSaveCroppedTilesButton();
     Button getSettingsButton();
     Button getCropSelectionButton();
@@ -197,8 +202,8 @@ public class ManageTileSetsController implements Controller, ManageImagesListene
           return null;
 
         OkCancelDialog dialog = new OkCancelDialog("Test Characters", StageStyle.UTILITY, Modality.APPLICATION_MODAL, true);
-        final CharactersPlayerController.ICharacterPlayerView[] characterPlayerView = {new CharactersPlayerView()};
-        final CharactersPlayerController[] charactersPlayerController = {new CharactersPlayerController(characterPlayerView[0],
+        final CharacterPlayerController.ICharacterPlayerView[] characterPlayerView = {new CharactersPlayerView()};
+        final CharacterPlayerController[] charactersPlayerController = {new CharacterPlayerController(characterPlayerView[0],
                 param, configurationController.getSquareStrokeColor(), configurationController.getSquareFillColor(),
                 currentCanvas.getNumberOfSelectedColumns(), currentCanvas.getNumberOfSelectedRows(),
                 currentCanvas.getCellWidth(), currentCanvas.getCellHeight())};
@@ -218,6 +223,8 @@ public class ManageTileSetsController implements Controller, ManageImagesListene
     view.getBrushButton().setOnAction(event -> onBrushSelection());
 
     view.getObjectButton().setOnAction(event -> onObjectSelection());
+
+    view.getCharacterButton().setOnAction(event -> onCharacterSelection());
   }
 
   private void onBrushSelection() {
@@ -291,6 +298,54 @@ public class ManageTileSetsController implements Controller, ManageImagesListene
     });
 
     dialog.setContent(objectView.asNode());
+    dialog.show();
+  }
+
+  private void onCharacterSelection() {
+    if (currentCanvas == null || currentCanvas.getImage() == null)
+      return;
+
+    OkCancelDialog dialog = new OkCancelDialog("Create Object", StageStyle.UTILITY, Modality.APPLICATION_MODAL, true, 800, 600);
+    Image updatedImage = currentCanvas.getUpdatedImage();
+    CreateCharacterController.ICreateCharacterView characterView = new CreateCharacterView((int) updatedImage.getWidth(),
+            (int) updatedImage.getHeight());
+    CreateCharacterController characterController = new CreateCharacterController(characterView,
+            updatedImage,
+            dialog.getOkButton(),
+            dialog.getStage(),
+            configurationController.getSelectionWidth(),
+            configurationController.getSelectionHeight(),
+            configurationController.getSquareStrokeColor(),
+            configurationController.getSquareFillColor());
+    characterController.bind();
+
+    dialog.getOkButton().setOnAction(event -> {
+      if (!characterController.isValidSelection()) {
+        Dialog.showWarningDialog(null, "Fields are not correctly completed.", dialog.getStage());
+        return;
+      }
+
+      List<CharacterModel> characterModels = characterController.getCharacterModels();
+      if (characterModels == null || characterModels.isEmpty()) {
+        Dialog.showWarningDialog(null, "You have to create at least one character.", dialog.getStage());
+        return;
+      }
+
+      try {
+        SaveFilesStatus status = MapEditorController.getInstance().getRepoController().saveCharacterModels(characterModels, characterController.getSelectedPath());
+        dialog.close();
+        if (status != SaveFilesStatus.COMPLETE)
+          Dialog.showWarningDialog(null, status.getMessage(), dialog.getStage());
+        else
+          Dialog.showInformDialog(null, "All characters were saved successfully", dialog.getStage());
+      } catch (Exception ex) {
+        dialog.close();
+        ex.printStackTrace();
+        Dialog.showErrorDialog("Error", "ManageTileSetsController - An error occurred while saving the characters");
+      }
+    });
+
+    dialog.setContent(characterView.asNode());
     dialog.show();
   }
 

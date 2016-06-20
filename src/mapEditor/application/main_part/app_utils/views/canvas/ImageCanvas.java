@@ -262,9 +262,9 @@ public class ImageCanvas extends Canvas implements StyleListener {
     return imageView.snapshot(snapshotParameters, null);
   }
 
-  public void cropSelectedMatrix(Callback<ImageMatrix, Void> callback) {
+  public ImageMatrix cropSelectedMatrix() {
     if (image == null)
-      return;
+      return null;
 
     int minCellX = squareCellX;
     int minCellY = squareCellY;
@@ -286,8 +286,8 @@ public class ImageCanvas extends Canvas implements StyleListener {
 
     Image[][] images = new Image[diffY + 1][diffX + 1];
     for (int i=0; i<=diffX; i++) {
-      for (int j=0; j<diffY; j++) {
-        Rectangle2D rectangle2D = new Rectangle2D(minCellX + i * CELL_WIDTH, minCellY + j * CELL_HEIGHT, CELL_WIDTH, CELL_HEIGHT);
+      for (int j=0; j<=diffY; j++) {
+        Rectangle2D rectangle2D = new Rectangle2D((minCellX + i) * CELL_WIDTH, (minCellY + j) * CELL_HEIGHT, CELL_WIDTH, CELL_HEIGHT);
         snapshotParameters.setViewport(rectangle2D);
         WritableImage snapshot = imageView.snapshot(snapshotParameters, null);
         images[j][i] = snapshot;
@@ -298,7 +298,11 @@ public class ImageCanvas extends Canvas implements StyleListener {
             (diffX + 1) * CELL_WIDTH,
             (diffY + 1) * CELL_HEIGHT));
     Image image = imageView.snapshot(snapshotParameters, null);
-    callback.call(new ImageMatrix(images, image));
+    return new ImageMatrix(images, image);
+  }
+
+  public void cropSelectedMatrix(Callback<ImageMatrix, Void> callback) {
+    callback.call(cropSelectedMatrix());
   }
 
   public Image cropCell(int x, int y) {
@@ -460,6 +464,24 @@ public class ImageCanvas extends Canvas implements StyleListener {
   }
 
   protected void mousePressed() {}
+
+  public int getSelecteRows() {
+    int diffY = 0;
+
+    if (completeSelectionCellY >=0 && completeSelectionCellY <= image.getHeight()) {
+      diffY = Math.abs(completeSelectionCellY - squareCellY);
+    }
+    return diffY + 1;
+  }
+
+  public int getSelectedCols() {
+    int diffX = 0;
+
+    if (completeSelectionCellX >= 0 && completeSelectionCellX <= image.getWidth()) {
+      diffX = Math.abs(completeSelectionCellX - squareCellX);
+    }
+    return diffX + 1;
+  }
 
   @Override
   public ColorAdjust getColorAdjust() {

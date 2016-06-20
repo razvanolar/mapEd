@@ -6,32 +6,28 @@ import javafx.scene.control.TabPane;
 import javafx.scene.control.ToolBar;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
+import mapEditor.application.main_part.manage_maps.utils.AbstractTabView;
 
 /**
  *
  * Created by razvanolar on 23.01.2016.
  */
-public class ManageTilesView implements ManageTilesController.IManageTilesView {
+public class ManageTilesView extends AbstractTabView implements ManageTilesController.IManageTilesView {
 
-  private BorderPane mainContainer;
-  private TabPane tabPane;
   private Button newTabButton;
   private Button addTilesButton;
 
   public ManageTilesView() {
+    super();
     initGUI();
   }
 
   private void initGUI() {
-    tabPane = new TabPane();
     addTilesButton = new Button("Load");
     newTabButton = new Button("New Tab");
-    mainContainer = new BorderPane();
 
-    ToolBar toolBar = new ToolBar();
     toolBar.getItems().addAll(newTabButton, addTilesButton);
 
-    mainContainer.setCenter(tabPane);
     mainContainer.setBottom(toolBar);
   }
 

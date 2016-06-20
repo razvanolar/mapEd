@@ -49,8 +49,14 @@ public class ProjectSAXHandler extends DefaultHandler {
       case "grid_visibility":
         project.setIsGridVisibilitySelected(Boolean.valueOf(attributes.getValue("value")));
         break;
+      case "delete_entity":
+        project.setDeleteEntity(Boolean.valueOf(attributes.getValue("value")));
+        break;
       case "fill_area":
         project.setFillArea(Boolean.valueOf(attributes.getValue("value")));
+        break;
+      case "tiles_tab":
+        project.setIsTilesTabsSelected(Boolean.valueOf(attributes.getValue("value")));
         break;
       case "show_grid":
         project.setShowGrid(Boolean.valueOf(attributes.getValue("value")));
@@ -96,6 +102,12 @@ public class ProjectSAXHandler extends DefaultHandler {
         File object = new File(projectDirPath + objectRelativeDir);
         if (object.exists())
           drawModels.add(object);
+        break;
+      case "character":
+        String characterRelativDir = attributes.getValue("path");
+        File character = new File(projectDirPath + characterRelativDir);
+        if (character.exists())
+          drawModels.add(character);
         break;
     }
   }

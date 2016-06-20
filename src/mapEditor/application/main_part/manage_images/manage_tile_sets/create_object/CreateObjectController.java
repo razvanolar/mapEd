@@ -208,6 +208,7 @@ public class CreateObjectController implements Controller, CreateEntityListener 
       objectViews.remove(selectableCreateObjectView);
       view.removeObjectView(selectableCreateObjectView.asNode());
     }
+    completeSelectionNode.setDisable(!isValidSelection());
   }
 
   @Override

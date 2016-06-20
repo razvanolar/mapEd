@@ -151,7 +151,7 @@ public class ManageConfigurationController implements Controller {
 
     view.getSelectionHeightSpinner().valueProperty().addListener((observable, oldValue, newValue) -> {
       if (stopSelectionHeightEvent) {
-        stopSelectionHeightEvent = true;
+        stopSelectionHeightEvent = false;
         return;
       }
       if (listener != null)
@@ -251,5 +251,13 @@ public class ManageConfigurationController implements Controller {
 
   public Color getSquareFillColor() {
     return view.getSelectionFillColorPicker().getValue();
+  }
+
+  public int getSelectionWidth() {
+    return view.getSelectionWidthSpinner().getValue();
+  }
+
+  public int getSelectionHeight() {
+    return view.getSelectionHeightSpinner().getValue();
   }
 }

@@ -24,7 +24,6 @@ import java.util.Queue;
  */
 public class PrimaryMapView extends MapCanvas {
 
-  public static boolean FILL_AREA;
   public static PrimaryMapUtil mapUtil = new PrimaryMapUtil();
 
   public PrimaryMapView(MapDetail mapDetail) {
@@ -199,15 +198,17 @@ public class PrimaryMapView extends MapCanvas {
   }
 
   private void drawImagesOnMouseActions(MouseEvent event) {
-    if (selectedLayer == null) {
-      Dialog.showWarningDialog(null, "Please select a layer");
-      return;
-    } else if (!selectedLayer.isChecked()) {
-      Dialog.showWarningDialog(null, "Selected layer is not checked");
-      return;
-    } else if (selectedDrawModel == null) {
-      Dialog.showWarningDialog(null, "Please select a tile");
-      return;
+    if (!DELETE_ENTITY) {
+      if (selectedLayer == null) {
+        Dialog.showWarningDialog(null, "Please select a layer");
+        return;
+      } else if (!selectedLayer.isChecked()) {
+        Dialog.showWarningDialog(null, "Selected layer is not checked");
+        return;
+      } else if (selectedDrawModel == null) {
+        Dialog.showWarningDialog(null, "Please select a tile");
+        return;
+      }
     }
 
     /** matrix cells coordinates */
@@ -222,7 +223,10 @@ public class PrimaryMapView extends MapCanvas {
 
     if (FILL_AREA && selectedDrawModel.getDrawModelType() == AbstractDrawModel.DrawModelType.TILE)
       fillArea(g, hoveredCellX, hoveredCellY, cellX, cellY);
-    else {
+    else if (DELETE_ENTITY) {
+      tilesContainer.addTile(null, selectedLayer, cellY, cellX);
+      paintAllCellTilesPerLayer(g, hoveredCellX, hoveredCellY, cellX, cellY);
+    } else {
       if (selectedDrawModel.getDrawModelType() == AbstractDrawModel.DrawModelType.TILE && selectedDrawModel instanceof ImageModel) {
         // single tile selected
         tilesContainer.addTile((ImageModel) selectedDrawModel, selectedLayer, cellY, cellX);

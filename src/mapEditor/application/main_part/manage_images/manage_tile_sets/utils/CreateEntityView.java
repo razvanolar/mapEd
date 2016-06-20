@@ -16,6 +16,7 @@ import mapEditor.application.main_part.types.View;
 public class CreateEntityView implements View {
 
   protected BorderPane mainContainer;
+  protected BorderPane leftPane;
   protected SplitPane splitPane;
   protected VBox fieldsContainer;
   protected Button addButton;
@@ -35,7 +36,8 @@ public class CreateEntityView implements View {
     pathTextField = new TextField();
     ToolBar toolBar = new ToolBar(addButton, new Separator(), new Text("Path : "), pathTextField, pathButton);
     fieldsContainer = new VBox(5);
-    splitPane = new SplitPane(fieldsContainer);
+    leftPane = new BorderPane(fieldsContainer);
+    splitPane = new SplitPane(leftPane);
     mainContainer = new BorderPane(splitPane);
 
     pathTextField.setMinWidth(300);

@@ -73,6 +73,10 @@ public class FileExtensionUtil {
     return !StringValidator.isNullOrEmpty(name) && getFileExtension(name) == KnownFileExtensions.OBJECT;
   }
 
+  public static boolean isCharacterFile(String name) {
+    return !StringValidator.isNullOrEmpty(name) && getFileExtension(name) == KnownFileExtensions.CHARACTER;
+  }
+
   public static boolean isTmxFile(String name) {
     return !StringValidator.isNullOrEmpty(name) && getFileExtension(name) == KnownFileExtensions.TMX;
   }

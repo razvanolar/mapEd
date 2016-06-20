@@ -25,6 +25,7 @@ public class MapEditorToolbarController implements Controller {
     Button getTmxFormatButton();
     ToggleButton getChange2DVisibility();
     ToggleButton getChangeGridVisibility();
+    ToggleButton getDeleteEntityButton();
     ToggleButton getFillAreaButton();
     ToggleButton getShowGridButton();
     ToggleButton getMapEditorViewButton();
@@ -36,11 +37,13 @@ public class MapEditorToolbarController implements Controller {
   public MapEditorToolbarController(IMapEditorToolbarView view,
                                     boolean is2DVisibilitySelected,
                                     boolean isGridVisibilitySelected,
+                                    boolean isDeleteEntity,
                                     boolean isFillArea,
                                     boolean isShowGridSelected) {
     this.view = view;
     this.view.getChange2DVisibility().setSelected(is2DVisibilitySelected);
     this.view.getChangeGridVisibility().setSelected(isGridVisibilitySelected);
+    this.view.getDeleteEntityButton().setSelected(isDeleteEntity);
     this.view.getFillAreaButton().setSelected(isFillArea);
     this.view.getShowGridButton().setSelected(isShowGridSelected);
   }
@@ -54,9 +57,7 @@ public class MapEditorToolbarController implements Controller {
     view.getNewMapButton().setOnAction(event -> onNewMapButtonSelection());
 
     // tmx format listener
-    view.getTmxFormatButton().setOnAction(event -> {
-      MapEditorController.getInstance().convertCurrentMapToTMX();
-    });
+    view.getTmxFormatButton().setOnAction(event -> MapEditorController.getInstance().convertCurrentMapToTMX());
 
     // visibility listener
     view.getChange2DVisibility().selectedProperty().addListener((observable, oldValue, newValue) -> {
@@ -66,20 +67,29 @@ public class MapEditorToolbarController implements Controller {
       MapEditorController.getInstance().changeVisibilityState(false, newValue);
     });
 
+    // delete listener
+    view.getDeleteEntityButton().selectedProperty().addListener((observable, oldValue, newValue) -> {
+      MapEditorController.getInstance().setDeleteEntityValue(newValue);
+      if (newValue)
+        view.getFillAreaButton().setSelected(false);
+    });
+
     // fill area listener
     view.getFillAreaButton().selectedProperty().addListener((observable, oldValue, newValue) -> {
       MapEditorController.getInstance().setFillAreaValue(newValue);
+      if (newValue)
+        view.getDeleteEntityButton().setSelected(false);
     });
 
     // show grid listener
-    view.getShowGridButton().selectedProperty().addListener((observable1, oldValue1, newValue1) -> {
-      MapEditorController.getInstance().showMapGrid(newValue1);
+    view.getShowGridButton().selectedProperty().addListener((observable, oldValue, newValue) -> {
+      MapEditorController.getInstance().showMapGrid(newValue);
     });
 
     // editors listeners
     ChangeListener<Boolean> editorsChangeListener = (observable, oldValue, newValue) -> {
       if (newValue)
-        MapEditorController.getInstance().changeView();
+        MapEditorController.getInstance().changeMainView();
     };
     view.getMapEditorViewButton().selectedProperty().addListener(editorsChangeListener);
     view.getImageEditorViewButton().selectedProperty().addListener(editorsChangeListener);

@@ -20,8 +20,9 @@ import mapEditor.application.main_part.manage_maps.ManageMapsController;
 import mapEditor.application.main_part.manage_maps.ManageMapsView;
 import mapEditor.application.main_part.main_app_toolbars.main_toolbar.MapEditorToolbarController;
 import mapEditor.application.main_part.main_app_toolbars.main_toolbar.MapEditorToolbarView;
+import mapEditor.application.main_part.manage_maps.MapCanvas;
+import mapEditor.application.main_part.manage_maps.manage_characters.ManageCharactersController;
 import mapEditor.application.main_part.manage_maps.manage_tiles.ManageTilesController;
-import mapEditor.application.main_part.manage_maps.primary_map.PrimaryMapView;
 import mapEditor.application.main_part.menu_bar.MapEditorMenuBarController;
 import mapEditor.application.main_part.menu_bar.MapEditorMenuBarView;
 import mapEditor.application.main_part.project_tree.ProjectTreeController;
@@ -62,7 +63,8 @@ public class MapEditorController {
   }
 
   public void initPrimaryView() {
-    lastProjectTreeDividerPosition = AppParameters.CURRENT_PROJECT.getProjectTreeDividerPosition();
+    ProjectModel currentProject = AppParameters.CURRENT_PROJECT;
+    lastProjectTreeDividerPosition = currentProject.getProjectTreeDividerPosition();
     /* init menu bar */
     MapEditorMenuBarController.IMapEditorMenuBarView menuBarView = new MapEditorMenuBarView();
     MapEditorMenuBarController menuBarController = new MapEditorMenuBarController(menuBarView);
@@ -71,12 +73,14 @@ public class MapEditorController {
     /* init main toolbar */
     MapEditorToolbarController.IMapEditorToolbarView toolbarView = new MapEditorToolbarView();
     toolbarController = new MapEditorToolbarController(toolbarView,
-            AppParameters.CURRENT_PROJECT.is2DVisibilitySelected(),
-            AppParameters.CURRENT_PROJECT.isGridVisibilitySelected(),
-            AppParameters.CURRENT_PROJECT.isFillArea(),
-            AppParameters.CURRENT_PROJECT.isShowGrid());
+            currentProject.is2DVisibilitySelected(),
+            currentProject.isGridVisibilitySelected(),
+            currentProject.isDeleteEntity(),
+            currentProject.isFillArea(),
+            currentProject.isShowGrid());
     toolbarController.bind();
-    PrimaryMapView.FILL_AREA = AppParameters.CURRENT_PROJECT.isFillArea();
+    MapCanvas.FILL_AREA = currentProject.isFillArea();
+    MapCanvas.DELETE_ENTITY = currentProject.isDeleteEntity();
 
     /* init status bar */
     StatusBarController.IStatusBarView statusBarView = new StatusBarView();
@@ -87,14 +91,18 @@ public class MapEditorController {
 
     /* init left side toolbar : project toolbar */
     ProjectVerticalToolbarController.IProjectVerticalToolbarView projectVerticalToolbarView = new ProjectVerticalToolbarView();
-    projectVerticalToolbarController = new ProjectVerticalToolbarController(projectVerticalToolbarView, AppParameters.CURRENT_PROJECT.isShowProjectTree());
+    projectVerticalToolbarController = new ProjectVerticalToolbarController(projectVerticalToolbarView, currentProject.isShowProjectTree());
     projectVerticalToolbarController.bind();
     mainContainer.setLeft(projectVerticalToolbarView.asNode());
 
     // use it when construct the project tree view; now it's only for testing
-    setProjectTreeView(AppParameters.CURRENT_PROJECT.isShowProjectTree());
+    setProjectTreeView(currentProject.isShowProjectTree());
 
-    changeView();
+    changeMainView();
+    if (currentProject.isTilesTabsSelected())
+      changeToTilesView();
+    else
+      changeToCharactersView();
 
     addListeners();
   }
@@ -128,9 +136,14 @@ public class MapEditorController {
     manageMapsController.change2DVisibilityState(is2DVisibilitySelected, isGridVisibilitySelected, null);
   }
 
+  public void setDeleteEntityValue(boolean value) {
+    AppParameters.CURRENT_PROJECT.setDeleteEntity(value);
+    MapCanvas.DELETE_ENTITY = value;
+  }
+
   public void setFillAreaValue(boolean value) {
     AppParameters.CURRENT_PROJECT.setFillArea(value);
-    PrimaryMapView.FILL_AREA = value;
+    MapCanvas.FILL_AREA = value;
   }
 
   public void showMapGrid(boolean showMapGrid) {
@@ -142,7 +155,7 @@ public class MapEditorController {
    * Change primary content view. It is switching between map view and image view.
    * It is called when the view selection of the toolbar is changed.
    */
-  public void changeView() {
+  public void changeMainView() {
     if (toolbarController.isMapViewSelected())
       setMapView();
     else
@@ -306,6 +319,14 @@ public class MapEditorController {
     toolbarController.changeToImageEditorView();
   }
 
+  public void changeToTilesView() {
+    manageMapsController.switchTileView(true);
+  }
+
+  public void changeToCharactersView() {
+    manageMapsController.switchTileView(false);
+  }
+
   public void maskView() {
     mapEditorView.mask();
   }
@@ -366,5 +387,9 @@ public class MapEditorController {
 
   public ManageTilesController getManageTilesController() {
     return manageMapsController != null ? manageMapsController.getManageTilesController() : null;
+  }
+
+  public ManageCharactersController getManageCharactersController() {
+    return manageMapsController != null ? manageMapsController.getManageCharactersController() : null;
   }
 }

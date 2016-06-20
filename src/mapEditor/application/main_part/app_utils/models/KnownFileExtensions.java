@@ -16,6 +16,7 @@ public enum KnownFileExtensions {
   MAP(".map", "map"),
   BRUSH(".brush", "brush"),
   OBJECT(".object", "object"),
+  CHARACTER(".char", "char"),
   TMX(".tmx", "tmx");
 
 

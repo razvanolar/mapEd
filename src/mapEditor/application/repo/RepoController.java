@@ -11,6 +11,7 @@ import mapEditor.application.main_part.app_utils.models.KnownFileExtensions;
 import mapEditor.application.main_part.app_utils.models.LWMapModel;
 import mapEditor.application.main_part.app_utils.models.MapDetail;
 import mapEditor.application.main_part.app_utils.models.brush.LWBrushModel;
+import mapEditor.application.main_part.app_utils.models.character.CharacterModel;
 import mapEditor.application.main_part.app_utils.models.object.ObjectModel;
 import mapEditor.application.main_part.app_utils.models.object.ObjectTileModel;
 import mapEditor.application.repo.html_exporter.MapHtmlExporter;
@@ -20,6 +21,8 @@ import mapEditor.application.repo.models.ProjectModel;
 import mapEditor.application.repo.results.SaveImagesResult;
 import mapEditor.application.repo.sax_handlers.brush.BrushXMLConverter;
 import mapEditor.application.repo.sax_handlers.brush.BrushXMLHandler;
+import mapEditor.application.repo.sax_handlers.character.CharacterXMLConverter;
+import mapEditor.application.repo.sax_handlers.character.CharacterXMLHandler;
 import mapEditor.application.repo.sax_handlers.config.known_projects.KnownProjectsXMLConverter;
 import mapEditor.application.repo.sax_handlers.config.known_projects.KnownProjectsXMLHandler;
 import mapEditor.application.repo.sax_handlers.maps.MapXMLConverter;
@@ -753,6 +756,17 @@ public class RepoController {
       throw new Exception("Unable to save brush preview image");
   }
 
+  private void saveCharacterImages(List<ImageModel> images, String templateName, File directory) throws Exception {
+    if (images == null || images.isEmpty() || StringValidator.isNullOrEmpty(templateName) || directory == null || !directory.exists())
+      return;
+
+    for (int i = 0; i < images.size(); i ++) {
+      ImageModel imageModel = images.get(i);
+      if (saveImage(imageModel.getImage(), directory.getAbsolutePath(), templateName + i + KnownFileExtensions.PNG.getExtension(), true) == null)
+        throw new Exception("Unable to save character image");
+    }
+  }
+
   public SaveFilesStatus saveObjectModels(List<ObjectModel> models, String path) {
     if (path == null || path.isEmpty() || models == null || models.isEmpty())
       return SaveFilesStatus.NONE;
@@ -787,6 +801,43 @@ public class RepoController {
           }
         }
         writeContentToFile(converter.convertObjectToXML(object, objectDirectory), path + name);
+        count ++;
+      } catch (Exception ex) {
+        ex.printStackTrace();
+      }
+    }
+
+    return count == 0 ? SaveFilesStatus.NONE : count == models.size() ? SaveFilesStatus.COMPLETE : SaveFilesStatus.PARTIAL;
+  }
+
+  public SaveFilesStatus saveCharacterModels(List<CharacterModel> models, String path) {
+    if (path == null || path.isEmpty() || models == null || models.isEmpty())
+      return SaveFilesStatus.NONE;
+    path = path.endsWith("\\") ? path : path + "\\";
+    File file = new File(path);
+    if (!file.exists())
+      return SaveFilesStatus.NONE;
+
+    int count = 0;
+    CharacterXMLConverter converter = new CharacterXMLConverter();
+    for (CharacterModel character : models) {
+      try {
+        String name = getRepoUtil().checkCharacterNameOrGetANewOne(path, character.getName());
+        String characterDirectory = getRepoUtil().checkNameOrGetAnAlternativeOne(path, "_" + character.getName());
+        if (name == null || characterDirectory == null)
+          continue;
+        characterDirectory = characterDirectory.endsWith("\\") ? characterDirectory : characterDirectory + "\\";
+        File directory = new File(path + characterDirectory);
+        if (!directory.exists() && !directory.mkdirs()) {
+          System.out.println("*** RepoController - saveCharacterModels - Unable to create directory : " + path + characterDirectory);
+          continue;
+        }
+        String templateName = character.getName() + "_";
+        saveCharacterImages(character.getUpTiles(), templateName + "up_", directory);
+        saveCharacterImages(character.getDownTiles(), templateName + "down_", directory);
+        saveCharacterImages(character.getLeftTiles(), templateName + "left_", directory);
+        saveCharacterImages(character.getRightTiles(), templateName + "right_", directory);
+        writeContentToFile(converter.convertCharacterToXML(character, characterDirectory), path + name);
         count ++;
       } catch (Exception ex) {
         ex.printStackTrace();
@@ -884,6 +935,44 @@ public class RepoController {
       }
     }
     return objects;
+  }
+
+  public List<CharacterModel> openCharactersUnderDir(File file, CharacterXMLHandler handler) throws Exception {
+    if (file == null || !file.isDirectory())
+      throw new Exception("The specified file is not a directory");
+    if (handler == null)
+      handler = new CharacterXMLHandler();
+
+    File[] files = file.listFiles();
+    if (files == null)
+      throw new Exception("Unable to determine the files under " + file.getName());
+    List<File> fileList = new ArrayList<>();
+    Collections.addAll(fileList, files);
+    return openCharactersForFiles(fileList, handler);
+  }
+
+  public List<CharacterModel> openCharactersForFiles(List<File> files, CharacterXMLHandler handler) throws Exception {
+    if (files == null)
+      throw new Exception("The specified files list is null");
+    if (handler == null)
+      handler = new CharacterXMLHandler();
+
+    List<CharacterModel> characters = new ArrayList<>();
+    for (File f : files) {
+      if (f.isDirectory() || !FileExtensionUtil.isCharacterFile(f.getName()))
+        continue;
+      try {
+        String content = readContentFromFile(f);
+        handler.parse(content, f.getParentFile().getAbsolutePath());
+        CharacterModel character = handler.getCharacterModel();
+        character.setName(f.getName());
+        character.setFile(f);
+        characters.add(character);
+      } catch (Exception ex) {
+        System.out.println("*** RepoController - openCharactersForFiles - Unable to create the charater for : " + f.getAbsolutePath());
+      }
+    }
+    return characters;
   }
 
   /**

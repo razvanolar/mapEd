@@ -2,7 +2,7 @@ package mapEditor.application.main_part.manage_maps.utils;
 
 import mapEditor.application.main_part.app_utils.AppParameters;
 import mapEditor.application.main_part.app_utils.models.object.ObjectModel;
-import mapEditor.application.main_part.manage_maps.utils.listeners.SelectableTileListener;
+import mapEditor.application.main_part.manage_maps.utils.listeners.SelectableEntityListener;
 
 /**
  *
@@ -10,11 +10,11 @@ import mapEditor.application.main_part.manage_maps.utils.listeners.SelectableTil
  */
 public class SelectableObjectView extends SelectableTileView {
 
-  private ObjectModel obeject;
+  private ObjectModel object;
 
-  public SelectableObjectView(ObjectModel obeject, boolean isDetailed, SelectableTileListener listener) {
-    super(obeject.getPrimaryTile().getImage(), isDetailed, listener, obeject.getName());
-    this.obeject = obeject;
+  public SelectableObjectView(ObjectModel object, boolean isDetailed, SelectableEntityListener listener) {
+    super(object.getPrimaryTile().getImage(), isDetailed, listener, object.getName());
+    this.object = object;
   }
 
   @Override
@@ -25,7 +25,7 @@ public class SelectableObjectView extends SelectableTileView {
     listener.selectedObjectChanged(this);
   }
 
-  public ObjectModel getObejectModel() {
-    return obeject;
+  public ObjectModel getObjectModel() {
+    return object;
   }
 }

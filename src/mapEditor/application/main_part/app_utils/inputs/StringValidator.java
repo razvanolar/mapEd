@@ -59,4 +59,16 @@ public class StringValidator {
   public static boolean isValidObjectsPath(String path) {
     return !isNullOrEmpty(path) && path.contains(AppParameters.CURRENT_PROJECT.getObjectsFile().getAbsolutePath());
   }
+
+  /**
+   * Checks to see if the provided path is a valid character path.
+   * A valid characters path is the project characters directory and any of its sub-directories.
+   * So, the path parameter must contain the project characters path to be valid.
+   * @param path
+   * directory path
+   * @return true if its a valid characters path; false otherwise
+   */
+  public static boolean isValidCharacterPath(String path) {
+    return !isNullOrEmpty(path) && path.contains(AppParameters.CURRENT_PROJECT.getCharactersFile().getAbsolutePath());
+  }
 }

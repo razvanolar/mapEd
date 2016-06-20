@@ -20,7 +20,7 @@ public class ProjectTreeContextMenuView implements ProjectTreeContextMenuControl
   private MenuItem newTilesMenuItem;
   private MenuItem newMapMenuItem;
   private MenuItem openMapMenuItem;
-  private Menu openTilesMenu;
+  private Menu openEntitiesMenu;
   private MenuItem openEntityInNewTabMenuItem;
   private MenuItem openTilesInExistingTabMenuItem;
   private MenuItem openTilesInImageEditor;
@@ -43,7 +43,7 @@ public class ProjectTreeContextMenuView implements ProjectTreeContextMenuControl
     newTilesMenuItem = new MenuItem("Tiles");
     newMapMenuItem = new MenuItem("Map");
     openMapMenuItem = new MenuItem("Open Map");
-    openTilesMenu = new Menu("Open Tiles");
+    openEntitiesMenu = new Menu("Open Tiles");
     openEntityInNewTabMenuItem = new MenuItem("In New Tab");
     openTilesInExistingTabMenuItem = new MenuItem("In Existing Tab");
     openTilesInImageEditor = new MenuItem("In Image Editor");
@@ -61,14 +61,14 @@ public class ProjectTreeContextMenuView implements ProjectTreeContextMenuControl
             newTilesMenuItem,
             newMapMenuItem);
 
-    openTilesMenu.getItems().addAll(openEntityInNewTabMenuItem,
+    openEntitiesMenu.getItems().addAll(openEntityInNewTabMenuItem,
             openTilesInExistingTabMenuItem,
             openTilesInImageEditor);
 
     contextMenu.getItems().addAll(newMenu,
             new SeparatorMenuItem(),
             openMapMenuItem,
-            openTilesMenu,
+            openEntitiesMenu,
             openInImageEditorMenuItem,
             useForDrawingMenuItem,
             new SeparatorMenuItem(),
@@ -88,27 +88,27 @@ public class ProjectTreeContextMenuView implements ProjectTreeContextMenuControl
       return;
     }
     enableAllItems(true);
-    openTilesMenu.setDisable(true);
+    openEntitiesMenu.setDisable(true);
     exportToHtmlMenuItem.setDisable(true);
     switch (treeItemType) {
       case NORMAL:
         newMenu.setDisable(true);
         clearMenuItem.setDisable(true);
         openMapMenuItem.setDisable(true);
-        openTilesMenu.setDisable(true);
+        openEntitiesMenu.setDisable(true);
         openInImageEditorMenuItem.setDisable(true);
         useForDrawingMenuItem.setDisable(true);
         break;
       case IMAGE:
         openMapMenuItem.setDisable(true);
-        openTilesMenu.setDisable(true);
+        openEntitiesMenu.setDisable(true);
         newMenu.setDisable(true);
         clearMenuItem.setDisable(true);
         break;
       case MAP:
         newMenu.setDisable(true);
         clearMenuItem.setDisable(true);
-        openTilesMenu.setDisable(true);
+        openEntitiesMenu.setDisable(true);
         openInImageEditorMenuItem.setDisable(true);
         useForDrawingMenuItem.setDisable(true);
         exportToHtmlMenuItem.setDisable(false);
@@ -120,18 +120,19 @@ public class ProjectTreeContextMenuView implements ProjectTreeContextMenuControl
             newMapMenuItem.setDisable(true);
             break;
           case PROJECT_TILES_FOLDER:
-            openTilesMenu.setDisable(false);
-            openTilesMenu.setText("Open Tiles");
+            openEntitiesMenu.setDisable(false);
+            openEntitiesMenu.setText("Open Tiles");
             newTileSetsMenuItem.setDisable(true);
             newMapMenuItem.setDisable(true);
             break;
           case PROJECT_BRUSHES_FOLDER:
-            openTilesMenu.setText("Open Brushes");
+            openEntitiesMenu.setText("Open Brushes");
             break;
           case PROJECT_OBJECTS_FOLDER:
-            openTilesMenu.setText("Open Objects");
+            openEntitiesMenu.setText("Open Objects");
             break;
           case PROJECT_CHARACTERS_FOLDER:
+            openEntitiesMenu.setText("Open Characters");
             newTileSetsMenuItem.setDisable(true);
             newTilesMenuItem.setDisable(true);
             newMapMenuItem.setDisable(true);
@@ -158,8 +159,8 @@ public class ProjectTreeContextMenuView implements ProjectTreeContextMenuControl
         enableOpenMenuItems(false);
         break;
       case PROJECT_TILES_FOLDER:
-        openTilesMenu.setText("Open Tiles");
-        openTilesMenu.setDisable(false);
+        openEntitiesMenu.setText("Open Tiles");
+        openEntitiesMenu.setDisable(false);
         renameMenuItem.setDisable(true);
         deleteMenuItem.setDisable(true);
         newTileSetsMenuItem.setDisable(true);
@@ -167,8 +168,8 @@ public class ProjectTreeContextMenuView implements ProjectTreeContextMenuControl
         enableOpenMenuItems(false);
         break;
       case PROJECT_BRUSHES_FOLDER:
-        openTilesMenu.setText("Open Brushes");
-        openTilesMenu.setDisable(false);
+        openEntitiesMenu.setText("Open Brushes");
+        openEntitiesMenu.setDisable(false);
         renameMenuItem.setDisable(true);
         deleteMenuItem.setDisable(true);
         newTileSetsMenuItem.setDisable(true);
@@ -177,8 +178,8 @@ public class ProjectTreeContextMenuView implements ProjectTreeContextMenuControl
         enableOpenMenuItems(false);
         break;
       case PROJECT_OBJECTS_FOLDER:
-        openTilesMenu.setText("Open Objects");
-        openTilesMenu.setDisable(false);
+        openEntitiesMenu.setText("Open Objects");
+        openEntitiesMenu.setDisable(false);
         renameMenuItem.setDisable(true);
         deleteMenuItem.setDisable(true);
         newTileSetsMenuItem.setDisable(true);
@@ -187,6 +188,8 @@ public class ProjectTreeContextMenuView implements ProjectTreeContextMenuControl
         enableOpenMenuItems(false);
         break;
       case PROJECT_CHARACTERS_FOLDER:
+        openEntitiesMenu.setText("Open Characters");
+        openEntitiesMenu.setDisable(false);
         renameMenuItem.setDisable(true);
         deleteMenuItem.setDisable(true);
         newTileSetsMenuItem.setDisable(true);

@@ -176,6 +176,7 @@ public class CreateBrushController implements Controller, CreateEntityListener {
       brushViews.remove(selectableCreateBrushView);
       view.removeBrushView(selectableCreateBrushView.asNode());
     }
+    completeSelectionNode.setDisable(!isValidSelection());
   }
 
   @Override

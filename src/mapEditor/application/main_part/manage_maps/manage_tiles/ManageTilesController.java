@@ -6,7 +6,6 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
-import javafx.scene.layout.Region;
 import mapEditor.MapEditorController;
 import mapEditor.application.main_part.app_utils.AppParameters;
 import mapEditor.application.main_part.app_utils.data_types.CustomMap;
@@ -25,14 +24,12 @@ import mapEditor.application.main_part.manage_maps.manage_tiles.tab_container_ty
 import mapEditor.application.main_part.manage_maps.manage_tiles.tab_container_types.BrushesTabContainer;
 import mapEditor.application.main_part.manage_maps.manage_tiles.tab_container_types.ObjectsTabContainer;
 import mapEditor.application.main_part.manage_maps.manage_tiles.tab_container_types.TilesTabContainer;
-import mapEditor.application.main_part.manage_maps.utils.SelectableBrushView;
-import mapEditor.application.main_part.manage_maps.utils.SelectableObjectView;
-import mapEditor.application.main_part.manage_maps.utils.listeners.SelectableTileListener;
-import mapEditor.application.main_part.manage_maps.utils.SelectableTileView;
-import mapEditor.application.main_part.manage_maps.utils.listeners.SelectedTileListener;
-import mapEditor.application.main_part.manage_maps.utils.TabType;
+import mapEditor.application.main_part.manage_maps.utils.*;
+import mapEditor.application.main_part.manage_maps.utils.listeners.SelectableEntityListener;
+import mapEditor.application.main_part.manage_maps.utils.listeners.SelectedEntityListener;
 import mapEditor.application.main_part.types.Controller;
 import mapEditor.application.main_part.app_utils.models.brush.BrushModel;
+import mapEditor.application.main_part.types.View;
 import mapEditor.application.repo.models.ProjectModel;
 
 import java.io.File;
@@ -44,21 +41,20 @@ import java.util.List;
  *
  * Created by razvanolar on 23.01.2016.
  */
-public class ManageTilesController implements Controller, SelectableTileListener {
+public class ManageTilesController implements Controller, SelectableEntityListener {
 
-  public interface IManageTilesView {
+  public interface IManageTilesView extends View {
     TabPane getTabPane();
     Button getNewTabButton();
     Button getAddTilesButton();
     void addTab(Tab tab);
-    Region asNode();
   }
 
   private IManageTilesView view;
   private SelectableTileView selectedTileView;
-  private SelectedTileListener listener;
+  private SelectedEntityListener listener;
 
-  public ManageTilesController(IManageTilesView view, SelectedTileListener listener) {
+  public ManageTilesController(IManageTilesView view, SelectedEntityListener listener) {
     this.view = view;
     this.listener = listener;
   }
@@ -68,7 +64,7 @@ public class ManageTilesController implements Controller, SelectableTileListener
     if (tabs != null && !tabs.isEmpty()) {
       for (TabKey key : tabs.keys()) {
         List<File> drawModels = tabs.get(key);
-        if (drawModels != null && drawModels.isEmpty())
+        if (drawModels == null || drawModels.isEmpty())
           continue;
         if (key.getType() == TabType.TILES)
           addTilesTabForFiles(key.getName(), drawModels);
@@ -89,8 +85,8 @@ public class ManageTilesController implements Controller, SelectableTileListener
     });
 
     view.getTabPane().getTabs().addListener((ListChangeListener<Tab>) c -> {
+      ProjectModel currentProject = AppParameters.CURRENT_PROJECT;
       while (c.next()) {
-        ProjectModel currentProject = AppParameters.CURRENT_PROJECT;
 
         List<? extends Tab> deleted = c.getRemoved();
         if (deleted != null && !deleted.isEmpty()) {
@@ -522,6 +518,11 @@ public class ManageTilesController implements Controller, SelectableTileListener
       selectedTileView = objectView;
     }
 
-    listener.selectedEntityChanged(selectedTileView != null ? objectView.getObejectModel() : null);
+    listener.selectedEntityChanged(selectedTileView != null ? objectView.getObjectModel() : null);
+  }
+
+  @Override
+  public void selectedCharacterChanged(SelectableCharacterView characterView) {
+    // do nothing
   }
 }

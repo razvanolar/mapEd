@@ -25,7 +25,7 @@ public class ObjectsTabContainer extends AbstractTabContainer {
       return objectModels;
     selectableTileViews.stream().filter(selectableTileView -> selectableTileView != null && selectableTileView instanceof SelectableObjectView).forEach(selectableTileView -> {
       SelectableObjectView selectableObjectView = (SelectableObjectView) selectableTileView;
-      objectModels.add(selectableObjectView.getObejectModel());
+      objectModels.add(selectableObjectView.getObjectModel());
     });
     return objectModels;
   }
@@ -35,6 +35,6 @@ public class ObjectsTabContainer extends AbstractTabContainer {
     SelectableTileView selectedTileView = getSelectedTileView();
     if (selectedTileView == null || !(selectedTileView instanceof SelectableObjectView))
       return null;
-    return ((SelectableObjectView) selectedTileView).getObejectModel();
+    return ((SelectableObjectView) selectedTileView).getObjectModel();
   }
 }

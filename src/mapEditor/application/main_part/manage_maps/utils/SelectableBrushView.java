@@ -1,7 +1,7 @@
 package mapEditor.application.main_part.manage_maps.utils;
 
 import mapEditor.application.main_part.app_utils.AppParameters;
-import mapEditor.application.main_part.manage_maps.utils.listeners.SelectableTileListener;
+import mapEditor.application.main_part.manage_maps.utils.listeners.SelectableEntityListener;
 import mapEditor.application.main_part.app_utils.models.brush.BrushModel;
 
 /**
@@ -12,7 +12,7 @@ public class SelectableBrushView extends SelectableTileView {
 
   private BrushModel brushModel;
 
-  public SelectableBrushView(BrushModel brushModel, boolean isDetailed, SelectableTileListener listener) {
+  public SelectableBrushView(BrushModel brushModel, boolean isDetailed, SelectableEntityListener listener) {
     super(brushModel.getPrimaryImageModel(), isDetailed, listener, brushModel.getName());
     this.brushModel = brushModel;
   }

@@ -10,7 +10,7 @@ import javafx.scene.layout.Region;
  *
  * Created by razvanolar on 28.03.2016.
  */
-public class CharactersPlayerView implements CharactersPlayerController.ICharacterPlayerView {
+public class CharactersPlayerView implements CharacterPlayerController.ICharacterPlayerView {
 
   private BorderPane mainContainer;
   private SplitPane splitPane;

@@ -38,7 +38,9 @@ public class ProjectModel {
 
   private boolean is2DVisibilitySelected;
   private boolean isGridVisibilitySelected;
+  private boolean deleteEntity;
   private boolean fillArea;
+  private boolean isTilesTabsSelected;
   private boolean showGrid = SystemParameters.DEFAULT_SHOW_GRID_VALUE;
   private boolean showProjectTree = SystemParameters.DEFAULT_SHOW_PROJECT_TREE_VALUE;
 
@@ -127,8 +129,16 @@ public class ProjectModel {
     return isGridVisibilitySelected;
   }
 
+  public boolean isDeleteEntity() {
+    return deleteEntity;
+  }
+
   public boolean isFillArea() {
     return fillArea;
+  }
+
+  public boolean isTilesTabsSelected() {
+    return isTilesTabsSelected;
   }
 
   public boolean isShowGrid() {
@@ -209,8 +219,16 @@ public class ProjectModel {
     this.isGridVisibilitySelected = isGridVisibilitySelected;
   }
 
+  public void setDeleteEntity(boolean deleteEntity) {
+    this.deleteEntity = deleteEntity;
+  }
+
   public void setFillArea(boolean fillArea) {
     this.fillArea = fillArea;
+  }
+
+  public void setIsTilesTabsSelected(boolean isTilesTabsSelected) {
+    this.isTilesTabsSelected = isTilesTabsSelected;
   }
 
   public void setShowGrid(boolean showGrid) {

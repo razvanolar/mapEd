@@ -1,13 +1,14 @@
 package mapEditor.application.main_part.manage_maps;
 
 import javafx.geometry.Orientation;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.SplitPane;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
+import javafx.scene.control.*;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
 import mapEditor.MapEditorController;
 import mapEditor.application.main_part.app_utils.constants.CssConstants;
+import mapEditor.application.main_part.app_utils.views.others.FillToolItem;
+import mapEditor.application.main_part.manage_maps.manage_characters.ManageCharactersController;
+import mapEditor.application.main_part.manage_maps.manage_characters.ManageCharactersView;
 import mapEditor.application.main_part.manage_maps.manage_layers.LayersController;
 import mapEditor.application.main_part.manage_maps.manage_layers.LayersView;
 import mapEditor.application.main_part.manage_maps.manage_tiles.ManageTilesController;
@@ -27,7 +28,11 @@ public class ManageMapsView implements ManageMapsController.IMangeMapsView {
   /* right */
   private TabPane layersAndMinimapTabPane;
   private LayersController.ILayersView layersView;
+  private ToggleButton tileSwitchButton;
+  private ToggleButton characterSwitchButton;
   private ManageTilesController.IManageTilesView manageTilesView;
+  private ManageCharactersController.IManageCharactersView manageCharactersView;
+  private BorderPane bottomContainer;
 
   public ManageMapsView() {
     initGUI();
@@ -38,10 +43,20 @@ public class ManageMapsView implements ManageMapsController.IMangeMapsView {
     layersView = new LayersView();
     layersAndMinimapTabPane = new TabPane(new Tab("Layers", layersView.asNode()));
     manageTilesView = new ManageTilesView();
+    manageCharactersView = new ManageCharactersView();
+    tileSwitchButton = new ToggleButton("Tiles");
+    characterSwitchButton = new ToggleButton("Characters");
+    ToolBar tilesAndCharactersToolbar = new ToolBar(new FillToolItem(), tileSwitchButton, characterSwitchButton);
+    bottomContainer = new BorderPane(manageTilesView.asNode());
 
-    SplitPane rightSplitPane = new SplitPane(layersAndMinimapTabPane, manageTilesView.asNode());
+    ToggleGroup group = new ToggleGroup();
+    group.getToggles().addAll(tileSwitchButton, characterSwitchButton);
+    tileSwitchButton.setSelected(true);
+    bottomContainer.setTop(tilesAndCharactersToolbar);
+
+    SplitPane rightSplitPane = new SplitPane(layersAndMinimapTabPane, bottomContainer);
     rightSplitPane.setOrientation(Orientation.VERTICAL);
-    rightSplitPane.setDividerPositions(0.5);
+    rightSplitPane.setDividerPositions(0.3);
 
     splitPane = new SplitPane(mapsTabPane, rightSplitPane);
     splitPane.setOrientation(Orientation.HORIZONTAL);
@@ -72,6 +87,14 @@ public class ManageMapsView implements ManageMapsController.IMangeMapsView {
     return scrollPane;
   }
 
+  public ToggleButton getTileSwitchButton() {
+    return tileSwitchButton;
+  }
+
+  public ToggleButton getCharacterSwitchButton() {
+    return characterSwitchButton;
+  }
+
   public TabPane getMapsTabPane() {
     return mapsTabPane;
   }
@@ -84,11 +107,20 @@ public class ManageMapsView implements ManageMapsController.IMangeMapsView {
     return manageTilesView;
   }
 
+  public ManageCharactersController.IManageCharactersView getManageCharactersView() {
+    return manageCharactersView;
+  }
+
   public double getDividerPosition() {
     double[] dividerPositions = splitPane.getDividerPositions();
     if (dividerPositions != null && dividerPositions.length > 0)
       return dividerPositions[0];
     return -1;
+  }
+
+  @Override
+  public void switchTileView(boolean isTileView) {
+    bottomContainer.setCenter(isTileView ? manageTilesView.asNode() : manageCharactersView.asNode());
   }
 
   public void setDividerPosition(double value) {

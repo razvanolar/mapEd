@@ -10,7 +10,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 import mapEditor.application.main_part.app_utils.AppParameters;
 import mapEditor.application.main_part.app_utils.models.ImageModel;
-import mapEditor.application.main_part.manage_maps.utils.listeners.SelectableTileListener;
+import mapEditor.application.main_part.manage_maps.utils.listeners.SelectableEntityListener;
 
 /**
  *
@@ -29,9 +29,9 @@ public class SelectableTileView extends StackPane {
   protected String name;
   protected boolean detailedView;
   protected boolean selected;
-  protected SelectableTileListener listener;
+  protected SelectableEntityListener listener;
 
-  public SelectableTileView(ImageModel image, boolean detailedView, SelectableTileListener listener) {
+  public SelectableTileView(ImageModel image, boolean detailedView, SelectableEntityListener listener) {
     this.image = image;
     this.name = image.getName();
     this.detailedView = detailedView;
@@ -44,7 +44,7 @@ public class SelectableTileView extends StackPane {
     this.setOnMousePressed(getOnMousePressedListener());
   }
 
-  public SelectableTileView(ImageModel image, boolean detailedView, SelectableTileListener listener, String name) {
+  public SelectableTileView(ImageModel image, boolean detailedView, SelectableEntityListener listener, String name) {
     this(image, detailedView, listener);
     this.name = name;
     setContentBasedOnViewType();

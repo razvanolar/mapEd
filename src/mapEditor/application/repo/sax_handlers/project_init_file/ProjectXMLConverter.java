@@ -30,7 +30,9 @@ public class ProjectXMLConverter {
 
     builder.append("\t<hex_counter value=\"").append(project.getHexValue()).append("\" />\n");
     builder.append("\t<light_visibility value=\"").append(project.is2DVisibilitySelected()).append("\" />\n");
+    builder.append("\t<delete_entity value=\"").append(project.isDeleteEntity()).append("\" />\n");
     builder.append("\t<fill_area value=\"").append(project.isFillArea()).append("\" />\n");
+    builder.append("\t<tiles_tab value=\"").append(project.isTilesTabsSelected()).append("\" />\n");
     builder.append("\t<grid_visibility value=\"").append(project.isGridVisibilitySelected()).append("\" />\n");
     builder.append("\t<show_grid value=\"").append(project.isShowGrid()).append("\" />\n");
 //    builder.append("\t<show_project_tree value=\"").append(project.isShowProjectTree()).append("\" />\n\n");
@@ -72,12 +74,12 @@ public class ProjectXMLConverter {
       for (TabKey key : tabs.keys()) {
         if (key.getType() == TabType.TILES)
           convertEntityTab(builder, key.getName(), key.getType(), "tile", tabs.get(key), projectPath);
-//          convertTileTabs(builder, key.getName(), tabs.get(key), projectPath);
         else if (key.getType() == TabType.BRUSHES)
           convertEntityTab(builder, key.getName(), key.getType(), "brush", tabs.get(key), projectPath);
-//          convertBrushTabs(builder, key.getName(), tabs.get(key), projectPath);
         else if (key.getType() == TabType.OBJECTS)
           convertEntityTab(builder, key.getName(), key.getType(), "object", tabs.get(key), projectPath);
+        else if (key.getType() == TabType.CHARACTERS)
+          convertEntityTab(builder, key.getName(), key.getType(), "character", tabs.get(key), projectPath);
       }
       builder.append("\t</tabs>\n");
     } else

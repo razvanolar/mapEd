@@ -21,6 +21,11 @@ public class ImageModel extends AbstractDrawModel {
     this.image = image;
   }
 
+  public ImageModel(File file) {
+    super(DrawModelType.TILE);
+    this.file = file;
+  }
+
   public ImageModel(Image image, File file) {
     super(DrawModelType.TILE);
     this.image = image;

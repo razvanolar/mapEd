@@ -10,8 +10,8 @@ import javafx.scene.paint.Color;
 import javafx.util.Duration;
 import mapEditor.application.main_part.app_utils.constants.CssConstants;
 import mapEditor.application.main_part.app_utils.models.ImageMatrix;
-import mapEditor.application.main_part.app_utils.views.canvas.CharacterCanvas;
-import mapEditor.application.main_part.manage_images.manage_tile_sets.utils.listeners.CharacterPlayerListener;
+import mapEditor.application.main_part.app_utils.views.canvas.CharacterPlayCanvas;
+import mapEditor.application.main_part.manage_images.manage_tile_sets.utils.listeners.CharacterSelectionListener;
 import mapEditor.application.main_part.types.Controller;
 import mapEditor.application.main_part.types.View;
 
@@ -19,10 +19,10 @@ import mapEditor.application.main_part.types.View;
  *
  * Created by razvanolar on 28.03.2016.
  */
-public class CharactersPlayerController implements Controller, CharacterPlayerListener {
+public class CharacterPlayerController implements Controller, CharacterSelectionListener {
 
   private ImageView imageView;
-  private CharacterCanvas characterCanvas;
+  private CharacterPlayCanvas characterPlayCanvas;
 
   public interface ICharacterPlayerView extends View {
     void setContent(ScrollPane scrollPane, ImageView imageView);
@@ -43,8 +43,8 @@ public class CharactersPlayerController implements Controller, CharacterPlayerLi
   private SpriteAnimation animation;
   private boolean isPlaying;
 
-  public CharactersPlayerController(ICharacterPlayerView view, ImageMatrix imageMatrix, Color strokeColor,
-                                    Color fillColor, int columns, int rows, int cellWidth, int cellHeight) {
+  public CharacterPlayerController(ICharacterPlayerView view, ImageMatrix imageMatrix, Color strokeColor,
+                                   Color fillColor, int columns, int rows, int cellWidth, int cellHeight) {
     this.view = view;
     this.imageMatrix = imageMatrix;
     this.strokeColor = strokeColor;
@@ -57,13 +57,13 @@ public class CharactersPlayerController implements Controller, CharacterPlayerLi
 
   @Override
   public void bind() {
-    characterCanvas = new CharacterCanvas(imageMatrix.getImage(), view.isHorizontal(), strokeColor, fillColor, cellWidth, cellHeight, this);
-    ScrollPane scrollPane = new ScrollPane(characterCanvas);
+    characterPlayCanvas = new CharacterPlayCanvas(imageMatrix.getImage(), view.isHorizontal(), strokeColor, fillColor, cellWidth, cellHeight, this);
+    ScrollPane scrollPane = new ScrollPane(characterPlayCanvas);
 
-    characterCanvas.widthProperty().bind(scrollPane.widthProperty());
-    characterCanvas.heightProperty().bind(scrollPane.heightProperty());
+    characterPlayCanvas.widthProperty().bind(scrollPane.widthProperty());
+    characterPlayCanvas.heightProperty().bind(scrollPane.heightProperty());
 
-    ChangeListener<Number> listener = (observable, oldValue, newValue) -> characterCanvas.paint();
+    ChangeListener<Number> listener = (observable, oldValue, newValue) -> characterPlayCanvas.paint();
     scrollPane.widthProperty().addListener(listener);
     scrollPane.heightProperty().addListener(listener);
     scrollPane.getStyleClass().add(CssConstants.CANVAS_CONTAINER_LIGHT_BG);
@@ -77,7 +77,7 @@ public class CharactersPlayerController implements Controller, CharacterPlayerLi
   private void addListeners() {
     view.getPlayButton().setOnAction(event -> {
       if (animation == null) {
-        animation = new SpriteAnimation(imageView, new Duration(1000), columns, rows, cellWidth, cellHeight, view.isHorizontal(), characterCanvas.getStartIndex());
+        animation = new SpriteAnimation(imageView, new Duration(1000), columns, rows, cellWidth, cellHeight, view.isHorizontal(), characterPlayCanvas.getStartIndex());
         animation.setCycleCount(Animation.INDEFINITE);
         animation.setAutoReverse(true);
         animation.setRate(2.5);
@@ -99,8 +99,8 @@ public class CharactersPlayerController implements Controller, CharacterPlayerLi
   }
 
   private void changeSelectionDirection(boolean isHorizontal) {
-    characterCanvas.setIsHorizontal(isHorizontal);
-    characterCanvas.paint();
+    characterPlayCanvas.setIsHorizontal(isHorizontal);
+    characterPlayCanvas.paint();
     if (animation != null)
       animation.setIsHorizontal(isHorizontal);
   }
@@ -108,7 +108,7 @@ public class CharactersPlayerController implements Controller, CharacterPlayerLi
   @Override
   public void selectionChanged() {
     if (animation != null)
-      animation.setStartIndex(characterCanvas.getStartIndex());
+      animation.setStartIndex(characterPlayCanvas.getStartIndex());
   }
 
   public void closeAnimation() {

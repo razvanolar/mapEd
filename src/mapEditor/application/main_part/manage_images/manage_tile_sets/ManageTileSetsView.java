@@ -25,6 +25,7 @@ public class ManageTileSetsView implements ManageTileSetsController.IManageTileS
   private Button settingsButton;
   private Button cropSelectionButton;
   private Button objectButton;
+  private Button characterButton;
   private Button saveTileSetButton;
   private Button resetConfigurationButton;
   private Button brushButton;
@@ -47,6 +48,7 @@ public class ManageTileSetsView implements ManageTileSetsController.IManageTileS
     settingsButton = new Button("Settings");
     cropSelectionButton = new Button("Crop Selection");
     objectButton = new Button("Object");
+    characterButton = new Button("Character");
     saveTileSetButton = new Button("Save Tile Set");
     resetConfigurationButton = new Button("Reset");
     gridSelectionButton = new ToggleButton("Grid Selection");
@@ -72,8 +74,9 @@ public class ManageTileSetsView implements ManageTileSetsController.IManageTileS
     clearButton.setRotate(-90);
     simpleViewButton.setRotate(-90);
 
-    tabsToolbar.getItems().addAll(addNewTabButton, new Separator(Orientation.HORIZONTAL), playCharactersButton, brushButton, objectButton,
-            new FillToolItem(), cropSelectionButton, saveCroppedTilesButton, saveTileSetButton);
+    tabsToolbar.getItems().addAll(addNewTabButton, new Separator(Orientation.HORIZONTAL), playCharactersButton,
+            brushButton, objectButton, characterButton, new FillToolItem(), cropSelectionButton, saveCroppedTilesButton,
+            saveTileSetButton);
     configurationToolbar.getItems().addAll(resetConfigurationButton, settingsButton, gridSelectionButton);
 
     rightPane.setBottom(configurationToolbar);
@@ -134,6 +137,10 @@ public class ManageTileSetsView implements ManageTileSetsController.IManageTileS
 
   public Button getObjectButton() {
     return objectButton;
+  }
+
+  public Button getCharacterButton() {
+    return characterButton;
   }
 
   public Button getSaveCroppedTilesButton() {

@@ -10,16 +10,16 @@ import mapEditor.application.main_part.types.View;
  *
  * Created by razvanolar on 01.03.2016.
  */
-public class NewTilesTabController implements Controller {
+public class NewEntitiesTabController implements Controller {
 
-  public interface INewTilesTabView extends View {
+  public interface INewEntitiesTabView extends View {
     TextField getNameTextField();
   }
 
-  private INewTilesTabView view;
+  private INewEntitiesTabView view;
   private Node completeSelectionNode;
 
-  public NewTilesTabController(INewTilesTabView view, Node completeSelectionNode) {
+  public NewEntitiesTabController(INewEntitiesTabView view, Node completeSelectionNode) {
     this.view = view;
     this.completeSelectionNode = completeSelectionNode;
   }

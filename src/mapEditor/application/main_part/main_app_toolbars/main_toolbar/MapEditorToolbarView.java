@@ -16,6 +16,7 @@ public class MapEditorToolbarView implements MapEditorToolbarController.IMapEdit
   private Button tmxFormatButton;
   private ToggleButton change2DVisibility;
   private ToggleButton changeGridVisibility;
+  private ToggleButton deleteEntityButton;
   private ToggleButton fillAreaButton;
   private ToggleButton showGridButton;
   private ToggleButton mapEditorViewButton;
@@ -30,6 +31,7 @@ public class MapEditorToolbarView implements MapEditorToolbarController.IMapEdit
     tmxFormatButton = new Button("TMX");
     change2DVisibility = new ToggleButton("2D Visibility");
     changeGridVisibility = new ToggleButton("Grid Visibility");
+    deleteEntityButton = new ToggleButton("Delete");
     fillAreaButton = new ToggleButton("Fill Area");
     showGridButton = new ToggleButton("Show Grid");
     mapEditorViewButton = new ToggleButton("Maps Editor");
@@ -50,6 +52,7 @@ public class MapEditorToolbarView implements MapEditorToolbarController.IMapEdit
             change2DVisibility,
             changeGridVisibility,
             new Separator(Orientation.HORIZONTAL),
+            deleteEntityButton,
             fillAreaButton,
             showGridButton,
             new FillToolItem(),
@@ -71,6 +74,10 @@ public class MapEditorToolbarView implements MapEditorToolbarController.IMapEdit
 
   public ToggleButton getChangeGridVisibility() {
     return changeGridVisibility;
+  }
+
+  public ToggleButton getDeleteEntityButton() {
+    return deleteEntityButton;
   }
 
   public ToggleButton getFillAreaButton() {

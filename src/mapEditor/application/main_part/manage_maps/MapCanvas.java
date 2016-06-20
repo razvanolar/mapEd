@@ -17,6 +17,8 @@ import mapEditor.application.main_part.app_utils.models.object.ObjectModel;
  */
 public class MapCanvas extends Canvas {
 
+  public static boolean FILL_AREA;
+  public static boolean DELETE_ENTITY;
   protected static int ZOOM_RATIO = 1;
   protected static int DEFAULT_CELL_WIDTH;
   protected static int DEFAULT_CELL_HEIGHT;
@@ -356,7 +358,7 @@ public class MapCanvas extends Canvas {
 
     // draw selection based on the selectedDrawModel type
     g.setStroke(squareColor);
-    if (selectedDrawModel == null || selectedDrawModel.getDrawModelType() == AbstractDrawModel.DrawModelType.TILE) {
+    if (selectedDrawModel == null || selectedDrawModel.getDrawModelType() == AbstractDrawModel.DrawModelType.TILE || DELETE_ENTITY) {
       g.strokeRect(x + 0.5, y + 0.5, CELL_WIDTH, CELL_HEIGHT);
     } else if (selectedDrawModel.getDrawModelType() == AbstractDrawModel.DrawModelType.BRUSH) {
       int row = y / CELL_HEIGHT;

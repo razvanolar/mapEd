@@ -5,6 +5,7 @@ import javafx.collections.ListChangeListener;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.control.ToggleButton;
 import javafx.stage.Modality;
 import javafx.stage.StageStyle;
 import mapEditor.MapEditorController;
@@ -13,6 +14,7 @@ import mapEditor.application.main_part.app_utils.inputs.StringValidator;
 import mapEditor.application.main_part.app_utils.models.*;
 import mapEditor.application.main_part.app_utils.views.dialogs.Dialog;
 import mapEditor.application.main_part.app_utils.views.dialogs.OkCancelDialog;
+import mapEditor.application.main_part.manage_maps.manage_characters.ManageCharactersController;
 import mapEditor.application.main_part.manage_maps.manage_layers.LayersController;
 import mapEditor.application.main_part.manage_maps.manage_tiles.ManageTilesController;
 import mapEditor.application.main_part.manage_maps.primary_map.context_menu.PrimaryMapContextMenuController;
@@ -27,7 +29,7 @@ import mapEditor.application.main_part.manage_maps.primary_map.PrimaryMapControl
 import mapEditor.application.main_part.manage_maps.primary_map.PrimaryMapView;
 import mapEditor.application.main_part.manage_maps.utils.MapContentStateKeys;
 import mapEditor.application.main_part.manage_maps.utils.listeners.MapLayersListener;
-import mapEditor.application.main_part.manage_maps.utils.listeners.SelectedTileListener;
+import mapEditor.application.main_part.manage_maps.utils.listeners.SelectedEntityListener;
 import mapEditor.application.main_part.manage_maps.visibility_map.MapGridVisibilityController;
 import mapEditor.application.main_part.manage_maps.visibility_map.MapGridVisibilityView;
 import mapEditor.application.main_part.types.Controller;
@@ -41,20 +43,25 @@ import java.util.List;
  *
  * Created by razvanolar on 21.01.2016.
  */
-public class ManageMapsController implements Controller, MapLayersListener, SelectedTileListener, MapContextMenuListener {
+public class ManageMapsController implements Controller, MapLayersListener, SelectedEntityListener, MapContextMenuListener {
 
   public interface IMangeMapsView extends View {
     ScrollPane addMap(String title, PrimaryMapView mapView, boolean selectTab);
+    ToggleButton getTileSwitchButton();
+    ToggleButton getCharacterSwitchButton();
     TabPane getMapsTabPane();
     LayersController.ILayersView getLayersView();
     ManageTilesController.IManageTilesView getManageTilesView();
+    ManageCharactersController.IManageCharactersView getManageCharactersView();
     double getDividerPosition();
+    void switchTileView(boolean isTileView);
     void setDividerPosition(double value);
   }
 
   private IMangeMapsView view;
   private LayersController layersController;
   private ManageTilesController manageTilesController;
+  private ManageCharactersController manageCharactersController;
   private PrimaryMapContextMenuController contextMenuController;
   private MapDetail defaultModel;
 
@@ -163,6 +170,11 @@ public class ManageMapsController implements Controller, MapLayersListener, Sele
         }
       }
     });
+
+    view.getTileSwitchButton().selectedProperty().addListener((observable, oldValue, newValue) -> {
+      view.switchTileView(newValue);
+      AppParameters.CURRENT_PROJECT.setIsTilesTabsSelected(newValue);
+    });
   }
 
   private void initControllers() {
@@ -171,6 +183,9 @@ public class ManageMapsController implements Controller, MapLayersListener, Sele
 
     manageTilesController = new ManageTilesController(view.getManageTilesView(), this);
     manageTilesController.bind();
+
+    manageCharactersController = new ManageCharactersController(view.getManageCharactersView(), this);
+    manageCharactersController.bind();
 
     contextMenuController = new PrimaryMapContextMenuController(new PrimaryMapContextMenuView(), this);
     contextMenuController.bind();
@@ -623,6 +638,16 @@ public class ManageMapsController implements Controller, MapLayersListener, Sele
     return null;
   }
 
+  public void switchTileView(boolean isTileView) {
+    view.getTileSwitchButton().setSelected(isTileView);
+    if (!isTileView)
+      view.getCharacterSwitchButton().setSelected(true);
+  }
+
+  public boolean isTilesViewSelected() {
+    return view.getTileSwitchButton().isSelected();
+  }
+
   /**
    * Gets the selected map model. The data model will be updated.
    * @return MapDetail
@@ -654,6 +679,10 @@ public class ManageMapsController implements Controller, MapLayersListener, Sele
 
   public ManageTilesController getManageTilesController() {
     return manageTilesController;
+  }
+
+  public ManageCharactersController getManageCharactersController() {
+    return manageCharactersController;
   }
 }
 
